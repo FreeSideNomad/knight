@@ -1,0 +1,420 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+# Commercial Banking Platform - Data Engineering Model
+# Phase 2 - Strategic Focus
+# Version: 0.1.0
+
+system:
+  id: "sys-cash-mgmt-platform"
+  name: "Commercial Banking Cash Management Platform - Data Engineering"
+  description: "Data engineering model for cash management platform focusing on gold copy creation and serving layer for Service Profile domain"
+  domains:
+    - "dom-account-data"
+    - "dom-user-data"
+    - "dom-reference-data"
+
+# ==============================================================================
+# DOMAINS (Data Engineering)
+# ==============================================================================
+
+domains:
+  - id: "dom-account-data"
+    name: "Account Data Domain"
+    description: "Gold copy of account data from SRF and other account systems"
+    pipelines:
+      - "pip-srf-account-sync"
+      - "pip-account-status-change"
+
+  - id: "dom-user-data"
+    name: "User Data Domain"
+    description: "User data from Express platform (direct clients) and Okta (indirect clients)"
+    pipelines:
+      - "pip-express-user-sync"
+
+  - id: "dom-reference-data"
+    name: "Reference Data Domain"
+    description: "Reference data for client demographics, identity mapping"
+    pipelines:
+      - "pip-client-reference"
+
+# ==============================================================================
+# PIPELINES
+# ==============================================================================
+
+pipelines:
+  - id: "pip-srf-account-sync"
+    name: "SRF Account Synchronization"
+    description: "Daily batch sync of client-owned accounts from SRF"
+    mode: "batch"
+    schedule:
+      type: "cron"
+      cron_expression: "0 6 * * *"  # Daily at 6 AM
+    stages:
+      - "stg-srf-extract"
+      - "stg-account-transform"
+      - "stg-account-load"
+      - "stg-change-detection"
+
+  - id: "pip-account-status-change"
+    name: "Account Status Change Detection"
+    description: "Detect new and closed accounts for auto-enrollment"
+    mode: "batch"
+    schedule:
+      type: "event"
+      trigger: "pip-srf-account-sync completion"
+    stages:
+      - "stg-compare-snapshots"
+      - "stg-identify-changes"
+      - "stg-notify-enrollment"
+
+  - id: "pip-express-user-sync"
+    name: "Express User Synchronization"
+    description: "Near real-time sync of direct client users from Express"
+    mode: "streaming"
+    schedule:
+      type: "continuous"
+    stages:
+      - "stg-express-consume"
+      - "stg-user-transform"
+      - "stg-user-persist"
+
+  - id: "pip-client-reference"
+    name: "Client Reference Data"
+    description: "Daily sync of client demographics from SRF"
+    mode: "batch"
+    schedule:
+      type: "cron"
+      cron_expression: "0 5 * * *"  # Daily at 5 AM
+    stages:
+      - "stg-client-extract"
+      - "stg-client-transform"
+      - "stg-client-load"
+
+# ==============================================================================
+# STAGES
+# ==============================================================================
+
+stages:
+  # SRF Account Sync Stages
+  - id: "stg-srf-extract"
+    name: "Extract SRF Account Data"
+    inputs: []
+    outputs: ["ds-srf-raw-accounts"]
+    transforms:
+      - id: "trx-srf-extract"
+        type: "extract"
+        description: "Extract daily account feed from SRF"
+
+  - id: "stg-account-transform"
+    name: "Transform Account Data"
+    inputs: ["ds-srf-raw-accounts"]
+    outputs: ["ds-account-clean"]
+    transforms:
+      - id: "trx-clean-accounts"
+        type: "clean"
+        description: "Standardize account formats"
+      - id: "trx-validate-accounts"
+        type: "validate"
+        description: "Validate account data quality"
+
+  - id: "stg-account-load"
+    name: "Load Account Gold Copy"
+    inputs: ["ds-account-clean"]
+    outputs: ["ds-account-gold"]
+    transforms:
+      - id: "trx-merge-accounts"
+        type: "merge"
+        description: "Merge with existing gold copy"
+
+  - id: "stg-change-detection"
+    name: "Detect Account Changes"
+    inputs: ["ds-account-gold"]
+    outputs: ["ds-account-changes"]
+    depends_on: ["stg-account-load"]
+
+  # Account Status Change Stages
+  - id: "stg-compare-snapshots"
+    name: "Compare Account Snapshots"
+    inputs: ["ds-account-gold"]
+    outputs: ["ds-account-delta"]
+
+  - id: "stg-identify-changes"
+    name: "Identify New/Closed Accounts"
+    inputs: ["ds-account-delta"]
+    outputs: ["ds-account-events"]
+
+  - id: "stg-notify-enrollment"
+    name: "Notify Auto-Enrollment"
+    inputs: ["ds-account-events"]
+    outputs: []
+    transforms:
+      - id: "trx-publish-events"
+        type: "publish"
+        description: "Publish account change events"
+
+  # Express User Sync Stages
+  - id: "stg-express-consume"
+    name: "Consume Express User Events"
+    inputs: []
+    outputs: ["ds-express-user-events"]
+    transforms:
+      - id: "trx-consume-events"
+        type: "stream"
+        description: "Consume user add/update events from Express"
+
+  - id: "stg-user-transform"
+    name: "Transform User Data"
+    inputs: ["ds-express-user-events"]
+    outputs: ["ds-user-clean"]
+    transforms:
+      - id: "trx-map-users"
+        type: "map"
+        description: "Map Express users to platform model"
+
+  - id: "stg-user-persist"
+    name: "Persist User Gold Copy"
+    inputs: ["ds-user-clean"]
+    outputs: ["ds-user-gold"]
+
+  # Client Reference Stages
+  - id: "stg-client-extract"
+    name: "Extract Client Data"
+    inputs: []
+    outputs: ["ds-srf-raw-clients"]
+
+  - id: "stg-client-transform"
+    name: "Transform Client Data"
+    inputs: ["ds-srf-raw-clients"]
+    outputs: ["ds-client-clean"]
+
+  - id: "stg-client-load"
+    name: "Load Client Gold Copy"
+    inputs: ["ds-client-clean"]
+    outputs: ["ds-client-gold"]
+
+# ==============================================================================
+# DATASETS
+# ==============================================================================
+
+datasets:
+  # Raw/Bronze Layer
+  - id: "ds-srf-raw-accounts"
+    name: "SRF Raw Account Data"
+    type: "file"
+    format: "csv"
+    location: "s3://data-lake/bronze/srf/accounts/"
+    schema:
+      fields:
+        - name: "client_id"
+          type: "string"
+          nullable: false
+        - name: "account_number"
+          type: "string"
+          nullable: false
+        - name: "account_type"
+          type: "string"
+          nullable: false
+        - name: "status"
+          type: "string"
+        - name: "bank_number"
+          type: "string"
+        - name: "transit_number"
+          type: "string"
+    classification: "internal"
+    contains_pii: false
+
+  - id: "ds-express-user-events"
+    name: "Express User Event Stream"
+    type: "stream"
+    format: "json"
+    location: "kafka://express-user-events"
+    schema:
+      fields:
+        - name: "event_type"
+          type: "string"
+          nullable: false
+        - name: "site_id"
+          type: "string"
+          nullable: false
+        - name: "user_id"
+          type: "string"
+        - name: "email"
+          type: "string"
+          pii: true
+        - name: "timestamp"
+          type: "timestamp"
+    classification: "restricted"
+    contains_pii: true
+    pii_fields: ["email"]
+
+  # Silver Layer
+  - id: "ds-account-clean"
+    name: "Clean Account Data"
+    type: "table"
+    format: "delta"
+    location: "s3://data-lake/silver/accounts/"
+    classification: "internal"
+
+  - id: "ds-user-clean"
+    name: "Clean User Data"
+    type: "table"
+    format: "delta"
+    location: "s3://data-lake/silver/users/"
+    classification: "restricted"
+    contains_pii: true
+
+  - id: "ds-client-clean"
+    name: "Clean Client Data"
+    type: "table"
+    format: "delta"
+    location: "s3://data-lake/silver/clients/"
+    classification: "internal"
+    contains_pii: true
+
+  # Gold Layer (Serving)
+  - id: "ds-account-gold"
+    name: "Account Gold Copy"
+    type: "table"
+    format: "delta"
+    location: "s3://data-lake/gold/accounts/"
+    schema:
+      fields:
+        - name: "client_id"
+          type: "string"
+          nullable: false
+          description: "SRF client identifier"
+        - name: "account_id"
+          type: "string"
+          nullable: false
+          description: "Unique account identifier"
+        - name: "account_type"
+          type: "string"
+          nullable: false
+          description: "DDA, FCA, OLB, MTG, GIC, ACH/GSAN, TSYS"
+        - name: "account_status"
+          type: "string"
+          nullable: false
+          description: "ACTIVE, INACTIVE, CLOSED"
+        - name: "bank_transit_account"
+          type: "string"
+          description: "Canadian format: bank-transit-account"
+        - name: "currency"
+          type: "string"
+        - name: "last_updated"
+          type: "timestamp"
+    classification: "internal"
+    contains_pii: false
+
+  - id: "ds-user-gold"
+    name: "User Gold Copy"
+    type: "table"
+    format: "delta"
+    location: "s3://data-lake/gold/users/"
+    classification: "restricted"
+    contains_pii: true
+    pii_fields: ["email", "phone"]
+
+  - id: "ds-client-gold"
+    name: "Client Gold Copy"
+    type: "table"
+    format: "delta"
+    location: "s3://data-lake/gold/clients/"
+    classification: "internal"
+    contains_pii: true
+    pii_fields: ["client_name", "address"]
+
+  # Event/Change Datasets
+  - id: "ds-account-changes"
+    name: "Account Change Events"
+    type: "table"
+    format: "delta"
+    location: "s3://data-lake/events/account-changes/"
+    classification: "internal"
+
+  - id: "ds-account-events"
+    name: "Account Events for Publishing"
+    type: "stream"
+    format: "json"
+    location: "kafka://account-events"
+    classification: "internal"
+
+# ==============================================================================
+# CONTRACTS
+# ==============================================================================
+
+contracts:
+  - id: "ctr-account-gold"
+    name: "Account Gold Copy Contract"
+    dataset: "ds-account-gold"
+    version: "1.0.0"
+    description: "Contract for Service Profile domain to consume account data"
+    sla:
+      freshness_minutes: 1440  # 24 hours (daily batch)
+      completeness_percent: 99.5
+      availability_percent: 99.9
+    evolution_policy: "backward-compatible"
+    consumers:
+      - team: "service-profile-team"
+        use_case: "Account enrollment to service profiles"
+      - team: "approval-team"
+        use_case: "Account validation for approval workflows"
+
+  - id: "ctr-user-gold"
+    name: "User Gold Copy Contract"
+    dataset: "ds-user-gold"
+    version: "1.0.0"
+    description: "Contract for direct client user data"
+    sla:
+      freshness_minutes: 5  # Near real-time from Express
+      completeness_percent: 99
+      availability_percent: 99.9
+    evolution_policy: "backward-compatible"
+    consumers:
+      - team: "user-management-team"
+        use_case: "User synchronization and validation"
+
+  - id: "ctr-account-events"
+    name: "Account Change Events Contract"
+    dataset: "ds-account-events"
+    version: "1.0.0"
+    description: "Events for new/closed accounts"
+    sla:
+      freshness_minutes: 30  # Within 30 min of batch completion
+      completeness_percent: 100
+      availability_percent: 99.9
+    evolution_policy: "forward-compatible"
+    consumers:
+      - team: "service-profile-team"
+        use_case: "Auto-enrollment triggers"
+
+# ==============================================================================
+# DATA PRODUCTS (Optional but recommended for serving layer)
+# ==============================================================================
+
+data_products:
+  - id: "dp-account-serving"
+    name: "Account Data Serving Product"
+    description: "Read-only serving layer for Service Profile domain"
+    bounded_context_ref: "ddd:BoundedContext:bc_account_data_serving"
+    datasets:
+      - "ds-account-gold"
+      - "ds-client-gold"
+    contracts:
+      - "ctr-account-gold"
+    access_patterns:
+      - "Query accounts by client_id"
+      - "Query account by account_id"
+      - "List all accounts for profile enrollment"
+      - "Validate account existence and status"
+
+metadata:
+  phase: "phase_2_strategic"
+  last_updated: "2025-10-15"
+  alignment:
+    ddd_model: "platform-ddd.yaml"
+    key_mappings:
+      - ddd_domain: "dom_data_engineering"
+        data_domains: ["dom-account-data", "dom-user-data", "dom-reference-data"]
+      - ddd_context: "bc_account_data_sync"
+        pipelines: ["pip-srf-account-sync", "pip-account-status-change"]
+      - ddd_context: "bc_account_data_serving"
+        data_products: ["dp-account-serving"]

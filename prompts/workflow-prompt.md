@@ -25,9 +25,13 @@ Relationships defined in `domains/interdomain-map.yaml` show 28 groundings betwe
 ### "Define"
 When you see "define" in this workflow, it means:
 1. Create an initial version of the domain model based on schema and context
-2. Ask 3-5 meaningful clarifying questions based on the model schema and business context
-3. Accept user feedback and modify models accordingly
-4. When changes are made to one model, check if ripple effects require updates to other models
+2. **IMMEDIATELY convert YAML to MD using `./convert-yaml.sh`** before asking questions
+3. Ask 3-5 meaningful clarifying questions based on the model schema and business context
+4. Accept user feedback and modify models accordingly
+5. Convert updated YAML to MD again after modifications
+6. When changes are made to one model, check if ripple effects require updates to other models
+
+**IMPORTANT**: Always create .md files BEFORE asking for review, not at the end of the process
 
 ### "Refine"
 When you see "refine" in this workflow, it means:

@@ -36,12 +36,22 @@ This document tracks the progress of creating domain models for a commercial ban
 
 ---
 
-### Phase 2: Initial Domain Models (Strategic Focus) 📋
-**Status**: Not Started
+### Phase 2: Initial Domain Models (Strategic Focus) ✅
+**Status**: COMPLETED
 **Goal**: Create high-level domain structure
 **Outputs**:
-- `model/platform-ddd.yaml` with strategic patterns (Domains, Bounded Contexts, Context Mappings)
-- `model/platform-data-eng.yaml` with Systems, Domains, high-level Pipelines
+- ✅ `model/platform-ddd.yaml` with strategic patterns (4 domains, 10 bounded contexts, 5 context mappings)
+- ✅ `model/platform-ddd.md` (453 lines)
+- ✅ `model/platform-data-eng.yaml` with pipelines, datasets, contracts
+- ✅ `model/platform-data-eng.md` (220 lines)
+
+**Key Decisions Made**:
+- **Domain Restructuring**: Service Profiles (core), not Client Management
+- **Service Profiles Domain**: Manages service profiles for clients (we don't manage clients themselves)
+- **Indirect Clients**: Part of Service Profiles domain (exist only for indirect service profiles)
+- **Data Engineering Domain**: Creates gold copy, provides serving layer (read-only) to Service Profile domain
+- **Receivables vs Receivable-Approval**: Separate business services in same domain
+- **Anti-corruption Layers**: Express (user events) and SRF (account batch)
 
 ---
 

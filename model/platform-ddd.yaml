@@ -1,0 +1,278 @@
+# Commercial Banking Platform - DDD Model (Restructured)
+# Phase 2 - Strategic Focus
+# Version: 0.2.0
+
+system:
+  id: cash-mgmt-platform
+  name: Commercial Banking Cash Management Platform
+  version: 0.2.0
+  domains:
+    - dom_service_profiles
+    - dom_user_management
+    - dom_approval_workflows
+    - dom_data_engineering
+
+# ==============================================================================
+# DOMAINS
+# ==============================================================================
+
+domains:
+  dom_service_profiles:
+    id: dom_service_profiles
+    name: Service Profiles
+    type: core
+    strategic_importance: critical
+    description: >
+      Core domain managing SERVICE PROFILES for clients (not clients themselves - client
+      data from SRF/GID). Three profile types: servicing, online (direct client), indirect
+      (payor). Includes all service enrollment (stand-alone like BTR, online like Receivables,
+      indirect like receivable-approval). Indirect client management is part of this domain
+      since indirect clients exist only to serve indirect service profiles.
+    bounded_contexts:
+      - bc_service_profile_management
+      - bc_indirect_client_management
+      - bc_receivables_service
+      - bc_receivable_approval_service
+
+  dom_user_management:
+    id: dom_user_management
+    name: User Management
+    type: supporting
+    strategic_importance: important
+    description: >
+      User lifecycle for direct clients (Express sync) and indirect clients (Okta managed).
+      Identity provider integration with dual providers.
+    bounded_contexts:
+      - bc_user_lifecycle
+      - bc_identity_integration
+
+  dom_approval_workflows:
+    id: dom_approval_workflows
+    name: Approval Workflows
+    type: core
+    strategic_importance: critical
+    description: >
+      Generic approval workflow engine. AWS IAM-inspired permission model. Parallel approval
+      only (MVP). Reusable across all services.
+    bounded_contexts:
+      - bc_permission_management
+      - bc_approval_engine
+
+  dom_data_engineering:
+    id: dom_data_engineering
+    name: Data Engineering
+    type: supporting
+    strategic_importance: important
+    description: >
+      Data replication from external systems (SRF accounts via daily batch, Express users
+      via events). Creates GOLD COPY of representative data. Provides SERVING LAYER (read-only)
+      for Service Profile domain to access account data for profile creation and account linkage.
+    bounded_contexts:
+      - bc_account_data_sync
+      - bc_account_data_serving
+
+# ==============================================================================
+# BOUNDED CONTEXTS
+# ==============================================================================
+
+bounded_contexts:
+  bc_service_profile_management:
+    id: bc_service_profile_management
+    name: Service Profile Management
+    domain_ref: dom_service_profiles
+    description: >
+      Manages SERVICE PROFILES (not clients). Links to client data (SRF/GID/IND). Three
+      types: servicing, online, indirect. Enrolls services and accounts. Consumes account
+      data from bc_account_data_serving (read-only).
+    responsibilities:
+      - Create/manage service profiles (servicing, online, indirect)
+      - Link profile to SRF/GID client data (external)
+      - Enroll services to profiles (stand-alone, online, indirect)
+      - Enroll accounts to profiles (via serving layer)
+      - Link online profile to Express (site-id)
+      - Store permission/approval policies (owned by profile)
+
+  bc_indirect_client_management:
+    id: bc_indirect_client_management
+    name: Indirect Client Management
+    domain_ref: dom_service_profiles
+    description: >
+      Manages indirect clients (BUSINESS payors only, MVP). Part of Service Profiles domain
+      since indirect clients exist only for indirect service profiles. IND identification,
+      business info, related persons. Self-service user/permission/approval management.
+    responsibilities:
+      - Create/manage indirect client profiles (IND ID)
+      - Store business info and related persons
+      - Link to direct client service profile
+      - Support self-service management
+
+  bc_receivables_service:
+    id: bc_receivables_service
+    name: Receivables Service
+    domain_ref: dom_service_profiles
+    description: >
+      Online service for direct clients. ONE OF MANY services in Service Profile domain.
+      Enrolls GSAN accounts, onboards indirect clients (payors). MVP focus but not special
+      - just another service type.
+    responsibilities:
+      - Enroll receivables service for online profiles
+      - Link GSAN accounts to service
+      - Onboard indirect clients for direct client
+      - Configure receivables settings
+
+  bc_receivable_approval_service:
+    id: bc_receivable_approval_service
+    name: Receivable-Approval Service
+    domain_ref: dom_service_profiles
+    description: >
+      Indirect service enrolled by INDIRECT CLIENTS (payors). Separate business service
+      from Receivables. Uses generic approval engine for invoice approval workflows.
+      Parallel approval only (MVP).
+    responsibilities:
+      - Enroll receivable-approval service for indirect profiles
+      - Configure approval rules (via bc_approval_engine)
+      - Link payor DDA accounts for payments
+      - Process invoice approvals (via bc_approval_engine)
+
+  bc_user_lifecycle:
+    id: bc_user_lifecycle
+    name: User Lifecycle
+    domain_ref: dom_user_management
+    description: >
+      Direct client users (replicated from Express) and indirect client users (managed in Okta).
+      ~1050 indirect users across 700 business payors (MVP).
+    responsibilities:
+      - Replicate direct client users from Express (read-only)
+      - Manage indirect client users in Okta (full lifecycle)
+      - Track user roles and states
+      - Enforce dual admin requirement
+
+  bc_identity_integration:
+    id: bc_identity_integration
+    name: Identity Integration
+    domain_ref: dom_user_management
+    description: >
+      Anti-corruption layer for dual identity providers. Consumes Express user events
+      (add, update) via streaming. Integrates with Okta APIs for indirect client users.
+    responsibilities:
+      - Consume Express user events (anti-corruption layer)
+      - Integrate with Okta APIs for indirect users
+      - Abstract identity provider differences
+      - Translate to platform user model
+
+  bc_permission_management:
+    id: bc_permission_management
+    name: Permission Management
+    domain_ref: dom_approval_workflows
+    description: >
+      AWS IAM-inspired permission/approval policies. Subject (user), action (URN), resource
+      (accounts). Approval policy adds approver count and thresholds.
+    responsibilities:
+      - Store permission policies (profiles and indirect clients)
+      - Store approval policies with approver rules
+      - Validate user permissions
+      - Determine approval requirements
+
+  bc_approval_engine:
+    id: bc_approval_engine
+    name: Approval Engine
+    domain_ref: dom_approval_workflows
+    description: >
+      Generic approval workflow engine. Parallel approval only (MVP). Single or multiple
+      approvers. Amount-based thresholds. States: pending, approved, rejected, expired.
+      Reusable across all services.
+    responsibilities:
+      - Create approval workflow instances
+      - Enforce approval rules (parallel approval)
+      - Track approval progress
+      - Update workflow state
+      - Notify participants
+
+  bc_account_data_sync:
+    id: bc_account_data_sync
+    name: Account Data Sync
+    domain_ref: dom_data_engineering
+    description: >
+      Data engineering ETL. Daily batch from SRF for client-owned accounts. Creates GOLD
+      COPY of account data. Detects new/closed accounts. Data quality checks.
+    responsibilities:
+      - Consume SRF daily batch feed
+      - Create gold copy of account data
+      - Detect account status changes (new, closed)
+      - Data quality and transformation
+      - Trigger auto-enrollment notifications
+
+  bc_account_data_serving:
+    id: bc_account_data_serving
+    name: Account Data Serving
+    domain_ref: dom_data_engineering
+    description: >
+      SERVING LAYER providing READ-ONLY access to gold copy account data. Service Profile
+      domain consumes this for account enrollment and validation. Part of Data Engineering
+      but serves Service Profile domain needs.
+    responsibilities:
+      - Provide read-only API to account gold copy
+      - Query account data by client ID
+      - Validate account existence and status
+      - Support account enrollment workflows
+
+# ==============================================================================
+# CONTEXT MAPPINGS
+# ==============================================================================
+
+context_mappings:
+  cm_service_profile_to_account_serving:
+    id: cm_service_profile_to_account_serving
+    upstream_context: bc_account_data_serving
+    downstream_context: bc_service_profile_management
+    relationship_type: customer_supplier
+    description: >
+      Service Profile Management (downstream) consumes account data from Account Data
+      Serving (upstream) for account enrollment. Read-only access to gold copy.
+
+  cm_receivable_approval_to_approval_engine:
+    id: cm_receivable_approval_to_approval_engine
+    upstream_context: bc_receivable_approval_service
+    downstream_context: bc_approval_engine
+    relationship_type: customer_supplier
+    description: >
+      Receivable-Approval Service triggers invoice approvals via generic Approval Engine.
+      Approval Engine provides reusable workflow logic.
+
+  cm_service_profile_to_indirect_clients:
+    id: cm_service_profile_to_indirect_clients
+    upstream_context: bc_service_profile_management
+    downstream_context: bc_indirect_client_management
+    relationship_type: customer_supplier
+    description: >
+      Direct client service profile onboards indirect clients. One-to-many (1 profile →
+      700 indirect clients, MVP).
+
+  cm_identity_integration_to_express:
+    id: cm_identity_integration_to_express
+    upstream_context: express_platform
+    downstream_context: bc_identity_integration
+    relationship_type: anti_corruption_layer
+    description: >
+      Express publishes user events. Identity Integration consumes via ACL to protect
+      domain from Express complexity (big ball of mud). Unidirectional: Express → Platform.
+
+  cm_account_sync_to_srf:
+    id: cm_account_sync_to_srf
+    upstream_context: srf_system
+    downstream_context: bc_account_data_sync
+    relationship_type: anti_corruption_layer
+    description: >
+      SRF provides daily batch. Account Data Sync consumes via ACL to protect domain from
+      SRF complexity. Creates gold copy.
+
+metadata:
+  phase: phase_2_strategic
+  last_updated: "2025-10-15"
+  key_changes:
+    - Merged Client Management + Service Management into Service Profiles domain
+    - Service profiles for clients, not client management itself
+    - Indirect clients part of Service Profiles (exist only for service profiles)
+    - Created Data Engineering domain with gold copy and serving layer
+    - Receivable-approval is separate business service (not part of Receivables)
+    - Serving layer provides read-only account data to Service Profile domain
