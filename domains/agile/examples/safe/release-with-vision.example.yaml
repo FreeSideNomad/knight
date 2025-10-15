@@ -1,0 +1,395 @@
+# Example: Release with Comprehensive Release Vision
+# Demonstrates the Release and ReleaseVision schema structure
+
+id: "REL-001"
+name: "CommercePay Foundation Release"
+version: "1.0.0"
+
+startDate: "2025-01-15"
+endDate: "2025-04-30"
+
+productId: "commercepay-platform"
+
+programIncrements:
+  - "PI-1"
+  - "PI-2"
+
+vision:
+  releaseGoal: |
+    Enable real-time online account opening for sole proprietors and streamline
+    in-branch workflows for complex business clients, reducing account opening time
+    from 3-4 weeks to 5-15 minutes (online) or 48 hours (in-branch) while maintaining
+    full compliance with Canadian banking regulations (OSFI, FINTRAC, PIPEDA).
+
+  targetCustomers:
+    - "Sole proprietors seeking business banking accounts"
+    - "Small businesses (partnerships, private corporations) with simple ownership structures"
+    - "In-branch relationship managers assisting complex clients"
+    - "Compliance and operations teams managing KYC/AML workflows"
+
+  keyCapabilities:
+    - "Real-time online account opening with automated identity verification"
+    - "Automated KYC/AML screening integrated with credit bureaus and sanctions lists"
+    - "Digital in-branch workflows for complex client types (corporations, trusts, high-risk)"
+    - "Biometric verification using government-issued IDs"
+    - "Instant account activation for approved low-risk clients"
+
+  customerValue: |
+    Business clients can open accounts in minutes online instead of waiting 3-4 weeks,
+    with a streamlined mobile-first experience. In-branch clients benefit from digital
+    workflows that reduce wait times and paperwork. Relationship managers gain powerful
+    tools to serve complex clients efficiently.
+
+  businessValue: |
+    This release delivers $12M in annual operational cost savings through automation,
+    reduces compliance risk through systematic KYC/AML checks, improves customer
+    satisfaction (NPS target: 70+), and positions Sterling Financial Group as a
+    digital leader in Canadian commercial banking.
+
+  themes:
+    - "Digital Transformation - modernizing account opening"
+    - "Regulatory Excellence - automated compliance"
+    - "Customer Experience - self-service enablement"
+    - "Operational Efficiency - reducing manual processing"
+
+  differentiators:
+    - "Real-time account opening vs. 3-4 week industry standard"
+    - "Dual-channel approach (online + in-branch) vs. branch-only competitors"
+    - "Automated KYC/AML vs. manual verification processes"
+    - "Mobile-first experience vs. desktop-only portals"
+    - "Full bilingual support (EN/FR) built-in from day one"
+
+  boundaries:
+    inScope:
+      - "Online account opening for sole proprietors"
+      - "In-branch digital workflows for corporations and partnerships"
+      - "Identity verification (government ID, biometric checks)"
+      - "KYC/AML screening (credit bureau, sanctions, PEP checks)"
+      - "Instant account activation for approved clients"
+      - "Bilingual support (English and French)"
+      - "Integration with core banking system for account creation"
+
+    outOfScope:
+      - "Account opening for trusts and non-profits (deferred to Release 2.0)"
+      - "International client onboarding (future consideration)"
+      - "Cross-border account opening (US/Canada dual accounts)"
+      - "Business loan origination (separate platform)"
+      - "Merchant payment processing setup (Release 3.0)"
+      - "Open Banking API integration (Release 4.0)"
+
+    deferredToFuture:
+      - "AI-powered fraud detection and risk scoring (Release 3.0)"
+      - "Instant credit decisioning integrated with onboarding (Release 3.0)"
+      - "Enhanced due diligence automation for high-risk industries (Release 2.0)"
+      - "Beneficial ownership verification for complex structures (Release 2.0)"
+
+  successCriteria:
+    - name: "Online Account Opening Time"
+      description: "Average time to complete online account opening for sole proprietors"
+      target: 15
+      current: 1680
+      unit: "minutes"
+
+    - name: "In-Branch Account Opening Time"
+      description: "Time from application to account activation for in-branch clients"
+      target: 2880
+      current: 5040
+      unit: "minutes"
+
+    - name: "Online Conversion Rate"
+      description: "Percentage of started applications completed successfully"
+      target: 67
+      current: 23
+      unit: "percent"
+
+    - name: "Customer Satisfaction (NPS)"
+      description: "Net Promoter Score for account opening experience"
+      target: 70
+      current: 45
+      unit: "score"
+
+    - name: "Operational Cost Reduction"
+      description: "Reduction in account opening operational costs"
+      target: 40
+      current: 0
+      unit: "percent"
+
+    - name: "KYC/AML Compliance Rate"
+      description: "Percentage of accounts meeting compliance requirements"
+      target: 100
+      current: 98
+      unit: "percent"
+
+  risks:
+    - id: "RISK-001"
+      description: "Identity verification vendor API performance may not meet SLA"
+      impact: "high"
+      probability: "medium"
+      roam: "mitigated"
+      owner: "raj-patel"
+      mitigation: "Secondary vendor identified and integrated as backup"
+
+    - id: "RISK-002"
+      description: "Core banking integration may require additional security hardening"
+      impact: "medium"
+      probability: "high"
+      roam: "owned"
+      owner: "tom-bennett"
+      mitigation: "Security review in progress, additional penetration testing scheduled"
+
+    - id: "RISK-003"
+      description: "Regulatory approval timeline uncertain for online account opening"
+      impact: "high"
+      probability: "low"
+      roam: "owned"
+      owner: "marcus-thompson"
+      mitigation: "Ongoing dialogue with OSFI, compliance documentation complete"
+
+  alignmentToProductVision: |
+    This release directly delivers on the CommercePay Product Vision's first strategic
+    objective: "Enable real-time online account opening with automated KYC/AML for
+    simple business clients." It establishes the foundation platform capabilities
+    (identity verification, compliance screening, core banking integration) that all
+    future releases will build upon. Success in Release 1.0 validates our dual-channel
+    digital strategy and positions us to accelerate Release 2.0 and 3.0.
+
+  motivationalNarrative: |
+    For decades, opening a business bank account has been a frustrating, slow process.
+    Business owners fill out paperwork, wait for manual verification, make multiple
+    branch visits, and lose 3-4 weeks before they can start banking. This release
+    changes everything.
+
+    We're not just digitizing forms—we're reimagining the entire experience. A sole
+    proprietor can now open an account from their phone in under 15 minutes, with
+    instant approval and immediate access to banking. A corporation working with a
+    relationship manager benefits from digital workflows that eliminate paperwork
+    and reduce wait times to 48 hours.
+
+    This is about respect—respecting our customers' time and our employees' capabilities.
+    We're using technology to handle repetitive verification tasks so our relationship
+    managers can focus on advisory services and building relationships. We're meeting
+    regulatory requirements faster and more consistently than ever before.
+
+    Release 1.0 proves that a Tier 1 Canadian bank can move fast, innovate boldly, and
+    deliver experiences that rival fintech startups—all while maintaining the security,
+    compliance, and trustworthiness our customers expect. This is our digital foundation.
+    Everything we build next depends on getting this right.
+
+  lastUpdated: "2025-01-10"
+
+features:
+  - "FEAT-101"
+  - "FEAT-102"
+  - "FEAT-103"
+  - "FEAT-104"
+  - "FEAT-105"
+  - "FEAT-106"
+  - "FEAT-107"
+  - "FEAT-108"
+
+roadmap:
+  level: "release"
+  timeHorizon: "2 Program Increments (Jan - Apr 2025)"
+  items:
+    - timeframe: "PI-1 (Jan 15 - Feb 26, 2025)"
+      theme: "Foundation & Identity Verification"
+      objectives:
+        - "Deliver identity capture and verification for online clients"
+        - "Build platform identity verification service"
+        - "Integrate with government ID verification vendor"
+      epics:
+        - "EPIC-001"
+      features:
+        - "FEAT-101"
+        - "FEAT-102"
+        - "FEAT-103"
+        - "FEAT-104"
+      milestones:
+        - name: "PI-1 Planning Complete"
+          date: "2025-01-15"
+          type: "planning"
+        - name: "Identity Capture MVP Demo"
+          date: "2025-01-29"
+          type: "development"
+        - name: "Verification Service Integrated"
+          date: "2025-02-12"
+          type: "development"
+        - name: "PI-1 System Demo"
+          date: "2025-02-26"
+          type: "development"
+      confidence: "high"
+      dependencies:
+        - "Identity verification vendor API availability"
+        - "Platform team capacity for shared services"
+
+    - timeframe: "PI-2 (Mar 1 - Apr 11, 2025)"
+      theme: "Compliance & Activation"
+      objectives:
+        - "Deliver automated KYC/AML screening"
+        - "Enable instant account activation"
+        - "Launch in-branch digital workflow (MVP)"
+      epics:
+        - "EPIC-001"
+      features:
+        - "FEAT-105"
+        - "FEAT-106"
+        - "FEAT-107"
+        - "FEAT-108"
+      milestones:
+        - name: "PI-2 Planning Complete"
+          date: "2025-03-01"
+          type: "planning"
+        - name: "KYC/AML Service Integrated"
+          date: "2025-03-15"
+          type: "development"
+        - name: "End-to-End Account Opening Working"
+          date: "2025-03-29"
+          type: "development"
+        - name: "PI-2 System Demo & Release GO/NO-GO"
+          date: "2025-04-11"
+          type: "development"
+      confidence: "high"
+      dependencies:
+        - "Credit bureau API availability"
+        - "Core banking integration readiness"
+
+  lastReviewed: "2025-01-10"
+  reviewCadence: "Every 2 weeks at ART Sync"
+  notes: |
+    Release 1.0 scope has been stable since December 2024. All features are well-defined
+    and refined. Teams have high confidence in delivery. Key risks have been mitigated
+    or have active ownership. Regulatory approval is on track.
+
+releaseObjectives:
+  - description: "Enable real-time online account opening for sole proprietors"
+    businessValue: 10
+    targetPI: "PI-1 & PI-2"
+
+  - description: "Deliver automated KYC/AML compliance screening"
+    businessValue: 10
+    targetPI: "PI-2"
+
+  - description: "Launch digital in-branch workflow for complex clients"
+    businessValue: 8
+    targetPI: "PI-2"
+
+  - description: "Achieve 67% online conversion rate"
+    businessValue: 9
+    targetPI: "PI-2"
+
+  - description: "Reduce operational costs by 40%"
+    businessValue: 8
+    targetPI: "PI-2"
+
+milestones:
+  - name: "Release 1.0 Kick-off"
+    date: "2025-01-15"
+    type: "planning"
+    status: "completed"
+
+  - name: "PI-1 Planning"
+    date: "2025-01-15"
+    type: "planning"
+    status: "completed"
+
+  - name: "Online MVP Demo (Sole Proprietors)"
+    date: "2025-02-28"
+    type: "development"
+    status: "in-progress"
+
+  - name: "PI-2 Planning"
+    date: "2025-03-01"
+    type: "planning"
+    status: "upcoming"
+
+  - name: "End-to-End Testing Complete"
+    date: "2025-04-05"
+    type: "testing"
+    status: "upcoming"
+
+  - name: "Release GO/NO-GO Decision"
+    date: "2025-04-11"
+    type: "deployment"
+    status: "upcoming"
+
+  - name: "Production Deployment"
+    date: "2025-04-30"
+    type: "deployment"
+    status: "upcoming"
+
+  - name: "Post-Launch Review"
+    date: "2025-05-15"
+    type: "planning"
+    status: "upcoming"
+
+stakeholders:
+  - id: "sarah-chen"
+    name: "Sarah Chen"
+    role: "Senior VP Commercial Banking / Product Owner"
+    influence: "high"
+    interest: "high"
+
+  - id: "marcus-thompson"
+    name: "Marcus Thompson"
+    role: "Chief Compliance Officer"
+    influence: "high"
+    interest: "high"
+
+  - id: "emily-carter"
+    name: "Emily Carter"
+    role: "Release Train Engineer"
+    influence: "high"
+    interest: "high"
+
+  - id: "raj-patel"
+    name: "Raj Patel"
+    role: "Solution Architect"
+    influence: "high"
+    interest: "high"
+
+  - id: "jennifer-rodriguez"
+    name: "Jennifer Rodriguez"
+    role: "SVP Operations"
+    influence: "high"
+    interest: "medium"
+
+metrics:
+  - name: "Features Delivered"
+    description: "Number of features completed vs. planned"
+    target: 8
+    current: 4
+    unit: "features"
+
+  - name: "PI Predictability"
+    description: "Average PI Objectives achievement"
+    target: 85
+    current: 87
+    unit: "percent"
+
+  - name: "Test Coverage"
+    description: "Automated test coverage across codebase"
+    target: 80
+    current: 85
+    unit: "percent"
+
+  - name: "Defect Density"
+    description: "Critical and high defects per thousand lines of code"
+    target: 0.5
+    current: 0.3
+    unit: "defects per KLOC"
+
+status: "development"
+releaseType: "major"
+deploymentStrategy: "phased"
+
+metadata:
+  created: "2024-11-01T10:00:00Z"
+  updated: "2025-01-10T14:30:00Z"
+  createdBy: "sarah-chen"
+  updatedBy: "emily-carter"
+  tags:
+    - "foundation-release"
+    - "account-opening"
+    - "kyc-aml"
+    - "digital-transformation"
+    - "compliance"

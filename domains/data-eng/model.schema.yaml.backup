@@ -1,0 +1,546 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://example.com/schemas/data-eng-model.schema.json"
+title: Data Engineering Logical Model Schema
+description: JSON-Schema for modeling data engineering systems holistically
+version: 0.2.0
+
+type: object
+required: [system]
+properties:
+  system:
+    $ref: "#/$defs/system"
+
+$defs:
+  # ===== SYSTEM =====
+  system:
+    type: object
+    required: [id, name, domains]
+    properties:
+      id:
+        type: string
+        pattern: "^sys-[a-z0-9-]+$"
+        description: "Unique system identifier (format: sys-{kebab-name})"
+      name:
+        type: string
+        minLength: 1
+      description:
+        type: string
+      owners:
+        type: array
+        items:
+          $ref: "#/$defs/owner"
+      domains:
+        type: array
+        items:
+          type: string
+          pattern: "^dom-[a-z0-9-]+$"
+        description: "References to domain IDs"
+      tags:
+        type: array
+        items:
+          type: string
+      x-vendor:
+        type: object
+        description: "Vendor-specific extensions"
+
+  # ===== DOMAIN =====
+  domain:
+    type: object
+    required: [id, name, pipelines]
+    properties:
+      id:
+        type: string
+        pattern: "^dom-[a-z0-9-]+$"
+      name:
+        type: string
+      description:
+        type: string
+      owners:
+        type: array
+        items:
+          $ref: "#/$defs/owner"
+      pipelines:
+        type: array
+        items:
+          type: string
+          pattern: "^pip-[a-z0-9-]+$"
+        description: "References to pipeline IDs"
+
+  # ===== PIPELINE =====
+  pipeline:
+    type: object
+    required: [id, name, mode, stages]
+    properties:
+      id:
+        type: string
+        pattern: "^pip-[a-z0-9-]+$"
+      name:
+        type: string
+      description:
+        type: string
+      mode:
+        type: string
+        enum: [batch, streaming, micro-batch, continuous]
+      schedule:
+        $ref: "#/$defs/schedule"
+      stages:
+        type: array
+        items:
+          $ref: "#/$defs/stage"
+        minItems: 1
+      traits:
+        type: array
+        items:
+          type: string
+      tags:
+        type: array
+        items:
+          type: string
+
+  # ===== STAGE =====
+  stage:
+    type: object
+    required: [id, name]
+    properties:
+      id:
+        type: string
+        pattern: "^stg-[a-z0-9-]+$"
+      name:
+        type: string
+      description:
+        type: string
+      uses_patterns:
+        type: array
+        items:
+          type: string
+          pattern: "^pat-[a-z0-9-]+$"
+        description: "References to pattern UIDs from taxonomy"
+      inputs:
+        type: array
+        items:
+          type: string
+          pattern: "^ds-[a-z0-9-]+$"
+        description: "Dataset IDs consumed by this stage"
+      outputs:
+        type: array
+        items:
+          type: string
+          pattern: "^ds-[a-z0-9-]+$"
+        description: "Dataset IDs produced by this stage"
+      transforms:
+        type: array
+        items:
+          $ref: "#/$defs/transform"
+      depends_on:
+        type: array
+        items:
+          type: string
+          pattern: "^stg-[a-z0-9-]+$"
+        description: "Stage IDs that must complete before this stage"
+
+  # ===== TRANSFORM =====
+  transform:
+    type: object
+    required: [id, type]
+    properties:
+      id:
+        type: string
+        pattern: "^trf-[a-z0-9-]+$"
+      type:
+        type: string
+        enum:
+          - filter
+          - map
+          - join
+          - aggregate
+          - window
+          - deduplication
+          - upsert
+          - scd-type1
+          - scd-type2
+          - cdc-extract
+          - append
+          - custom
+      description:
+        type: string
+      config:
+        type: object
+        description: "Transform-specific configuration (flexible)"
+
+  # ===== DATASET =====
+  dataset:
+    type: object
+    required: [id, name, type, format]
+    properties:
+      id:
+        type: string
+        pattern: "^ds-[a-z0-9-]+$"
+      name:
+        type: string
+      description:
+        type: string
+      type:
+        type: string
+        enum: [table, view, stream, file, api]
+      format:
+        type: string
+        enum: [delta, iceberg, hudi, parquet, orc, avro, json, csv, xml, protobuf, custom]
+      location:
+        type: string
+        description: "URI or path to dataset (s3://, gs://, abfss://, /path, jdbc://)"
+      schema:
+        oneOf:
+          - type: object
+            required: [$ref]
+            properties:
+              $ref:
+                type: string
+                description: "Reference to external schema file"
+            additionalProperties: false
+          - type: object
+            required: [fields]
+            properties:
+              fields:
+                type: array
+                items:
+                  $ref: "#/$defs/field"
+            additionalProperties: false
+      partitioning:
+        type: object
+        properties:
+          columns:
+            type: array
+            items:
+              type: string
+          strategy:
+            type: string
+            enum: [daily, monthly, yearly, hash, range, custom]
+      classification:
+        type: string
+        enum: [public, internal, restricted, confidential]
+      contains_pii:
+        type: boolean
+      pii_fields:
+        type: array
+        items:
+          type: string
+      tags:
+        type: array
+        items:
+          type: string
+
+  # ===== FIELD (Schema Field) =====
+  field:
+    type: object
+    required: [name, type]
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      nullable:
+        type: boolean
+        default: true
+      description:
+        type: string
+      pii:
+        type: boolean
+        default: false
+
+  # ===== CONTRACT =====
+  contract:
+    type: object
+    required: [id, name, dataset, version]
+    properties:
+      id:
+        type: string
+        pattern: "^ctr-[a-z0-9-]+$"
+      name:
+        type: string
+      dataset:
+        type: string
+        pattern: "^ds-[a-z0-9-]+$"
+      version:
+        type: string
+        pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        description: "Semantic version (MAJOR.MINOR.PATCH)"
+      schema:
+        type: object
+        properties:
+          $ref:
+            type: string
+      sla:
+        type: object
+        properties:
+          freshness_minutes:
+            type: number
+            minimum: 0
+          completeness_percent:
+            type: number
+            minimum: 0
+            maximum: 100
+          availability_percent:
+            type: number
+            minimum: 0
+            maximum: 100
+      evolution_policy:
+        type: string
+        enum: [backward-compatible, forward-compatible, full-compatible, breaking-allowed]
+      owners:
+        type: array
+        items:
+          $ref: "#/$defs/owner"
+      consumers:
+        type: array
+        items:
+          type: object
+          properties:
+            team:
+              type: string
+            use_case:
+              type: string
+
+  # ===== CHECK =====
+  check:
+    type: object
+    required: [id, name, type, dataset]
+    properties:
+      id:
+        type: string
+        pattern: "^chk-[a-z0-9-]+$"
+      name:
+        type: string
+      type:
+        type: string
+        enum: [freshness, completeness, drift, anomaly, schema, uniqueness, referential-integrity, custom]
+      dataset:
+        type: string
+        pattern: "^ds-[a-z0-9-]+$"
+      threshold:
+        type: object
+        description: "Check-specific thresholds (flexible)"
+      assertions:
+        type: array
+        items:
+          type: object
+      severity:
+        type: string
+        enum: [low, medium, high, critical]
+      alert:
+        type: object
+        properties:
+          channel:
+            type: string
+            enum: [email, slack, pagerduty, webhook, none]
+          escalation:
+            type: string
+
+  # ===== LINEAGE =====
+  lineage:
+    type: object
+    required: [id, upstream, downstream]
+    properties:
+      id:
+        type: string
+        pattern: "^lin-[a-z0-9-]+$"
+      upstream:
+        type: string
+        pattern: "^ds-[a-z0-9-]+$"
+      downstream:
+        type: string
+        pattern: "^ds-[a-z0-9-]+$"
+      transform:
+        type: string
+        pattern: "^trf-[a-z0-9-]+$"
+      relationship:
+        type: string
+        enum: [one-to-one, one-to-many, many-to-one, many-to-many]
+
+  # ===== SCHEDULE =====
+  schedule:
+    type: object
+    required: [id, type]
+    properties:
+      id:
+        type: string
+        pattern: "^sch-[a-z0-9-]+$"
+      type:
+        type: string
+        enum: [cron, interval, event, continuous, manual]
+      cron_expression:
+        type: string
+        description: "Standard cron expression (if type=cron)"
+      interval_minutes:
+        type: number
+        minimum: 1
+        description: "Interval in minutes (if type=interval)"
+      triggers:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [dataset-updated, api-call, message, time, cdc-event]
+            source:
+              type: string
+
+  # ===== GOVERNANCE =====
+  governance:
+    type: object
+    properties:
+      retention:
+        type: array
+        items:
+          type: object
+          required: [dataset, policy]
+          properties:
+            dataset:
+              type: string
+              pattern: "^ds-[a-z0-9-]+$"
+            policy:
+              type: string
+              enum: [delete-after-days, archive-after-years, retain-indefinitely]
+            days:
+              type: number
+            years:
+              type: number
+      access:
+        type: array
+        items:
+          type: object
+          required: [dataset, tier, roles]
+          properties:
+            dataset:
+              type: string
+              pattern: "^ds-[a-z0-9-]+$"
+            tier:
+              type: string
+              enum: [public, general, restricted, confidential]
+            roles:
+              type: array
+              items:
+                type: string
+      pii_handling:
+        type: array
+        items:
+          type: object
+          required: [dataset, masking]
+          properties:
+            dataset:
+              type: string
+              pattern: "^ds-[a-z0-9-]+$"
+            masking:
+              type: array
+              items:
+                type: string
+            masking_method:
+              type: string
+              enum: [redact, hash, tokenize, encrypt, pseudonymize]
+
+  # ===== OBSERVABILITY =====
+  observability:
+    type: object
+    properties:
+      metrics:
+        type: array
+        items:
+          type: object
+          required: [name, type]
+          properties:
+            name:
+              type: string
+            dataset:
+              type: string
+              pattern: "^ds-[a-z0-9-]+$"
+            type:
+              type: string
+              enum: [counter, gauge, histogram]
+            description:
+              type: string
+      slos:
+        type: array
+        items:
+          type: object
+          required: [name, target, unit, window]
+          properties:
+            name:
+              type: string
+            target:
+              type: number
+            unit:
+              type: string
+              enum: [percent, seconds, count]
+            window:
+              type: string
+              pattern: "^[0-9]+(d|h|m)$"
+            linked_check:
+              type: string
+              pattern: "^chk-[a-z0-9-]+$"
+      alerts:
+        type: array
+        items:
+          type: object
+          required: [name, condition, severity, channel]
+          properties:
+            name:
+              type: string
+            condition:
+              type: string
+            severity:
+              type: string
+              enum: [low, medium, high, critical]
+            channel:
+              type: string
+              enum: [email, slack, pagerduty, webhook]
+
+  # ===== OWNER =====
+  owner:
+    type: object
+    required: [team]
+    properties:
+      team:
+        type: string
+      contact:
+        type: string
+        format: email
+
+# ===== ROOT STRUCTURE =====
+properties:
+  version:
+    type: string
+    pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+  status:
+    type: string
+    enum: [draft, review, final]
+  last_updated:
+    type: string
+    format: date
+  domains:
+    type: array
+    items:
+      $ref: "#/$defs/domain"
+  pipelines:
+    type: array
+    items:
+      $ref: "#/$defs/pipeline"
+  datasets:
+    type: array
+    items:
+      $ref: "#/$defs/dataset"
+  contracts:
+    type: array
+    items:
+      $ref: "#/$defs/contract"
+  checks:
+    type: array
+    items:
+      $ref: "#/$defs/check"
+  lineage:
+    type: array
+    items:
+      $ref: "#/$defs/lineage"
+  governance:
+    $ref: "#/$defs/governance"
+  observability:
+    $ref: "#/$defs/observability"

@@ -1,0 +1,1501 @@
+# Job Seeker Application - UX Schema Example
+# Complete UI/UX specification using UX Schema Definition v1.0
+# Demonstrates DDD integration with bounded contexts, aggregates, and value objects
+
+system_id: sys_job_seeker
+name: "Job Seeker Application"
+description: "AI-powered job matching and application tracking platform for software developers"
+version: "1.0.0"
+
+# =============================================================================
+# DDD INTEGRATION
+# =============================================================================
+
+ddd_reference:
+  schema_file: "../../ddd/deliverables/ddd-schema-example.yaml"
+  system_id: "sys_job_seeker"
+  note: "All bounded contexts, aggregates, and value objects reference DDD schema"
+
+# =============================================================================
+# INFORMATION ARCHITECTURE
+# =============================================================================
+
+information_architecture:
+  organization_scheme: hybrid
+  description: "Hierarchical primary navigation with faceted search in job catalog"
+
+  # Hierarchical structure mapping to bounded contexts
+  hierarchy:
+    root: "Job Seeker"
+    levels:
+      - level: 1
+        nodes:
+          - id: node_profile
+            label: "Profile"
+            bounded_context: bc_profile
+            url: "/profile"
+            children: [node_profile_personal, node_profile_experience, node_profile_skills, node_profile_preferences]
+
+          - id: node_jobs
+            label: "Jobs"
+            bounded_context: bc_job_catalog
+            url: "/jobs"
+            children: [node_jobs_browse, node_jobs_matches, node_jobs_saved, node_jobs_alerts]
+
+          - id: node_applications
+            label: "Applications"
+            bounded_context: bc_applications
+            url: "/applications"
+            children: [node_applications_active, node_applications_interviews, node_applications_archive]
+
+          - id: node_career
+            label: "Career Development"
+            bounded_context: bc_skills_analysis
+            url: "/career"
+            children: [node_career_skills_gap, node_career_projects, node_career_learning]
+
+      - level: 2
+        nodes:
+          # Profile sub-pages
+          - id: node_profile_personal
+            label: "Personal Information"
+            bounded_context: bc_profile
+            url: "/profile/personal"
+
+          - id: node_profile_experience
+            label: "Work Experience"
+            bounded_context: bc_profile
+            url: "/profile/experience"
+
+          - id: node_profile_skills
+            label: "Skills & Expertise"
+            bounded_context: bc_profile
+            url: "/profile/skills"
+
+          - id: node_profile_preferences
+            label: "Job Preferences"
+            bounded_context: bc_profile
+            url: "/profile/preferences"
+
+          # Jobs sub-pages
+          - id: node_jobs_browse
+            label: "Browse All Jobs"
+            bounded_context: bc_job_catalog
+            url: "/jobs/browse"
+
+          - id: node_jobs_matches
+            label: "My Matches"
+            bounded_context: bc_matching
+            url: "/jobs/matches"
+
+          - id: node_jobs_saved
+            label: "Saved Jobs"
+            bounded_context: bc_profile
+            url: "/jobs/saved"
+
+          - id: node_jobs_alerts
+            label: "Job Alerts"
+            bounded_context: bc_notifications
+            url: "/jobs/alerts"
+
+          # Applications sub-pages
+          - id: node_applications_active
+            label: "Active Applications"
+            bounded_context: bc_applications
+            url: "/applications/active"
+
+          - id: node_applications_interviews
+            label: "Interview Schedule"
+            bounded_context: bc_applications
+            url: "/applications/interviews"
+
+          - id: node_applications_archive
+            label: "Application Archive"
+            bounded_context: bc_applications
+            url: "/applications/archive"
+
+          # Career sub-pages
+          - id: node_career_skills_gap
+            label: "Skills Gap Analysis"
+            bounded_context: bc_skills_analysis
+            url: "/career/skills-gap"
+
+          - id: node_career_projects
+            label: "Project Recommendations"
+            bounded_context: bc_project_recommendations
+            url: "/career/projects"
+
+          - id: node_career_learning
+            label: "Learning Resources"
+            bounded_context: bc_skills_analysis
+            url: "/career/learning"
+
+  # Faceted classification for job search
+  facets:
+    - facet_id: facet_location
+      label: "Location"
+      type: multi_select
+      ddd_mapping: "vo_location.work_mode"
+      values:
+        - value: remote
+          label: "Remote"
+          count: 247
+        - value: hybrid
+          label: "Hybrid"
+          count: 89
+        - value: onsite
+          label: "On-site"
+          count: 412
+
+    - facet_id: facet_job_type
+      label: "Employment Type"
+      type: multi_select
+      ddd_mapping: "vo_job_type"
+      values:
+        - value: full_time
+          label: "Full-time"
+          count: 621
+        - value: part_time
+          label: "Part-time"
+          count: 34
+        - value: contract
+          label: "Contract"
+          count: 87
+        - value: freelance
+          label: "Freelance"
+          count: 12
+
+    - facet_id: facet_experience_level
+      label: "Experience Level"
+      type: single_select
+      ddd_mapping: "vo_experience_level"
+      values:
+        - value: all
+          label: "All Levels"
+        - value: entry
+          label: "Entry Level"
+          count: 92
+        - value: mid
+          label: "Mid Level"
+          count: 284
+        - value: senior
+          label: "Senior Level"
+          count: 371
+        - value: lead
+          label: "Lead/Principal"
+          count: 7
+
+    - facet_id: facet_salary
+      label: "Salary Range"
+      type: range
+      ddd_mapping: "vo_salary_range.min"
+      range:
+        min: 0
+        max: 250000
+        step: 5000
+
+    - facet_id: facet_skills
+      label: "Required Skills"
+      type: multi_select
+      ddd_mapping: "vo_required_skills"
+      values: dynamic  # Loaded from skills taxonomy
+
+    - facet_id: facet_company_size
+      label: "Company Size"
+      type: multi_select
+      ddd_mapping: "vo_company.size"
+      values:
+        - value: startup
+          label: "Startup (1-50)"
+          count: 134
+        - value: midsize
+          label: "Mid-size (51-500)"
+          count: 289
+        - value: enterprise
+          label: "Enterprise (500+)"
+          count: 321
+
+  navigation_systems:
+    global_navigation: true
+    local_navigation: true
+    contextual_navigation: true
+    search: true
+    breadcrumbs: true
+
+  search_system:
+    type: faceted
+    scope: global
+    features:
+      - autocomplete
+      - suggestions
+      - filters
+      - saved_searches
+      - recent_searches
+    indexed_fields:
+      - job_title
+      - company_name
+      - skills
+      - location
+      - description
+
+  labeling_system:
+    terminology_source: "DDD ubiquitous language from bounded context glossaries"
+    label_types:
+      - contextual_links
+      - headings
+      - navigation_labels
+      - tags
+
+# =============================================================================
+# NAVIGATION
+# =============================================================================
+
+navigation:
+  global_navigation:
+    pattern: top_horizontal
+    position: top
+    sticky: true
+    items:
+      - id: nav_dashboard
+        label: "Dashboard"
+        target: "/dashboard"
+        bounded_context: cross_context
+        icon: "home"
+
+      - id: nav_profile
+        label: "Profile"
+        target: "/profile"
+        bounded_context: bc_profile
+        icon: "user"
+        badge:
+          type: status
+          source: "profile_completeness < 100%"
+
+      - id: nav_jobs
+        label: "Jobs"
+        target: "/jobs"
+        bounded_context: bc_job_catalog
+        icon: "briefcase"
+        children:
+          - id: nav_jobs_browse
+            label: "Browse Jobs"
+            target: "/jobs/browse"
+          - id: nav_jobs_matches
+            label: "My Matches"
+            target: "/jobs/matches"
+            badge:
+              type: count
+              source: "new_match_count"
+          - id: nav_jobs_saved
+            label: "Saved Jobs"
+            target: "/jobs/saved"
+
+      - id: nav_applications
+        label: "Applications"
+        target: "/applications"
+        bounded_context: bc_applications
+        icon: "file_text"
+        badge:
+          type: count
+          source: "active_applications_count"
+
+      - id: nav_career
+        label: "Career"
+        target: "/career"
+        bounded_context: bc_skills_analysis
+        icon: "trending_up"
+
+  local_navigation:
+    - id: localnav_profile
+      scope: bounded_context
+      scope_id: bc_profile
+      pattern: tabs
+      items:
+        - id: localnav_profile_personal
+          label: "Personal Info"
+          target: "/profile/personal"
+        - id: localnav_profile_experience
+          label: "Work Experience"
+          target: "/profile/experience"
+        - id: localnav_profile_skills
+          label: "Skills & Expertise"
+          target: "/profile/skills"
+        - id: localnav_profile_preferences
+          label: "Job Preferences"
+          target: "/profile/preferences"
+
+    - id: localnav_applications
+      scope: bounded_context
+      scope_id: bc_applications
+      pattern: sub_nav
+      items:
+        - id: localnav_applications_active
+          label: "Active"
+          target: "/applications/active"
+        - id: localnav_applications_interviews
+          label: "Interviews"
+          target: "/applications/interviews"
+        - id: localnav_applications_archive
+          label: "Archive"
+          target: "/applications/archive"
+
+  utility_navigation:
+    user_menu:
+      trigger: avatar
+      items:
+        - label: "Settings"
+          target: "/settings"
+        - label: "Help & Support"
+          target: "/help"
+        - label: "Sign Out"
+          target: "/logout"
+
+    search:
+      position: header
+      shortcut: "Cmd+K"
+
+    notifications:
+      position: header
+      badge_source: "unread_notification_count"
+
+  mobile_navigation:
+    pattern: bottom_tabs
+    breakpoint: 768
+    items:
+      - id: mobile_nav_dashboard
+        label: "Home"
+        target: "/dashboard"
+        icon: "home"
+      - id: mobile_nav_jobs
+        label: "Jobs"
+        target: "/jobs"
+        icon: "search"
+      - id: mobile_nav_applications
+        label: "Applications"
+        target: "/applications"
+        icon: "file_text"
+        badge: true
+      - id: mobile_nav_profile
+        label: "Profile"
+        target: "/profile"
+        icon: "user"
+
+  cross_context_navigation:
+    - from_context: bc_job_catalog
+      to_context: bc_company_profiles
+      relationship: customer_supplier
+      trigger: link
+      visual_indicator: true
+      example: "Job detail page links to company profile"
+
+    - from_context: bc_matching
+      to_context: bc_job_catalog
+      relationship: customer_supplier
+      trigger: link
+      visual_indicator: false
+      example: "Match score links to full job posting"
+
+    - from_context: bc_applications
+      to_context: bc_job_catalog
+      relationship: customer_supplier
+      trigger: link
+      visual_indicator: false
+      example: "Application links to original job posting"
+
+    - from_context: bc_profile
+      to_context: bc_skills_analysis
+      relationship: partnership
+      trigger: action
+      visual_indicator: true
+      example: "Profile skills trigger skills gap analysis"
+
+# =============================================================================
+# WORKFLOWS
+# =============================================================================
+
+workflows:
+  # Profile Setup Wizard
+  - workflow_id: wf_profile_setup
+    name: "Complete Profile Setup"
+    type: linear
+    bounded_contexts: [bc_profile]
+    application_service: svc_app_create_candidate_profile
+    aggregate: agg_candidate_profile
+
+    steps:
+      - step_number: 1
+        label: "Basic Information"
+        page_id: page_profile_setup_step1
+        collects: [vo_email, vo_name, vo_location]
+        validates:
+          timing: on_blur
+          rules:
+            - "vo_email must match email pattern"
+            - "vo_name required"
+            - "vo_location required"
+        can_skip: false
+        next_enabled_when: "all_required_fields_valid"
+        on_complete:
+          update_aggregate: "agg_candidate_profile (DRAFT state)"
+
+      - step_number: 2
+        label: "Work Experience"
+        page_id: page_profile_setup_step2
+        collects: [ent_work_experience]
+        validates:
+          timing: on_submit
+          rules:
+            - "at_least_one_work_experience_required"
+        can_skip: false
+        next_enabled_when: "at_least_one_valid_experience"
+        on_complete:
+          update_aggregate: "agg_candidate_profile.work_history"
+
+      - step_number: 3
+        label: "Skills & Expertise"
+        page_id: page_profile_setup_step3
+        collects: [vo_skills, vo_experience_level]
+        validates:
+          timing: on_blur
+          rules:
+            - "vo_skills: min 3, max 20"
+            - "vo_experience_level required"
+        can_skip: false
+        next_enabled_when: "min_skills_met"
+        on_complete:
+          update_aggregate: "agg_candidate_profile.skills"
+
+      - step_number: 4
+        label: "Job Preferences"
+        page_id: page_profile_setup_step4
+        collects: [vo_job_preferences]
+        validates:
+          timing: on_blur
+          rules: []
+        can_skip: true
+        next_enabled_when: "always"
+        on_complete:
+          update_aggregate: "agg_candidate_profile.preferences"
+
+      - step_number: 5
+        label: "Review & Submit"
+        page_id: page_profile_setup_step5
+        collects: []
+        validates:
+          timing: on_submit
+          rules:
+            - "aggregate_completeness >= 80%"
+        can_skip: false
+        next_enabled_when: "completeness_threshold_met"
+        on_complete:
+          update_aggregate: "state transition DRAFT → ACTIVE"
+          publish_event: evt_profile_completed
+          navigate_to: "/dashboard"
+
+    state_persistence:
+      strategy: auto_save
+      interval: 30000  # 30 seconds
+
+    progress_indicator:
+      type: steps
+      position: top
+
+    completion:
+      aggregate_transition: "DRAFT → ACTIVE"
+      publishes_event: evt_profile_completed
+      navigate_to: "/dashboard"
+      feedback: toast
+
+  # Job Application Workflow
+  - workflow_id: wf_job_application
+    name: "Apply for Job"
+    type: conditional
+    bounded_contexts: [bc_applications, bc_profile, bc_job_catalog]
+    application_service: svc_app_submit_application
+    aggregate: agg_application
+
+    steps:
+      - step_number: 1
+        label: "Select Job"
+        page_id: page_job_detail
+        collects: []
+        validates:
+          timing: on_submit
+          rules:
+            - "profile_completeness >= 80%"
+            - "not_already_applied"
+        can_skip: false
+        next_enabled_when: "eligibility_criteria_met"
+        on_complete:
+          update_aggregate: "create agg_application (DRAFT)"
+
+      - step_number: 2
+        label: "Upload Resume"
+        page_id: page_application_resume
+        collects: [vo_resume_file]
+        validates:
+          timing: on_change
+          rules:
+            - "file type: PDF or DOCX"
+            - "file size < 5MB"
+        can_skip: false
+        next_enabled_when: "valid_resume_uploaded"
+        on_complete:
+          update_aggregate: "agg_application.resume"
+
+      - step_number: 3
+        label: "Answer Screening Questions"
+        page_id: page_application_questions
+        collects: [screening_answers]
+        validates:
+          timing: on_submit
+          rules:
+            - "all_required_questions_answered"
+        can_skip: false
+        next_enabled_when: "all_questions_answered"
+        on_complete:
+          update_aggregate: "agg_application.screening_answers"
+
+      - step_number: 4
+        label: "Review & Submit"
+        page_id: page_application_review
+        collects: []
+        validates:
+          timing: on_submit
+          rules:
+            - "all_sections_complete"
+        can_skip: false
+        next_enabled_when: "ready_to_submit"
+        on_complete:
+          update_aggregate: "state transition DRAFT → SUBMITTED"
+          publish_event: evt_application_submitted
+          navigate_to: "/applications/active"
+
+    state_persistence:
+      strategy: auto_save
+      interval: 15000  # 15 seconds
+
+    progress_indicator:
+      type: steps
+      position: top
+
+    completion:
+      aggregate_transition: "DRAFT → SUBMITTED"
+      publishes_event: evt_application_submitted
+      navigate_to: "/applications/active"
+      feedback: toast
+
+# =============================================================================
+# PAGES
+# =============================================================================
+
+pages:
+  # Dashboard
+  - page_id: page_dashboard
+    name: "Dashboard"
+    type: dashboard
+    url: "/dashboard"
+    bounded_context: cross_context  # Aggregates data from multiple contexts
+
+    displays:
+      aggregate_type: cross_context
+      cardinality: collection
+      data_source: query_dashboard_widgets
+
+    sections:
+      - section_id: section_dashboard_welcome
+        type: header
+        title: "Welcome back, {{user.name}}"
+        components: []
+
+      - section_id: section_dashboard_profile_status
+        type: content
+        title: "Profile Status"
+        components: [comp_profile_status_widget]
+
+      - section_id: section_dashboard_new_matches
+        type: content
+        title: "New Job Matches"
+        components: [comp_match_widget, comp_job_card]
+
+      - section_id: section_dashboard_applications
+        type: content
+        title: "Active Applications"
+        components: [comp_application_status_widget, comp_application_card]
+
+      - section_id: section_dashboard_skills_gap
+        type: content
+        title: "Skills Development"
+        components: [comp_skills_gap_widget]
+
+    layout:
+      pattern: grid
+      responsive:
+        mobile: single_column
+        tablet: two_column
+        desktop: three_column
+
+    behaviors:
+      - behavior_id: bhv_dashboard_realtime_updates
+        type: event_response
+        trigger: domain_event
+        trigger_source: evt_high_match_found
+        action: "Append new match card to match widget"
+        feedback:
+          type: toast
+          message: "New high-match job found! Check your matches."
+          duration: 5000
+
+    accessibility:
+      wcag_level: AA
+      aria:
+        role: main
+        labels:
+          aria_label: "Dashboard"
+
+  # Job Listings (List Page)
+  - page_id: page_job_listings
+    name: "Job Listings"
+    type: list
+    url: "/jobs"
+    bounded_context: bc_job_catalog
+
+    displays:
+      aggregate_type: agg_job_posting
+      cardinality: collection
+      data_source: repo_job_posting
+      query_params:
+        filters: faceted
+        sort: [best_match, recent, salary]
+        pagination: true
+
+    sections:
+      - section_id: section_jobs_header
+        type: header
+        title: "Jobs ({{total_count}})"
+        components: [comp_button]
+
+      - section_id: section_jobs_filters
+        type: filters
+        title: "Filters"
+        components: [comp_filter_panel]
+        collapsible: true
+        responsive:
+          mobile: hide  # Show in drawer on mobile
+          tablet: show
+          desktop: show
+
+      - section_id: section_jobs_controls
+        type: content
+        components: [comp_sort_dropdown, comp_view_toggle]
+
+      - section_id: section_jobs_list
+        type: list
+        components: [comp_job_card]
+
+      - section_id: section_jobs_pagination
+        type: content
+        components: [comp_pagination]
+
+    layout:
+      pattern: sidebar_left
+      responsive:
+        mobile: single_column
+        tablet: sidebar_left
+        desktop: sidebar_left
+
+    behaviors:
+      - behavior_id: bhv_jobs_filter_update
+        type: interaction
+        trigger: change
+        action: "Update job list based on selected facets"
+        feedback:
+          type: inline
+          message: "{{result_count}} jobs found"
+
+      - behavior_id: bhv_jobs_save_job
+        type: interaction
+        trigger: click
+        action: "Add job to saved jobs (update agg_candidate_profile.saved_jobs)"
+        feedback:
+          type: toast
+          message: "Job saved!"
+          duration: 3000
+
+    accessibility:
+      wcag_level: AA
+      aria:
+        role: main
+        labels:
+          aria_label: "Job listings"
+      keyboard:
+        focusable: true
+
+    scalability:
+      pagination:
+        type: numbered
+        page_size: 20
+        page_size_options: [10, 20, 50, 100]
+        show_total: true
+        repository_method: "repo_job_posting.findPaginated"
+
+      caching:
+        strategy: memory
+        ttl: 300  # 5 minutes
+        invalidation:
+          on_events: [evt_job_posting_created, evt_job_posting_updated]
+
+  # Job Detail (Detail Page)
+  - page_id: page_job_detail
+    name: "Job Detail"
+    type: detail
+    url: "/jobs/:id"
+    bounded_context: bc_job_catalog
+
+    displays:
+      aggregate_type: agg_job_posting
+      cardinality: single
+      data_source: repo_job_posting
+      query_params:
+        id: ":id"
+
+    sections:
+      - section_id: section_job_hero
+        type: header
+        components: [comp_job_hero]
+
+      - section_id: section_job_description
+        type: content
+        title: "Job Description"
+        components: []
+
+      - section_id: section_job_requirements
+        type: content
+        title: "Requirements"
+        components: [comp_requirements_list]
+
+      - section_id: section_job_sidebar
+        type: sidebar
+        components: [comp_job_metadata, comp_match_score, comp_application_cta]
+
+      - section_id: section_job_similar
+        type: related
+        title: "Similar Jobs"
+        components: [comp_job_card]
+
+    layout:
+      pattern: sidebar_right
+      responsive:
+        mobile: single_column
+        tablet: sidebar_right
+        desktop: sidebar_right
+
+    behaviors:
+      - behavior_id: bhv_job_apply
+        type: async_operation
+        trigger: click
+        action: "Initiate application workflow"
+        async_operation:
+          operation: "Start wf_job_application"
+          loading_state:
+            indicator: spinner
+            message: "Preparing application..."
+          success_state:
+            navigate_to: "/applications/new"
+          error_state:
+            feedback: "toast"
+            retry: true
+
+      - behavior_id: bhv_job_save
+        type: async_operation
+        trigger: click
+        action: "Save job (update agg_candidate_profile.saved_jobs)"
+        async_operation:
+          operation: "svc_app_save_job"
+          loading_state:
+            indicator: spinner
+          success_state:
+            feedback: "toast"
+            publish_event: evt_job_saved
+          error_state:
+            feedback: "toast"
+            retry: true
+
+    accessibility:
+      wcag_level: AA
+      aria:
+        role: article
+        labels:
+          aria_labelledby: "job-title"
+
+  # Profile Edit (Form Page)
+  - page_id: page_profile_edit
+    name: "Edit Profile"
+    type: form
+    url: "/profile/edit"
+    bounded_context: bc_profile
+
+    displays:
+      aggregate_type: agg_candidate_profile
+      cardinality: single
+      data_source: repo_candidate_profile
+      query_params:
+        id: "current_user_id"
+
+    sections:
+      - section_id: section_profile_header
+        type: header
+        title: "Edit Profile"
+        components: [comp_button]
+
+      - section_id: section_profile_form
+        type: form
+        components:
+          - comp_form_field
+          - comp_work_experience_editor
+          - comp_skills_input
+          - comp_preferences_editor
+
+      - section_id: section_profile_actions
+        type: actions
+        components: [comp_button]
+
+    layout:
+      pattern: single_column
+      responsive:
+        mobile: single_column
+        tablet: single_column
+        desktop: two_column
+
+    behaviors:
+      - behavior_id: bhv_profile_autosave
+        type: async_operation
+        trigger: timer
+        action: "Auto-save profile changes"
+        async_operation:
+          operation: "svc_app_update_profile"
+          loading_state:
+            indicator: inline
+            message: "Saving..."
+          success_state:
+            feedback: "inline"
+            publish_event: evt_profile_updated
+          error_state:
+            feedback: "inline"
+            fallback: "Restore from local storage"
+
+      - behavior_id: bhv_profile_validation
+        type: validation
+        trigger: blur
+        validation:
+          timing: on_blur
+          debounce_ms: 300
+          rules:
+            - rule: "vo_email validation"
+              error_message: "Please enter a valid email address"
+            - rule: "vo_skills: min 3, max 20"
+              error_message: "Please add 3-20 skills"
+
+    accessibility:
+      wcag_level: AA
+      aria:
+        role: form
+        labels:
+          aria_label: "Edit profile form"
+      keyboard:
+        focusable: true
+        tab_order: 0
+
+  # Applications List
+  - page_id: page_applications
+    name: "Applications"
+    type: list
+    url: "/applications"
+    bounded_context: bc_applications
+
+    displays:
+      aggregate_type: agg_application
+      cardinality: collection
+      data_source: repo_application
+      query_params:
+        filter: "status IN (SUBMITTED, IN_REVIEW, INTERVIEW)"
+        sort: "updated_at DESC"
+
+    sections:
+      - section_id: section_applications_header
+        type: header
+        title: "Active Applications ({{count}})"
+        components: []
+
+      - section_id: section_applications_filters
+        type: filters
+        components: [comp_status_filter]
+
+      - section_id: section_applications_list
+        type: list
+        components: [comp_application_card]
+
+      - section_id: section_applications_empty
+        type: empty_state
+        components: [comp_empty_state]
+
+    layout:
+      pattern: single_column
+
+    behaviors:
+      - behavior_id: bhv_application_status_update
+        type: event_response
+        trigger: domain_event
+        trigger_source: evt_application_status_changed
+        domain_event_response:
+          event: evt_application_status_changed
+          action: "Update application card status badge"
+          feedback: toast
+
+    accessibility:
+      wcag_level: AA
+
+    scalability:
+      pagination:
+        type: infinite_scroll
+        page_size: 10
+
+# =============================================================================
+# COMPONENTS
+# =============================================================================
+
+components:
+  # ATOMS
+  - component_id: comp_button
+    name: "Button"
+    atomic_level: atom
+    category: input
+
+    props:
+      - name: variant
+        type: string
+        required: false
+        default: "primary"
+        validation: "one of: primary, secondary, tertiary, danger, ghost"
+
+      - name: size
+        type: string
+        required: false
+        default: "medium"
+        validation: "one of: small, medium, large"
+
+      - name: disabled
+        type: boolean
+        required: false
+        default: false
+
+      - name: loading
+        type: boolean
+        required: false
+        default: false
+
+      - name: onClick
+        type: function
+        required: true
+
+      - name: children
+        type: node
+        required: true
+
+    variants:
+      - name: primary
+        description: "Main actions (Apply, Save, Submit)"
+      - name: secondary
+        description: "Alternative actions (Cancel, Back)"
+      - name: tertiary
+        description: "Subtle actions (Learn More)"
+      - name: danger
+        description: "Destructive actions (Delete, Withdraw)"
+      - name: ghost
+        description: "Minimal styling (icon buttons)"
+
+    states:
+      - default
+      - hover
+      - focus
+      - active
+      - disabled
+      - loading
+
+    behaviors:
+      - behavior_id: bhv_button_click
+        type: interaction
+        trigger: click
+        action: "Execute onClick handler"
+        feedback:
+          type: visual
+          message: "Button press animation"
+
+    accessibility:
+      wcag_level: AA
+      aria:
+        role: "button (or use <button> element)"
+      keyboard:
+        focusable: true
+        tab_order: 0
+        shortcuts:
+          - key: "Enter"
+            action: "Activate button"
+          - key: "Space"
+            action: "Activate button"
+      touch_targets:
+        minimum_size: "44x44px"
+
+  - component_id: comp_input
+    name: "Input"
+    atomic_level: atom
+    category: input
+
+    props:
+      - name: type
+        type: string
+        required: false
+        default: "text"
+        validation: "one of: text, email, password, number, tel, url, search"
+
+      - name: value
+        type: string
+        required: true
+
+      - name: onChange
+        type: function
+        required: true
+
+      - name: placeholder
+        type: string
+        required: false
+
+      - name: disabled
+        type: boolean
+        required: false
+        default: false
+
+      - name: error
+        type: string
+        required: false
+
+    states:
+      - default
+      - focus
+      - filled
+      - error
+      - disabled
+
+    behaviors:
+      - behavior_id: bhv_input_validation
+        type: validation
+        trigger: blur
+        validation:
+          timing: on_blur
+          debounce_ms: 300
+
+    accessibility:
+      wcag_level: AA
+      aria:
+        labels:
+          aria_label: "Input field label"
+          aria_describedby: "error-id or help-text-id"
+        states:
+          aria_invalid: "true when error present"
+
+  - component_id: comp_badge
+    name: "Badge"
+    atomic_level: atom
+    category: display
+
+    props:
+      - name: variant
+        type: string
+        required: false
+        default: "neutral"
+        validation: "one of: success, warning, error, info, neutral"
+
+      - name: size
+        type: string
+        required: false
+        default: "medium"
+
+      - name: children
+        type: node
+        required: true
+
+    variants:
+      - name: success
+        description: "Success states (Active, Accepted)"
+      - name: warning
+        description: "Warning states (Pending, Draft)"
+      - name: error
+        description: "Error states (Rejected, Failed)"
+      - name: info
+        description: "Informational (Remote, Full-time)"
+      - name: neutral
+        description: "Neutral categories (skills, tags)"
+
+    examples:
+      - name: "Application Status"
+        code: '<Badge variant="success">{application.state}</Badge>'
+        description: "Display aggregate state using domain language"
+
+  # MOLECULES
+  - component_id: comp_form_field
+    name: "Form Field"
+    atomic_level: molecule
+    category: input
+
+    composed_of:
+      - comp_input
+      - label
+      - error_message
+      - help_text
+
+    props:
+      - name: label
+        type: string
+        required: true
+
+      - name: type
+        type: string
+        required: false
+        default: "text"
+
+      - name: value
+        type: string
+        required: true
+
+      - name: onChange
+        type: function
+        required: true
+
+      - name: error
+        type: string
+        required: false
+
+      - name: helpText
+        type: string
+        required: false
+
+      - name: required
+        type: boolean
+        required: false
+        default: false
+
+    behaviors:
+      - behavior_id: bhv_form_field_validation
+        type: validation
+        trigger: blur
+        validation:
+          timing: on_blur
+          rules:
+            - rule: "DDD value object validation"
+
+    accessibility:
+      wcag_level: AA
+      aria:
+        labels:
+          aria_describedby: "Link to error and help text"
+        states:
+          aria_invalid: "true when error"
+          aria_required: "true when required"
+
+  - component_id: comp_search_box
+    name: "Search Box"
+    atomic_level: molecule
+    category: input
+
+    composed_of:
+      - comp_input
+      - comp_button
+      - autocomplete_list
+
+    props:
+      - name: placeholder
+        type: string
+        required: false
+        default: "Search jobs, companies, skills..."
+
+      - name: onSearch
+        type: function
+        required: true
+
+      - name: autocomplete
+        type: boolean
+        required: false
+        default: true
+
+    behaviors:
+      - behavior_id: bhv_search_autocomplete
+        type: async_operation
+        trigger: change
+        validation:
+          timing: debounced
+          debounce_ms: 300
+        async_operation:
+          operation: "Fetch autocomplete suggestions"
+          loading_state:
+            indicator: spinner
+
+    accessibility:
+      wcag_level: AA
+      aria:
+        role: search
+        properties:
+          aria_autocomplete: list
+          aria_controls: "suggestions-list-id"
+
+  # ORGANISMS
+  - component_id: comp_job_card
+    name: "Job Card"
+    atomic_level: organism
+    category: domain_specific
+    description: "Displays summary of job posting aggregate"
+
+    composed_of:
+      - comp_badge
+      - comp_button
+
+    props:
+      - name: job
+        type: object
+        required: true
+        ddd_mapping: "agg_job_posting"
+
+      - name: matchScore
+        type: number
+        required: false
+        ddd_mapping: "vo_match_score from bc_matching"
+
+      - name: onSave
+        type: function
+        required: false
+
+      - name: onApply
+        type: function
+        required: false
+
+    behaviors:
+      - behavior_id: bhv_job_card_hover
+        type: interaction
+        trigger: hover
+        action: "Elevate card and reveal quick actions"
+        animation:
+          type: scale
+          duration: 200
+          easing: ease_out
+
+      - behavior_id: bhv_job_card_save
+        type: async_operation
+        trigger: click
+        action: "Save job to candidate profile"
+        async_operation:
+          operation: "Update agg_candidate_profile.saved_jobs"
+          success_state:
+            feedback: toast
+            publish_event: evt_job_saved
+
+    accessibility:
+      wcag_level: AA
+      aria:
+        role: article
+        labels:
+          aria_labelledby: "job-title-id"
+
+    examples:
+      - name: "Job Card with Match Score"
+        code: |
+          <JobCard
+            job={jobPosting}
+            matchScore={85}
+            onSave={handleSave}
+            onApply={handleApply}
+          />
+        description: "Display job with match score from bc_matching"
+
+  - component_id: comp_application_card
+    name: "Application Card"
+    atomic_level: organism
+    category: domain_specific
+    description: "Displays application aggregate with status and timeline"
+
+    composed_of:
+      - comp_badge
+      - comp_button
+
+    props:
+      - name: application
+        type: object
+        required: true
+        ddd_mapping: "agg_application"
+
+      - name: onViewDetails
+        type: function
+        required: false
+
+      - name: onWithdraw
+        type: function
+        required: false
+
+    behaviors:
+      - behavior_id: bhv_application_status_badge
+        type: state_transition
+        trigger: domain_event
+        trigger_source: evt_application_status_changed
+        state_transition:
+          aggregate: agg_application
+          from_state: "IN_REVIEW"
+          to_state: "INTERVIEW"
+          visual_feedback: "Badge color change + animation"
+
+    accessibility:
+      wcag_level: AA
+
+  - component_id: comp_filter_panel
+    name: "Filter Panel"
+    atomic_level: organism
+    category: navigation
+    description: "Faceted search filter panel"
+
+    composed_of:
+      - comp_form_field
+      - comp_button
+
+    props:
+      - name: facets
+        type: array
+        required: true
+        ddd_mapping: "Maps to value object properties"
+
+      - name: onFilterChange
+        type: function
+        required: true
+
+    behaviors:
+      - behavior_id: bhv_filter_update
+        type: interaction
+        trigger: change
+        action: "Update results based on facet selection"
+        feedback:
+          type: inline
+          message: "{{count}} results"
+
+    accessibility:
+      wcag_level: AA
+      aria:
+        role: region
+        labels:
+          aria_label: "Filters"
+
+  - component_id: comp_navigation_bar
+    name: "Navigation Bar"
+    atomic_level: organism
+    category: navigation
+    description: "Global navigation header"
+
+    composed_of:
+      - comp_button
+      - comp_badge
+      - logo
+      - user_menu
+
+    behaviors:
+      - behavior_id: bhv_nav_sticky
+        type: interaction
+        trigger: scroll
+        action: "Remain fixed at top on scroll"
+
+    accessibility:
+      wcag_level: AA
+      aria:
+        role: banner
+        labels:
+          aria_label: "Main navigation"
+      keyboard:
+        focusable: true
+        shortcuts:
+          - key: "/"
+            action: "Focus search"
+
+# =============================================================================
+# DESIGN TOKENS
+# =============================================================================
+
+design_tokens:
+  colors:
+    primary: "#0066cc"
+    success: "#10b981"
+    warning: "#f59e0b"
+    error: "#ef4444"
+    neutral: "#6b7280"
+
+  typography:
+    font_family: "Inter, system-ui, sans-serif"
+    scale:
+      xs: "12px"
+      sm: "14px"
+      base: "16px"
+      lg: "18px"
+      xl: "20px"
+      "2xl": "24px"
+      "3xl": "30px"
+      "4xl": "36px"
+
+  spacing:
+    scale:
+      "1": "4px"
+      "2": "8px"
+      "3": "12px"
+      "4": "16px"
+      "6": "24px"
+      "8": "32px"
+      "12": "48px"
+
+  breakpoints:
+    mobile: 768
+    tablet: 1024
+    desktop: 1440
+
+# =============================================================================
+# ACCESSIBILITY
+# =============================================================================
+
+accessibility:
+  wcag_level: AA
+  target_standards:
+    - "WCAG 2.1 Level AA"
+    - "WAI-ARIA 1.2"
+    - "Section 508"
+
+  keyboard_navigation:
+    skip_links: true
+    focus_indicators: true
+    logical_tab_order: true
+
+  screen_reader:
+    landmarks: true
+    headings: true
+    live_regions: true
+
+  color_contrast:
+    minimum_ratio: 4.5
+    large_text_ratio: 3.0
+
+  touch_targets:
+    minimum_size: "44x44px"
+
+# =============================================================================
+# METADATA
+# =============================================================================
+
+metadata:
+  created_by: "UX Research Phase 11"
+  created_date: "2025-10-04"
+  schema_version: "1.0"
+  ddd_integration: true
+  total_pages: 5
+  total_workflows: 2
+  total_components: 11
+  bounded_contexts_referenced: 7

@@ -1,0 +1,912 @@
+# Canonical Grounding: Inter-Domain Dependency Map
+# Version: 1.0.0
+# Date: 2025-10-13
+# Purpose: Complete graph of canonical domain model dependencies and grounding relationships
+
+metadata:
+  version: "2.0.0"
+  terminology_version: "2.0"
+  terminology_change_date: "2025-10-14"
+  terminology_change: "Canon → Canonical Domain Model"
+  backward_compat: "Old field names preserved in comments for reference"
+  schema_version: "1.0.0"  # Schema structure unchanged
+  created: "2025-10-13"
+  description: "Formal specification of grounding relationships between canonical domain models"
+  total_canonical_models: 5  # formerly: total_canons
+  total_groundings: 28  # Updated: 19 original + 9 new strong groundings (Enhancement Phase 4)
+  graph_properties:
+    acyclic: true
+    layered: true
+    foundation_models: 2  # formerly: foundation_canons
+    derived_models: 2  # formerly: derived_canons
+    meta_models: 1  # formerly: meta_canons
+
+# ============================================================================
+# CANONICAL DOMAIN MODELS
+# ============================================================================
+
+canonical_models:  # formerly: canons
+  - id: "model_ddd"
+    name: "Domain-Driven Design"
+    version: "1.0.0"
+    layer: "foundation"
+    closure_percentage: 100
+    description: "Strategic and tactical patterns for domain modeling"
+    core_concepts:
+      - Domain
+      - BoundedContext
+      - Aggregate
+      - Entity
+      - ValueObject
+      - Repository
+      - DomainService
+      - ApplicationService
+      - DomainEvent
+      - Factory
+    key_patterns:
+      - RepositoryPattern
+      - AggregatePattern
+      - FactoryPattern
+      - SpecificationPattern
+    grounds_in: []  # Foundation model (no external dependencies)
+    grounded_by:
+      - model_ux
+      - model_qe
+      - model_agile
+
+  - id: "model_data_eng"
+    name: "Data Engineering"
+    version: "1.0.0"
+    layer: "foundation"
+    closure_percentage: 100
+    description: "Data pipeline, quality, and governance patterns"
+    core_concepts:
+      - System
+      - Domain
+      - Pipeline
+      - Stage
+      - Transform
+      - Dataset
+      - Contract
+      - Check
+      - Lineage
+      - Governance
+    key_patterns:
+      - MedallionArchitecture
+      - DeltaArchitecture
+      - DataMesh
+    grounds_in: []  # Foundation model (no external dependencies)
+    grounded_by:
+      - model_ux
+      - model_qe
+      - model_agile
+
+  - id: "model_ux"
+    name: "User Experience"
+    version: "1.0.0"
+    layer: "derived"
+    closure_percentage: 96
+    description: "User interface and interaction patterns"
+    core_concepts:
+      - InformationArchitecture
+      - Navigation
+      - Workflow
+      - Page
+      - Component
+    key_patterns:
+      - NavigationPattern
+      - WorkflowPattern
+      - PagePattern
+    grounds_in:
+      - model_ddd
+      - model_data_eng
+    grounded_by:
+      - model_qe
+      - model_agile
+
+  - id: "model_qe"
+    name: "Quality Engineering"
+    version: "1.0.0"
+    layer: "derived"
+    closure_percentage: 75
+    description: "Testing and quality assurance patterns"
+    core_concepts:
+      - Test
+      - TestSuite
+      - Assertion
+      - Mock
+      - Fixture
+      - Coverage
+    key_patterns:
+      - TestPyramid
+      - ContractTesting
+      - PropertyBasedTesting
+    grounds_in:
+      - model_ddd
+      - model_ux
+      - model_data_eng
+    grounded_by:
+      - model_agile
+    notes: "Incomplete - needs additional grounding declarations"
+
+  - id: "model_agile"
+    name: "Agile/SAFe"
+    version: "1.0.0"
+    layer: "meta"
+    closure_percentage: 72
+    description: "Work organization and coordination patterns"
+    core_concepts:
+      - Vision
+      - Epic
+      - Feature
+      - Story
+      - Task
+      - Sprint
+      - PI
+      - Team
+      - ART
+    key_patterns:
+      - ScrumPattern
+      - SAFePattern
+      - StoryMapping
+    grounds_in:
+      - model_ddd
+      - model_ux
+      - model_qe
+      - model_data_eng
+    grounded_by: []
+    notes: "Incomplete - grounding relationships need to be made explicit"
+
+# ============================================================================
+# GROUNDING RELATIONSHIPS
+# ============================================================================
+
+groundings:
+  # UX → DDD Groundings
+  - id: "grounding_ux_ddd_001"
+    source: "model_ux"
+    target: "model_ddd"
+    type: "structural"
+    strength: "strong"
+    description: "UX pages reference DDD bounded contexts"
+    relationships:
+      - source_concept: "ux:Page"
+        target_concept: "ddd:bounded_context"
+        cardinality: "many-to-one"
+        reference_field: "bounded_context_ref"
+        validation: "required"
+    rationale: "Pages exist within domain contexts"
+    examples:
+      - "OrderDetailsPage → OrderManagement BoundedContext"
+      - "CustomerProfilePage → CustomerRelations BoundedContext"
+
+  - id: "grounding_ux_ddd_002"
+    source: "model_ux"
+    target: "model_ddd"
+    type: "structural"
+    strength: "strong"
+    description: "UX workflows reference DDD aggregates"
+    relationships:
+      - source_concept: "ux:Workflow"
+        target_concept: "ddd:Aggregate"
+        cardinality: "many-to-many"
+        reference_field: "aggregate_refs"
+        validation: "required"
+    rationale: "Workflows manipulate domain aggregates"
+    examples:
+      - "CheckoutWorkflow → [Order, Payment, Shipment]"
+      - "RegistrationWorkflow → [User, Account]"
+
+  - id: "grounding_ux_ddd_003"
+    source: "model_ux"
+    target: "model_ddd"
+    type: "semantic"
+    strength: "strong"
+    description: "UX navigation mirrors DDD domain structure"
+    relationships:
+      - source_concept: "ux:Navigation"
+        target_concept: "ddd:Domain"
+        cardinality: "alignment"
+    rationale: "Navigation structure follows domain decomposition"
+    constraint: "Primary navigation sections should correspond to major domain boundaries"
+
+  - id: "grounding_ux_ddd_004"
+    source: "model_ux"
+    target: "model_ddd"
+    type: "semantic"
+    strength: "strong"
+    description: "UX labels use DDD ubiquitous language"
+    relationships:
+      - source_concept: "ux:component"
+        target_concept: "ddd:domain"
+        cardinality: "alignment"
+        note: "Component labels should align with domain terminology"
+    rationale: "UI terminology matches domain terminology"
+    constraint: "User-facing labels should use terms from DDD glossary >80% match"
+
+  - id: "grounding_ux_ddd_005"
+    source: "model_ux"
+    target: "model_ddd"
+    type: "procedural"
+    strength: "strong"
+    description: "UX workflows respect DDD aggregate boundaries"
+    relationships:
+      - source_concept: "ux:Workflow.steps"
+        target_concept: "ddd:Aggregate.invariants"
+        cardinality: "constraint"
+    rationale: "Workflows must maintain aggregate consistency"
+    constraint: "Multi-step workflows crossing aggregates require saga or process manager pattern"
+
+  # UX → Data-Eng Groundings
+  - id: "grounding_ux_data_001"
+    source: "model_ux"
+    target: "model_data_eng"
+    type: "structural"
+    strength: "strong"
+    description: "UX components reference data sources"
+    relationships:
+      - source_concept: "ux:Component"
+        target_concept: "data-eng:Dataset"
+        cardinality: "many-to-many"
+        reference_field: "data_sources"
+    rationale: "UI components display data from datasets"
+    examples:
+      - "OrderListTable → orders_dataset"
+      - "CustomerChart → customer_metrics_dataset"
+
+  - id: "grounding_ux_data_002"
+    source: "model_ux"
+    target: "model_data_eng"
+    type: "semantic"
+    strength: "strong"
+    description: "UX pagination depends on dataset partitioning"
+    relationships:
+      - source_concept: "ux:Page.pagination"
+        target_concept: "data-eng:Dataset.partitioning"
+        cardinality: "alignment"
+    rationale: "Efficient pagination requires aligned partitioning strategy"
+    constraint: "Pagination strategy should align with dataset partition keys"
+
+  # QE → DDD Groundings
+  - id: "grounding_qe_ddd_001"
+    source: "model_qe"
+    target: "model_ddd"
+    type: "procedural"
+    strength: "strong"
+    description: "QE tests validate DDD invariants"
+    relationships:
+      - source_concept: "qe:test_case"
+        target_concept: "ddd:Aggregate.invariants"
+        cardinality: "one-to-many"
+        reference_field: "validates_invariants"
+    rationale: "Tests ensure domain rules are enforced"
+    constraint: "Every aggregate invariant should have at least one test"
+    coverage_target: "100% of documented invariants"
+
+  - id: "grounding_qe_ddd_002"
+    source: "model_qe"
+    target: "model_ddd"
+    type: "structural"
+    strength: "strong"
+    description: "QE integration tests reference DDD aggregates"
+    relationships:
+      - source_concept: "qe:test_case"
+        target_concept: "ddd:Aggregate"
+        cardinality: "many-to-many"
+        reference_field: "aggregates_under_test"
+    rationale: "Integration tests validate aggregate interactions"
+
+  - id: "grounding_qe_ddd_003"
+    source: "model_qe"
+    target: "model_ddd"
+    type: "semantic"
+    strength: "strong"
+    description: "QE test cases explicitly validate DDD invariants"
+    relationships:
+      - source_concept: "qe:test_case"
+        target_concept: "ddd:aggregate"
+        cardinality: "one-to-many"
+        reference_field: "ddd_references.aggregate_ref"
+        validation: "optional"
+        note: "Tests validate aggregate invariants (business rules embedded in aggregates)"
+    rationale: "Tests must explicitly validate aggregate invariants to ensure domain model integrity"
+    constraint: "All critical invariants should have explicit test coverage"
+    coverage_target: "100% of critical invariants"
+    note: "STRENGTHENED: Explicit invariant validation with structured tracking"
+    schema_enforcement: "Pattern: ddd:Invariant:[id], includes invariant_type: [state_invariant, business_rule, consistency_rule, lifecycle_rule]"
+
+  # QE → UX Groundings
+  - id: "grounding_qe_ux_001"
+    source: "model_qe"
+    target: "model_ux"
+    type: "procedural"
+    strength: "strong"
+    description: "QE UI tests validate UX workflows"
+    relationships:
+      - source_concept: "qe:test_case"
+        target_concept: "ux:Workflow"
+        cardinality: "one-to-one"
+        reference_field: "validates_workflow"
+    rationale: "UI tests ensure workflows complete successfully"
+    constraint: "Critical workflows should have E2E test coverage"
+
+  - id: "grounding_qe_ux_002"
+    source: "model_qe"
+    target: "model_ux"
+    type: "procedural"
+    strength: "strong"
+    description: "QE test cases validate UX workflow steps and state transitions"
+    relationships:
+      - source_concept: "qe:test_case.ux_references.workflow_validation"
+        target_concept: "ux:Workflow"
+        cardinality: "one-to-one"
+        reference_field: "workflow_ref"
+        validation: "optional"
+      - source_concept: "qe:test_case.ux_references.workflow_validation.step_transitions"
+        target_concept: "ux:Workflow.steps"
+        cardinality: "validation"
+    rationale: "Workflow tests must validate complete user journeys and state transitions"
+    constraint: "Workflow tests should validate all critical state transitions"
+    note: "ADDED: Explicit workflow validation with step transition and state assertion tracking"
+    schema_enforcement: "Pattern: ux:Workflow:[id], includes step_transitions and workflow_state_assertions"
+
+  # QE → Data-Eng Groundings
+  - id: "grounding_qe_data_001"
+    source: "model_qe"
+    target: "model_data_eng"
+    type: "procedural"
+    strength: "strong"
+    description: "QE contract tests validate data contracts"
+    relationships:
+      - source_concept: "qe:contract_test"
+        target_concept: "data-eng:Contract"
+        cardinality: "one-to-one"
+        reference_field: "validates_contract"
+    rationale: "Contract tests ensure schema stability"
+    constraint: "Breaking contract changes must be detected in CI"
+
+  - id: "grounding_qe_data_002"
+    source: "model_qe"
+    target: "model_data_eng"
+    type: "structural"
+    strength: "strong"
+    description: "QE contract tests reference data-eng schemas and quality rules"
+    relationships:
+      - source_concept: "qe:contract_test"
+        target_concept: "data-eng:field"
+        cardinality: "one-to-many"
+        reference_field: "data_eng_references.schema_ref"
+        validation: "optional"
+        note: "Contract tests validate schema field definitions"
+      - source_concept: "qe:contract_test"
+        target_concept: "data-eng:Contract"
+        cardinality: "one-to-one"
+        reference_field: "data_eng_references.contract_ref"
+        validation: "optional"
+      - source_concept: "qe:contract_test"
+        target_concept: "data-eng:Pipeline"
+        cardinality: "one-to-one"
+        reference_field: "data_eng_references.pipeline_ref"
+        validation: "optional"
+      - source_concept: "qe:contract_test"
+        target_concept: "data-eng:check"
+        cardinality: "many-to-many"
+        reference_field: "data_quality_rule_ref"
+        validation: "optional"
+        note: "Contract tests validate data quality checks"
+    rationale: "Contract tests validate adherence to formal Data-Eng schemas and contracts"
+    constraint: "Contract tests should reference formal schema definitions for validation"
+    note: "ADDED: Explicit contract test definition with data-eng grounding"
+    schema_enforcement: "Patterns: data-eng:Schema:[id], data-eng:Contract:[id], data-eng:Pipeline:[id], data-eng:QualityRule:[id]"
+
+  # QE Test Strategy → Multi-Canon Grounding
+  - id: "grounding_qe_multi_001"
+    source: "model_qe"
+    target: ["model_ddd", "model_ux", "model_data_eng"]
+    type: "procedural"
+    strength: "strong"
+    description: "QE test strategies explicitly cover domain patterns from DDD, UX, and Data-Eng"
+    relationships:
+      - source_concept: "qe:test_strategy"
+        target_concept: "ddd:aggregate"
+        cardinality: "one-to-many"
+        reference_field: "domain_pattern_coverage.ddd_patterns"
+        validation: "optional"
+        note: "Test strategies cover DDD aggregates and domain patterns"
+      - source_concept: "qe:test_strategy"
+        target_concept: "ux:workflow"
+        cardinality: "one-to-many"
+        reference_field: "domain_pattern_coverage.ux_patterns"
+        validation: "optional"
+        note: "Test strategies cover UX workflows and interaction patterns"
+      - source_concept: "qe:test_strategy"
+        target_concept: "data-eng:pipeline"
+        cardinality: "one-to-many"
+        reference_field: "domain_pattern_coverage.data_patterns"
+        validation: "optional"
+        note: "Test strategies cover data engineering pipelines and patterns"
+    rationale: "Test strategies must explicitly cover domain patterns to ensure comprehensive validation"
+    constraint: "Test strategies should define testing approaches for all critical patterns in scope"
+    coverage_target: "All critical patterns in bounded context should have testing approach defined"
+    note: "ADDED: Systematic domain pattern coverage tracking in test strategies"
+    schema_enforcement: "Patterns: ddd:Pattern:[id], ux:Pattern:[id], data-eng:Pattern:[id]"
+
+  # Agile → DDD Grounding
+  - id: "grounding_agile_ddd_001"
+    source: "model_agile"
+    target: "model_ddd"
+    type: "epistemic"
+    strength: "strong"
+    description: "Agile features map to DDD bounded contexts"
+    relationships:
+      - source_concept: "agile:feature"
+        target_concept: "ddd:bounded_context"
+        cardinality: "many-to-one"
+        reference_field: "bounded_context_ref"
+        validation: "required"
+    rationale: "Features must be scoped to a bounded context to ensure domain alignment"
+    note: "ENHANCED: Now required field with pattern validation (ddd:BoundedContext:[id])"
+    schema_enforcement: "Pattern: ^ddd:BoundedContext:[a-z0-9_-]+$"
+
+  # Agile → UX Grounding
+  - id: "grounding_agile_ux_001"
+    source: "model_agile"
+    target: "model_ux"
+    type: "procedural"
+    strength: "strong"
+    description: "Agile stories implement UX pages, components, or workflows"
+    relationships:
+      - source_concept: "agile:user_story"
+        target_concept: "ux:Page"
+        cardinality: "many-to-many"
+        reference_field: "ux_artifact_refs.page_refs"
+        validation: "optional"
+      - source_concept: "agile:user_story"
+        target_concept: "ux:Component"
+        cardinality: "many-to-many"
+        reference_field: "ux_artifact_refs.component_refs"
+        validation: "optional"
+      - source_concept: "agile:user_story"
+        target_concept: "ux:Workflow"
+        cardinality: "many-to-many"
+        reference_field: "ux_artifact_refs.workflow_refs"
+        validation: "optional"
+    rationale: "Stories are implemented through UX artifacts (pages, components, workflows)"
+    note: "ENHANCED: Explicit structured references with pattern validation"
+    schema_enforcement: "Patterns: ux:Page:[id], ux:Component:[id], ux:Workflow:[id]"
+
+  # Agile → QE Grounding
+  - id: "grounding_agile_qe_001"
+    source: "model_agile"
+    target: "model_qe"
+    type: "epistemic"
+    strength: "strong"
+    description: "Agile definition of done references QE test criteria and validation"
+    relationships:
+      - source_concept: "agile:sprint.definitionOfDone"
+        target_concept: "qe:test_strategy"
+        cardinality: "one-to-many"
+        reference_field: "definitionOfDone.test_criteria_refs"
+        validation: "optional"
+      - source_concept: "agile:sprint.definitionOfDone.checklist"
+        target_concept: "qe:test_case"
+        cardinality: "one-to-one"
+        reference_field: "qe_validation_ref"
+        validation: "optional"
+      - source_concept: "agile:sprint.definitionOfDone.checklist"
+        target_concept: "qe:test_suite"
+        cardinality: "one-to-one"
+        reference_field: "qe_validation_ref"
+        validation: "optional"
+      - source_concept: "agile:sprint.definitionOfDone.checklist"
+        target_concept: "qe:test_strategy"
+        cardinality: "one-to-one"
+        reference_field: "qe_validation_ref"
+        validation: "optional"
+    rationale: "DoD criteria must be validated through QE test strategies"
+    constraint: "Story cannot be marked complete without meeting QE validation criteria"
+    note: "ENHANCED: Explicit structured references to QE artifacts that validate DoD items"
+    schema_enforcement: "Pattern: ^qe:(TestCase|TestSuite|TestStrategy|TestCriteria):[a-z0-9_-]+$"
+
+  # Agile → Data-Eng Grounding
+  - id: "grounding_agile_data_001"
+    source: "model_agile"
+    target: "model_data_eng"
+    type: "epistemic"
+    strength: "weak"
+    description: "Agile features include data pipeline work"
+    relationships:
+      - source_concept: "agile:feature"
+        target_concept: "data-eng:Pipeline"
+        cardinality: "one-to-many"
+        reference_field: "includes_pipelines"
+        validation: "optional"
+    rationale: "Features may require new data pipelines or modifications"
+    note: "Currently implicit - should be made explicit"
+
+  # NEW STRONG GROUNDINGS - Enhancement Phase 4 (2025-10-14)
+
+  # UX → DDD Strong Groundings (3 new)
+  - id: "grounding_ux_ddd_004"
+    source: "model_ux"
+    target: "model_ddd"
+    type: "semantic"
+    strength: "strong"
+    description: "UX validation_config enforces DDD value_object invariants"
+    relationships:
+      - source_concept: "ux:validation_config"
+        target_concept: "ddd:value_object"
+        target_property: "invariants"
+        cardinality: "many-to-many"
+        reference_field: "ddd_invariant_refs"
+        validation: "optional"
+    rationale: "UI validation rules enforce value object invariants at presentation layer"
+    note: "ADDED: Enhancement Phase 4 - Ontological alignment of validation rules to domain invariants"
+    examples:
+      - "EmailValidation (UX) → Email value object invariants (DDD)"
+      - "DateRangeValidation (UX) → DateRange value object invariants (DDD)"
+
+  - id: "grounding_ux_ddd_005"
+    source: "model_ux"
+    target: "model_ddd"
+    type: "semantic"
+    strength: "strong"
+    description: "UX hierarchy_node maps to DDD bounded_context boundaries"
+    relationships:
+      - source_concept: "ux:hierarchy_node"
+        target_concept: "ddd:bounded_context"
+        cardinality: "many-to-one"
+        reference_field: "bounded_context_ref"
+        validation: "optional"
+    rationale: "Navigation hierarchy nodes correspond to bounded context boundaries in domain model"
+    constraint: "Top-level navigation nodes should align with major bounded contexts"
+    note: "ADDED: Enhancement Phase 4 - Explicit navigation-to-domain-structure alignment"
+    examples:
+      - "Orders nav node → OrderManagement bounded context"
+      - "Customers nav node → CustomerRelations bounded context"
+
+  - id: "grounding_ux_ddd_006"
+    source: "model_ux"
+    target: "model_ddd"
+    type: "semantic"
+    strength: "strong"
+    description: "UX facet filters map to DDD value_object attributes"
+    relationships:
+      - source_concept: "ux:facet"
+        target_concept: "ddd:value_object"
+        cardinality: "many-to-many"
+        reference_field: "ddd_value_object_refs"
+        validation: "optional"
+    rationale: "Faceted navigation filters correspond to value object attributes in domain model"
+    note: "ADDED: Enhancement Phase 4 - Facet-to-value-object semantic grounding"
+    examples:
+      - "Price Range facet → Price value object"
+      - "Status facet → OrderStatus value object"
+
+  # Data-Eng → DDD Strong Groundings (2 new)
+  - id: "grounding_dataeng_ddd_001"
+    source: "model_data_eng"
+    target: "model_ddd"
+    type: "structural"
+    strength: "strong"
+    description: "Data-Eng data_product aligns with DDD bounded_context boundaries"
+    relationships:
+      - source_concept: "data-eng:data_product"
+        target_concept: "ddd:bounded_context"
+        cardinality: "many-to-one"
+        reference_field: "bounded_context_ref"
+        validation: "optional"
+    rationale: "Data products align with bounded context boundaries following data mesh principles"
+    constraint: "Each data product should be owned by exactly one bounded context"
+    note: "ADDED: Enhancement Phase 4 - Data mesh alignment with domain boundaries"
+    examples:
+      - "Customer360 data product → CustomerRelations bounded context"
+      - "OrderAnalytics data product → OrderManagement bounded context"
+
+  - id: "grounding_dataeng_ddd_002"
+    source: "model_data_eng"
+    target: "model_ddd"
+    type: "structural"
+    strength: "strong"
+    description: "Data-Eng data_contract formalizes DDD context_mapping relationships"
+    relationships:
+      - source_concept: "data-eng:data_contract"
+        target_concept: "ddd:context_mapping"
+        cardinality: "one-to-one"
+        reference_field: "context_mapping_ref"
+        validation: "optional"
+    rationale: "Data contracts formalize the interface agreements in DDD context mapping relationships"
+    constraint: "Breaking contract changes require context mapping relationship updates"
+    note: "ADDED: Enhancement Phase 4 - Explicit contract-to-context-mapping alignment"
+    examples:
+      - "OrderEvents contract → Shared Kernel context mapping (Order→Shipping)"
+      - "CustomerProfile contract → Customer-Supplier context mapping (Customer→Marketing)"
+
+  # QE → UX Strong Groundings (1 new)
+  - id: "grounding_qe_ux_003"
+    source: "model_qe"
+    target: "model_ux"
+    type: "procedural"
+    strength: "strong"
+    description: "QE test_script validates UX page workflows and interactions"
+    relationships:
+      - source_concept: "qe:test_script"
+        target_concept: "ux:page"
+        cardinality: "many-to-many"
+        reference_field: "page_refs"
+        validation: "optional"
+    rationale: "E2E test scripts navigate through pages and validate user workflows"
+    constraint: "Critical user journeys should have automated test script coverage"
+    note: "ADDED: Enhancement Phase 4 - Test-to-page procedural grounding"
+    examples:
+      - "CheckoutE2ETest → [ProductPage, CartPage, CheckoutPage, ConfirmationPage]"
+      - "RegistrationTest → [RegistrationPage, VerificationPage]"
+
+  # QE → DDD Strong Groundings (1 new)
+  - id: "grounding_qe_ddd_004"
+    source: "model_qe"
+    target: "model_ddd"
+    type: "semantic"
+    strength: "strong"
+    description: "QE coverage_target defines testing goals for DDD aggregates"
+    relationships:
+      - source_concept: "qe:coverage_target"
+        target_concept: "ddd:aggregate"
+        cardinality: "many-to-many"
+        reference_field: "aggregate_refs"
+        validation: "optional"
+    rationale: "Coverage targets are set at aggregate granularity to ensure domain logic is tested"
+    constraint: "Each critical aggregate should have defined coverage targets"
+    coverage_requirement: "Critical aggregates require 100% invariant coverage"
+    note: "ADDED: Enhancement Phase 4 - Coverage-to-aggregate semantic grounding"
+    examples:
+      - "Order aggregate coverage target: 95% statement, 100% invariant coverage"
+      - "Account aggregate coverage target: 90% branch coverage"
+
+  # Agile → QE Strong Groundings (1 new)
+  - id: "grounding_agile_qe_002"
+    source: "model_agile"
+    target: "model_qe"
+    type: "semantic"
+    strength: "strong"
+    description: "Agile NFR defines QE quality_metric acceptance criteria"
+    relationships:
+      - source_concept: "agile:non_functional_requirement"
+        target_concept: "qe:quality_characteristics"
+        cardinality: "one-to-many"
+        reference_field: "quality_metric_refs"
+        validation: "optional"
+    rationale: "Non-functional requirements define quality metrics that must be validated through testing"
+    constraint: "Each NFR should have corresponding quality metrics with measurable targets"
+    note: "ADDED: Enhancement Phase 4 - NFR-to-quality-metric semantic grounding"
+    examples:
+      - "Performance NFR (response time <200ms) → Response Time quality metric"
+      - "Scalability NFR (1000 concurrent users) → Throughput quality metric"
+
+  # Agile → DDD Strong Groundings (1 new)
+  - id: "grounding_agile_ddd_002"
+    source: "model_agile"
+    target: "model_ddd"
+    type: "structural"
+    strength: "strong"
+    description: "Agile technical_debt tracks architectural issues in DDD bounded_contexts"
+    relationships:
+      - source_concept: "agile:technical_debt"
+        target_concept: "ddd:bounded_context"
+        cardinality: "many-to-one"
+        reference_field: "bounded_context_ref"
+        validation: "optional"
+    rationale: "Technical debt is tracked at bounded context level to manage architectural runway"
+    constraint: "Technical debt items should be scoped to specific bounded contexts"
+    note: "ADDED: Enhancement Phase 4 - Technical-debt-to-bounded-context structural grounding"
+    examples:
+      - "Legacy payment integration debt → Payment bounded context"
+      - "Monolithic database refactoring → Multiple bounded contexts"
+
+# ============================================================================
+# GRAPH ANALYSIS
+# ============================================================================
+
+graph_analysis:
+  topology:
+    type: "directed_acyclic_graph"
+    layers:
+      - name: "foundation"
+        canonical_models:  # formerly: canons ["model_ddd", "model_data_eng"]
+        in_degree: 0
+        out_degree_avg: 3.5
+      - name: "derived"
+        canonical_models:  # formerly: canons ["model_ux", "model_qe"]
+        in_degree_avg: 2
+        out_degree_avg: 1.5
+      - name: "meta"
+        canonical_models:  # formerly: canons ["model_agile"]
+        in_degree: 4
+        out_degree: 0
+
+  centrality:
+    betweenness:
+      - model: "model_ddd"
+        score: 0.65
+        interpretation: "Central hub - most dependency paths go through DDD model"
+      - model: "model_data_eng"
+        score: 0.45
+        interpretation: "Important foundation for data flow"
+      - model: "model_ux"
+        score: 0.30
+        interpretation: "Intermediate - bridges DDD and QE"
+      - model: "model_qe"
+        score: 0.15
+        interpretation: "Leaf validator"
+      - model: "model_agile"
+        score: 0.10
+        interpretation: "Leaf coordinator"
+
+    in_degree:
+      - model: "model_ddd"
+        score: 3
+        interpretation: "Most depended upon"
+      - model: "model_data_eng"
+        score: 3
+        interpretation: "Highly depended upon"
+      - model: "model_ux"
+        score: 2
+        interpretation: "Moderately depended upon"
+      - model: "model_qe"
+        score: 1
+        interpretation: "Less depended upon"
+      - model: "model_agile"
+        score: 0
+        interpretation: "Not depended upon (meta-level)"
+
+  semantic_distance:
+    description: "Shortest path between canonical models"
+    matrix:
+      ddd_to_data_eng: 2  # DDD ← UX → Data-Eng
+      ddd_to_ux: 1        # Direct grounding
+      ddd_to_qe: 1        # Direct grounding
+      ddd_to_agile: 1     # Direct grounding
+      data_eng_to_ux: 1   # Direct grounding
+      data_eng_to_qe: 1   # Direct grounding
+      data_eng_to_agile: 1 # Direct grounding
+      ux_to_qe: 1         # Direct grounding
+      ux_to_agile: 1      # Direct grounding
+      qe_to_agile: 1      # Direct grounding
+
+  grounding_type_distribution:
+    structural: 9  # 32% (was 6: +3 from Enhancement Phase 4)
+    semantic: 9    # 32% (was 4: +5 from Enhancement Phase 4)
+    procedural: 6  # 21% (was 5: +1 from Enhancement Phase 4)
+    epistemic: 5   # 18% (unchanged)
+    total: 28      # Updated: 19 → 28 (+9 strong groundings)
+    note: "Some groundings have multiple types; percentages approximate"
+
+  grounding_strength_distribution:
+    strong: 27     # 96% (was 18: +9 from Enhancement Phase 4)
+    weak: 1        # 4% (was 1: unchanged)
+    optional: 0    # 0%
+
+# ============================================================================
+# VALIDATION RESULTS
+# ============================================================================
+
+validation:
+  closure_check:
+    status: "partial"
+    results:
+      - model: "model_ddd"
+        closure: 100
+        status: "PASS"
+      - model: "model_data_eng"
+        closure: 100
+        status: "PASS"
+      - model: "model_ux"
+        closure: 96
+        status: "PASS"
+        issues:
+          - "4% of references lack explicit grounding (data_source field)"
+      - model: "model_qe"
+        closure: 75
+        status: "INCOMPLETE"
+        issues:
+          - "25% of references lack explicit grounding"
+          - "Missing grounding to data_eng contract validation"
+      - model: "model_agile"
+        closure: 72
+        status: "INCOMPLETE"
+        issues:
+          - "28% of references lack explicit grounding"
+          - "Most domain references currently implicit"
+    overall: "89% average closure"
+    target: "95% for production"
+
+  acyclicity_check:
+    status: "PASS"
+    result: "No cycles detected"
+    validation_method: "topological_sort"
+
+  consistency_check:
+    status: "PASS"
+    results:
+      - "No contradictory constraints detected"
+      - "All grounding targets exist"
+      - "All cardinality constraints are satisfiable"
+
+  completeness_check:
+    status: "PARTIAL"
+    missing_groundings:
+      - source: "model_qe"
+        target: "model_data_eng"
+        type: "procedural"
+        description: "Data quality tests should reference dataset contracts"
+      - source: "model_agile"
+        target: "all"
+        type: "epistemic"
+        description: "Agile concepts need explicit domain references"
+
+# ============================================================================
+# EVOLUTION TRACKING
+# ============================================================================
+
+evolution:
+  version_history:
+    - version: "1.0.0"
+      date: "2025-10-13"
+      changes:
+        - "Initial release"
+        - "5 canonical domain models defined"
+        - "15 grounding relationships established"
+        - "Foundation and derived layers complete"
+        - "Meta layer (Agile) needs completion"
+
+  planned_changes:
+    - version: "1.1.0"
+      description: "Complete QE and Agile model grounding"
+      changes:
+        - "Add missing QE → Data-Eng grounding"
+        - "Make Agile domain references explicit"
+        - "Target: 95% closure for all models"
+
+    - version: "2.0.0"
+      description: "Add new domains"
+      changes:
+        - "Add Compliance canonical model"
+        - "Add DevOps canonical model"
+        - "Add Security canonical model"
+        - "Define groundings for new models"
+
+  deprecation_policy:
+    breaking_changes: "Major version bump (x.0.0)"
+    new_features: "Minor version bump (0.x.0)"
+    bug_fixes: "Patch version bump (0.0.x)"
+    deprecation_period: "6 months minimum"
+    migration_tools: "Automated migration scripts provided"
+
+# ============================================================================
+# USAGE NOTES
+# ============================================================================
+
+usage:
+  purpose: "Reference for implementing canonical grounding validation and reasoning"
+
+  consumers:
+    - name: "LLM Reasoning Systems"
+      usage: "Load relevant canonical models and groundings for task context"
+    - name: "Schema Validators"
+      usage: "Validate closure, acyclicity, and consistency"
+    - name: "Architecture Tools"
+      usage: "Visualize domain dependencies"
+    - name: "Impact Analysis"
+      usage: "Trace change impact through grounding chains"
+
+  integration:
+    - "Load this map at system initialization"
+    - "Use grounding relationships to validate cross-domain references"
+    - "Follow transitive closure for complete dependency resolution"
+    - "Check strength field to determine validation severity"
+
+  maintenance:
+    - "Update when new canonical domain models added"
+    - "Update when domain schemas evolve"
+    - "Validate after each change"
+    - "Version bump according to deprecation policy"

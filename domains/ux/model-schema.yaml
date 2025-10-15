@@ -1,0 +1,1141 @@
+# UX Schema Definition v1.0
+# Defines structure for modeling user interfaces and information architecture
+# Integrates with DDD Schema for domain-driven design alignment
+
+# schema_version: "1.0"
+schema_name: "UX Schema Definition"
+description: "Comprehensive schema for modeling user interface structure, navigation, workflows, components, and behaviors with DDD integration"
+
+# =============================================================================
+# TOP-LEVEL STRUCTURE
+# =============================================================================
+
+ux_system:
+  type: object
+  required: [system_id, name, ddd_reference, information_architecture, navigation, pages]
+  properties:
+    system_id:
+      type: string
+      description: "Unique identifier for the UI system"
+      pattern: "^sys_[a-z0-9_]+$"
+      example: "sys_job_seeker"
+
+    name:
+      type: string
+      description: "Human-readable system name"
+      example: "Job Seeker Application"
+
+    description:
+      type: string
+      description: "Brief system description"
+
+    version:
+      type: string
+      description: "UI system version"
+      pattern: "^\\d+\\.\\d+\\.\\d+$"
+      example: "1.0.0"
+
+    ddd_reference:
+      type: object
+      description: "Reference to DDD schema for domain integration"
+      required: [schema_file, system_id]
+      properties:
+        schema_file:
+          type: string
+          description: "Path to DDD schema file"
+          example: "../../ddd/deliverables/ddd-schema-example.yaml"
+        system_id:
+          type: string
+          description: "DDD system identifier"
+          example: "sys_job_seeker"
+
+    information_architecture:
+      type: reference
+      ref: "#/$defs/information_architecture"
+      description: "System-wide IA structure"
+
+    navigation:
+      type: reference
+      ref: "#/$defs/navigation"
+      description: "Navigation structures"
+
+    workflows:
+      type: array
+      items:
+        type: reference
+        ref: "#/$defs/workflow"
+      description: "User workflows"
+
+    pages:
+      type: array
+      items:
+        type: reference
+        ref: "#/$defs/page"
+      description: "Page definitions"
+
+    components:
+      type: array
+      items:
+        type: reference
+        ref: "#/$defs/component"
+      description: "Reusable component library"
+
+    design_tokens:
+      type: reference
+      ref: "#/$defs/design_tokens"
+      description: "Design system tokens"
+
+    accessibility:
+      type: reference
+      ref: "#/$defs/accessibility_spec"
+      description: "System-wide accessibility specifications"
+
+# =============================================================================
+# INFORMATION ARCHITECTURE
+# =============================================================================
+
+$defs:
+  information_architecture:
+    type: object
+    description: "Defines how information is organized, labeled, and accessed"
+    required: [organization_scheme, navigation_systems]
+    properties:
+      organization_scheme:
+        type: string
+        enum: [hierarchical, sequential, faceted, matrix, hybrid]
+        description: "Primary organization pattern"
+
+      hierarchy:
+        type: object
+        description: "Hierarchical structure (if applicable)"
+        properties:
+          root:
+            type: string
+            description: "Root node label"
+          levels:
+            type: array
+            items:
+              type: object
+              properties:
+                level:
+                  type: integer
+                  description: "Hierarchy depth (1 = top level)"
+                nodes:
+                  type: array
+                  items:
+                    $ref: "#/$defs/hierarchy_node"
+
+      facets:
+        type: array
+        description: "Faceted classification dimensions"
+        items:
+          $ref: "#/$defs/facet"
+
+      navigation_systems:
+        type: object
+        description: "Types of navigation available"
+        properties:
+          global_navigation:
+            type: boolean
+          local_navigation:
+            type: boolean
+          contextual_navigation:
+            type: boolean
+          search:
+            type: boolean
+          breadcrumbs:
+            type: boolean
+
+      search_system:
+        $ref: "#/$defs/search_system"
+
+      labeling_system:
+        type: object
+        description: "Labeling standards"
+        properties:
+          terminology_source:
+            type: string
+            description: "Source of terminology (ubiquitous language)"
+            example: "DDD bounded context glossaries"
+          label_types:
+            type: array
+            items:
+              type: string
+              enum: [contextual_links, headings, navigation_labels, index_terms, tags]
+
+# =============================================================================
+# NAVIGATION
+# =============================================================================
+
+  navigation:
+    type: object
+    description: "Navigation structures and patterns"
+    required: [global_navigation]
+    properties:
+      global_navigation:
+        type: object
+        description: "Primary navigation across entire system"
+        required: [pattern, items]
+        properties:
+          pattern:
+            type: string
+            enum: [top_horizontal, side_vertical, tabs, hybrid]
+          position:
+            type: string
+            enum: [top, left, right, bottom]
+          sticky:
+            type: boolean
+            description: "Remains visible on scroll"
+          items:
+            type: array
+            items:
+              type: object
+              required: [id, label, target]
+              properties:
+                id:
+                  type: string
+                  pattern: "^nav_[a-z0-9_]+$"
+                label:
+                  type: string
+                  description: "Display text (ubiquitous language)"
+                target:
+                  type: string
+                  description: "URL or page ID"
+                bounded_context:
+                  type: string
+                  description: "Associated bounded context"
+                  pattern: "^bc_[a-z0-9_]+$"
+                icon:
+                  type: string
+                  description: "Icon identifier"
+                badge:
+                  type: object
+                  description: "Notification badge"
+                  properties:
+                    type:
+                      type: string
+                      enum: [count, dot, status]
+                    source:
+                      type: string
+                      description: "Data source for badge value"
+                children:
+                  type: array
+                  items:
+                    type: reference
+                  description: "Sub-navigation items (recursive)"
+
+      local_navigation:
+        type: array
+        description: "Context-specific navigation sections"
+        items:
+          type: object
+          required: [id, scope, pattern]
+          properties:
+            id:
+              type: string
+              pattern: "^localnav_[a-z0-9_]+$"
+            scope:
+              type: string
+              description: "Where this navigation appears"
+              enum: [bounded_context, page, section]
+            scope_id:
+              type: string
+              description: "ID of scope (bc_id, page_id, or section_id)"
+            pattern:
+              type: string
+              enum: [tabs, sidebar, sub_nav, breadcrumbs]
+            items:
+              type: array
+              description: "Navigation items (same structure as global)"
+
+      utility_navigation:
+        type: object
+        description: "Utility functions (user menu, settings, help)"
+        properties:
+          user_menu:
+            type: object
+            properties:
+              trigger:
+                type: string
+                enum: [avatar, icon, text]
+              items:
+                type: array
+                description: "Menu items"
+          search:
+            type: object
+            properties:
+              position:
+                type: string
+                enum: [header, overlay, dedicated_page]
+              shortcut:
+                type: string
+                description: "Keyboard shortcut"
+                example: "Cmd+K"
+          notifications:
+            type: object
+            properties:
+              position:
+                type: string
+              badge_source:
+                type: string
+                description: "Domain event source for count"
+
+      mobile_navigation:
+        type: object
+        description: "Mobile-specific navigation patterns"
+        properties:
+          pattern:
+            type: string
+            enum: [bottom_tabs, hamburger, drawer, hybrid]
+          breakpoint:
+            type: integer
+            description: "Viewport width to switch to mobile nav"
+            example: 768
+
+      cross_context_navigation:
+        type: array
+        description: "Navigation between bounded contexts"
+        items:
+          type: object
+          properties:
+            from_context:
+              type: string
+              pattern: "^bc_[a-z0-9_]+$"
+            to_context:
+              type: string
+              pattern: "^bc_[a-z0-9_]+$"
+            relationship:
+              type: string
+              enum: [customer_supplier, partnership, shared_kernel, conformist]
+              description: "DDD context mapping relationship"
+            trigger:
+              type: string
+              description: "What triggers navigation"
+              enum: [link, action, workflow, event]
+            visual_indicator:
+              type: boolean
+              description: "Show visual indication of context change"
+
+# =============================================================================
+# WORKFLOWS
+# =============================================================================
+
+  workflow:
+    type: object
+    description: "Multi-step user workflows"
+    required: [workflow_id, name, type, steps]
+    properties:
+      workflow_id:
+        type: string
+        pattern: "^wf_[a-z0-9_]+$"
+        example: "wf_profile_setup"
+
+      name:
+        type: string
+        description: "Workflow name"
+
+      type:
+        type: string
+        enum: [linear, flexible, guided, batch, conditional, long_running]
+        description: "Workflow pattern type"
+
+      bounded_contexts:
+        type: array
+        items:
+          type: string
+          pattern: "^bc_[a-z0-9_]+$"
+        description: "Bounded contexts involved in workflow"
+
+      application_service:
+        type: string
+        pattern: "^svc_app_[a-z0-9_]+$"
+        description: "DDD application service implementing workflow"
+
+      aggregate:
+        type: string
+        pattern: "^agg_[a-z0-9_]+$"
+        description: "Primary aggregate affected by workflow"
+
+      steps:
+        type: array
+        items:
+          type: object
+          required: [step_number, label]
+          properties:
+            step_number:
+              type: integer
+              description: "Step sequence (1-based)"
+
+            label:
+              type: string
+              description: "Step display label"
+
+            page_id:
+              type: string
+              description: "Page displayed for this step"
+              pattern: "^page_[a-z0-9_]+$"
+
+            collects:
+              type: array
+              items:
+                type: string
+              description: "Data collected (DDD value objects/entities)"
+              example: ["vo_email", "vo_name", "vo_location"]
+
+            validates:
+              type: object
+              properties:
+                timing:
+                  type: string
+                  enum: [on_blur, on_change, on_submit, on_next]
+                rules:
+                  type: array
+                  items:
+                    type: string
+                  description: "Validation rules (reference VO rules)"
+
+            can_skip:
+              type: boolean
+              description: "Whether step is optional"
+
+            next_enabled_when:
+              type: string
+              description: "Condition for enabling Next button"
+              example: "all_required_fields_valid"
+
+            on_complete:
+              type: object
+              description: "Actions on step completion"
+              properties:
+                update_aggregate:
+                  type: string
+                  description: "Aggregate state update"
+                publish_event:
+                  type: string
+                  pattern: "^evt_[a-z0-9_]+$"
+                  description: "Domain event published"
+                navigate_to:
+                  type: string
+                  description: "Next step or page"
+
+      state_persistence:
+        type: object
+        description: "How workflow state is saved"
+        properties:
+          strategy:
+            type: string
+            enum: [auto_save, manual_save, on_step_complete, local_storage]
+          interval:
+            type: integer
+            description: "Auto-save interval (milliseconds)"
+
+      progress_indicator:
+        type: object
+        description: "Visual progress tracking"
+        properties:
+          type:
+            type: string
+            enum: [steps, progress_bar, percentage, checklist]
+          position:
+            type: string
+            enum: [top, left, right, inline]
+
+      completion:
+        type: object
+        description: "Workflow completion actions"
+        properties:
+          aggregate_transition:
+            type: string
+            description: "Aggregate state transition"
+            example: "DRAFT → ACTIVE"
+          publishes_event:
+            type: string
+            pattern: "^evt_[a-z0-9_]+$"
+          navigate_to:
+            type: string
+            description: "Post-completion navigation"
+          feedback:
+            type: string
+            enum: [toast, modal, redirect, inline]
+
+# =============================================================================
+# PAGES
+# =============================================================================
+
+  page:
+    type: object
+    description: "Individual page definition"
+    required: [page_id, name, type, url]
+    properties:
+      page_id:
+        type: string
+        pattern: "^page_[a-z0-9_]+$"
+        example: "page_job_listings"
+
+      name:
+        type: string
+        description: "Page name/title"
+
+      type:
+        type: string
+        enum: [list, detail, form, dashboard, search, empty_state, error]
+        description: "Page type classification"
+
+      url:
+        type: string
+        description: "URL path"
+        example: "/jobs"
+
+      bounded_context:
+        type: string
+        pattern: "^bc_[a-z0-9_]+$"
+        description: "Primary bounded context"
+
+      displays:
+        type: object
+        description: "What data this page displays"
+        properties:
+          aggregate_type:
+            type: string
+            description: "DDD aggregate type"
+            pattern: "^agg_[a-z0-9_]+$"
+          cardinality:
+            type: string
+            enum: [single, collection]
+          data_source:
+            type: string
+            description: "Repository or query"
+            pattern: "^(repo_|query_)[a-z0-9_]+$"
+          query_params:
+            type: object
+            description: "Query parameters (filters, sort, pagination)"
+
+      sections:
+        type: array
+        items:
+          type: reference
+          ref: "#/$defs/page_section"
+        description: "Page sections"
+
+      layout:
+        type: object
+        description: "Page layout configuration"
+        properties:
+          pattern:
+            type: string
+            enum: [single_column, two_column, three_column, sidebar_left, sidebar_right, grid, custom]
+          responsive:
+            $ref: "#/$defs/responsive_config"
+
+      behaviors:
+        type: array
+        items:
+          type: reference
+          ref: "#/$defs/behavior"
+        description: "Page-level behaviors"
+
+      accessibility:
+        type: reference
+        ref: "#/$defs/accessibility_spec"
+
+      scalability:
+        type: object
+        description: "Scalability patterns for this page"
+        properties:
+          pagination:
+            type: reference
+            ref: "#/$defs/pagination_config"
+          lazy_loading:
+            type: boolean
+          virtual_scrolling:
+            type: boolean
+          caching:
+            type: reference
+            ref: "#/$defs/caching_config"
+
+  page_section:
+    type: object
+    description: "Section within a page"
+    required: [section_id, type]
+    properties:
+      section_id:
+        type: string
+        pattern: "^section_[a-z0-9_]+$"
+
+      type:
+        type: string
+        enum: [header, content, sidebar, footer, filters, list, detail, form, actions, related, empty_state]
+
+      title:
+        type: string
+        description: "Section heading"
+
+      components:
+        type: array
+        items:
+          type: string
+        description: "Component IDs used in section"
+        example: ["comp_job_card", "comp_pagination"]
+
+      collapsible:
+        type: boolean
+        description: "Can section be collapsed"
+
+      sticky:
+        type: boolean
+        description: "Remains visible on scroll"
+
+      responsive:
+        $ref: "#/$defs/responsive_config"
+
+# =============================================================================
+# COMPONENTS
+# =============================================================================
+
+  component:
+    type: object
+    description: "Reusable UI component"
+    required: [component_id, name, atomic_level]
+    properties:
+      component_id:
+        type: string
+        pattern: "^comp_[a-z0-9_]+$"
+        example: "comp_button"
+
+      name:
+        type: string
+        description: "Component name"
+
+      atomic_level:
+        type: string
+        enum: [atom, molecule, organism, template]
+        description: "Atomic design classification"
+
+      category:
+        type: string
+        enum: [input, display, navigation, feedback, layout, domain_specific]
+
+      description:
+        type: string
+
+      props:
+        type: array
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            type:
+              type: string
+              enum: [string, number, boolean, array, object, function, node]
+            required:
+              type: boolean
+            default:
+              description: "Default value"
+            validation:
+              type: string
+              description: "Validation rule (reference DDD VO rules)"
+            ddd_mapping:
+              type: string
+              description: "Maps to DDD value object or property"
+
+      variants:
+        type: array
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+
+      states:
+        type: array
+        items:
+          type: string
+          enum: [default, hover, focus, active, disabled, loading, error, success]
+
+      composed_of:
+        type: array
+        items:
+          type: string
+        description: "Child component IDs (for molecules/organisms)"
+
+      behaviors:
+        type: array
+        items:
+          type: reference
+          ref: "#/$defs/behavior"
+
+      accessibility:
+        type: reference
+        ref: "#/$defs/accessibility_spec"
+
+      examples:
+        type: array
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            code:
+              type: string
+            description:
+              type: string
+
+# =============================================================================
+# BEHAVIORS
+# =============================================================================
+
+  behavior:
+    type: object
+    description: "Interactive behavior specification"
+    required: [behavior_id, type]
+    properties:
+      behavior_id:
+        type: string
+        pattern: "^bhv_[a-z0-9_]+$"
+
+      type:
+        type: string
+        enum: [interaction, validation, async_operation, animation, event_response, state_transition]
+
+      trigger:
+        type: string
+        description: "What triggers this behavior"
+        enum: [click, hover, focus, blur, change, submit, scroll, keypress, domain_event, timer]
+
+      trigger_source:
+        type: string
+        description: "Specific trigger (e.g., event name for domain_event)"
+
+      action:
+        type: string
+        description: "What action occurs"
+
+      feedback:
+        type: object
+        description: "User feedback provided"
+        properties:
+          type:
+            type: string
+            enum: [visual, auditory, haptic, toast, modal, inline, redirect]
+          message:
+            type: string
+          duration:
+            type: integer
+            description: "Milliseconds (for temporary feedback)"
+
+      validation:
+        $ref: "#/$defs/validation_config"
+
+      async_operation:
+        type: object
+        description: "Asynchronous operation behavior"
+        properties:
+          operation:
+            type: string
+            description: "Operation description"
+          loading_state:
+            type: object
+            properties:
+              indicator:
+                type: string
+                enum: [spinner, progress_bar, skeleton, overlay]
+              message:
+                type: string
+          success_state:
+            type: object
+            properties:
+              feedback:
+                type: string
+              navigate_to:
+                type: string
+              publish_event:
+                type: string
+          error_state:
+            type: object
+            properties:
+              feedback:
+                type: string
+              retry:
+                type: boolean
+              fallback:
+                type: string
+
+      animation:
+        $ref: "#/$defs/animation"
+
+      domain_event_response:
+        type: object
+        description: "Response to domain event"
+        properties:
+          event:
+            type: string
+            pattern: "^evt_[a-z0-9_]+$"
+          action:
+            type: string
+            description: "What UI does in response"
+          feedback:
+            type: string
+            enum: [toast, modal, highlight, badge_update, navigation]
+
+      state_transition:
+        type: object
+        description: "Aggregate state visualization"
+        properties:
+          aggregate:
+            type: string
+            pattern: "^agg_[a-z0-9_]+$"
+          from_state:
+            type: string
+          to_state:
+            type: string
+          visual_feedback:
+            type: string
+            description: "How transition is shown"
+
+# =============================================================================
+# SCALABILITY PATTERNS
+# =============================================================================
+
+  pagination_config:
+    type: object
+    description: "Pagination configuration"
+    properties:
+      type:
+        type: string
+        enum: [numbered, cursor_based, infinite_scroll, load_more, virtual_scroll]
+      page_size:
+        type: integer
+        description: "Items per page"
+      page_size_options:
+        type: array
+        items:
+          type: integer
+        description: "User-selectable page sizes"
+      show_total:
+        type: boolean
+        description: "Display total item count"
+      repository_method:
+        type: string
+        description: "DDD repository pagination method"
+        example: "repo_job_posting.findPaginated"
+
+  caching_config:
+    type: object
+    description: "Client-side caching strategy"
+    properties:
+      strategy:
+        type: string
+        enum: [no_cache, memory, local_storage, session_storage, indexed_db, service_worker]
+      ttl:
+        type: integer
+        description: "Time to live (seconds)"
+      invalidation:
+        type: object
+        properties:
+          on_events:
+            type: array
+            items:
+              type: string
+            description: "Domain events that invalidate cache"
+          on_mutation:
+            type: boolean
+            description: "Invalidate on aggregate mutation"
+
+# =============================================================================
+# ACCESSIBILITY
+# =============================================================================
+
+  accessibility_spec:
+    type: object
+    description: "Accessibility specifications"
+    properties:
+      wcag_level:
+        type: string
+        enum: [A, AA, AAA]
+        description: "Target WCAG conformance level"
+
+      aria:
+        type: object
+        description: "ARIA attributes and patterns"
+        properties:
+          role:
+            type: string
+            description: "ARIA role"
+          labels:
+            type: object
+            properties:
+              aria_label:
+                type: string
+              aria_labelledby:
+                type: string
+              aria_describedby:
+                type: string
+          states:
+            type: object
+            description: "ARIA state attributes"
+            properties:
+              aria_expanded:
+                type: boolean
+              aria_selected:
+                type: boolean
+              aria_current:
+                type: string
+              aria_invalid:
+                type: boolean
+          properties:
+            type: object
+            description: "ARIA properties"
+
+      keyboard:
+        type: object
+        description: "Keyboard navigation support"
+        properties:
+          focusable:
+            type: boolean
+          tab_order:
+            type: integer
+            description: "Tab index (-1, 0, or positive)"
+          shortcuts:
+            type: array
+            items:
+              type: object
+              properties:
+                key:
+                  type: string
+                  description: "Key combination"
+                action:
+                  type: string
+                  description: "Action performed"
+
+      screen_reader:
+        type: object
+        description: "Screen reader support"
+        properties:
+          announcements:
+            type: array
+            items:
+              type: object
+              properties:
+                event:
+                  type: string
+                  description: "When to announce"
+                message:
+                  type: string
+                  description: "What to announce"
+                priority:
+                  type: string
+                  enum: [polite, assertive]
+
+      color_contrast:
+        type: object
+        description: "Color contrast requirements"
+        properties:
+          minimum_ratio:
+            type: number
+            description: "Minimum contrast ratio"
+            example: 4.5
+          large_text_ratio:
+            type: number
+            example: 3.0
+
+      touch_targets:
+        type: object
+        description: "Touch target specifications"
+        properties:
+          minimum_size:
+            type: string
+            description: "Minimum touch target size"
+            example: "44x44px"
+
+# =============================================================================
+# DESIGN TOKENS
+# =============================================================================
+
+  design_tokens:
+    type: object
+    description: "Design system tokens"
+    properties:
+      colors:
+        type: object
+        description: "Color palette"
+      typography:
+        type: object
+        description: "Typography scale"
+      spacing:
+        type: object
+        description: "Spacing scale"
+      breakpoints:
+        type: object
+        description: "Responsive breakpoints"
+        properties:
+          mobile:
+            type: integer
+            example: 768
+          tablet:
+            type: integer
+            example: 1024
+          desktop:
+            type: integer
+            example: 1440
+
+  hierarchy_node:
+    type: object
+    description: "Node in a hierarchical information architecture"
+    properties:
+      id:
+        type: string
+        pattern: "^node_[a-z0-9_]+$"
+      label:
+        type: string
+        description: "Display label (use ubiquitous language)"
+      bounded_context:
+        type: string
+        description: "Associated DDD bounded context"
+        pattern: "^bc_[a-z0-9_]+$"
+      url:
+        type: string
+        description: "URL path"
+      children:
+        type: array
+        items:
+          type: string
+        description: "Child node IDs"
+
+  facet_value:
+    type: object
+    description: "Value within a faceted classification dimension"
+    properties:
+      value:
+        type: string
+      label:
+        type: string
+      count:
+        type: integer
+        description: "Number of items with this value (dynamic)"
+
+  facet:
+    type: object
+    description: "Faceted classification dimension for filtering and navigation"
+    required: [facet_id, label, type]
+    properties:
+      facet_id:
+        type: string
+        pattern: "^facet_[a-z0-9_]+$"
+      label:
+        type: string
+        description: "Display label"
+      type:
+        type: string
+        enum: [single_select, multi_select, range, hierarchy, autocomplete]
+      ddd_mapping:
+        type: string
+        description: "Maps to DDD value object or property"
+        example: "vo_location.work_mode"
+      values:
+        type: array
+        description: "Available facet values (for select types)"
+        items:
+          $ref: "#/$defs/facet_value"
+      range:
+        type: object
+        description: "For range facets"
+        properties:
+          min:
+            type: number
+          max:
+            type: number
+          step:
+            type: number
+
+  search_system:
+    type: object
+    description: "Search configuration"
+    properties:
+      type:
+        type: string
+        enum: [simple, advanced, faceted]
+      scope:
+        type: string
+        enum: [global, contextual, bounded_context]
+      features:
+        type: array
+        items:
+          type: string
+          enum: [autocomplete, suggestions, filters, saved_searches, recent_searches]
+      indexed_fields:
+        type: array
+        items:
+          type: string
+        description: "Fields included in search index"
+
+  responsive_config:
+    type: object
+    description: "Responsive behavior configuration across device breakpoints"
+    properties:
+      mobile:
+        type: string
+        enum: [show, hide, collapse, reorder, single_column, stack]
+        description: "Mobile layout pattern"
+      tablet:
+        type: string
+        enum: [show, hide, collapse, reorder, single_column, two_column, stack]
+        description: "Tablet layout pattern"
+      desktop:
+        type: string
+        enum: [show, hide, collapse, reorder, single_column, two_column, three_column, grid]
+        description: "Desktop layout pattern"
+
+  animation:
+    type: object
+    description: "Animation specification"
+    properties:
+      type:
+        type: string
+        enum: [fade, slide, scale, rotate, morph, custom]
+      duration:
+        type: integer
+        description: "Milliseconds"
+      easing:
+        type: string
+        enum: [linear, ease_in, ease_out, ease_in_out, spring]
+      trigger:
+        type: string
+
+  validation_config:
+    type: object
+    description: "Validation behavior configuration"
+    properties:
+      timing:
+        type: string
+        enum: [on_blur, on_change, on_submit, real_time, debounced]
+      debounce_ms:
+        type: integer
+        description: "Debounce delay (milliseconds)"
+      rules:
+        type: array
+        items:
+          type: object
+          properties:
+            rule:
+              type: string
+              description: "Validation rule (reference VO rules)"
+            error_message:
+              type: string
+
+# =============================================================================
+# METADATA
+# =============================================================================
+
+metadata:
+  created_by: "UX Research Phase 11"
+  created_date: "2025-10-04"
+  version: "1.0"
+  ddd_integration: true
+  references:
+    - "ux-terminology.md"
+    - "../../ddd/deliverables/ddd-schema-definition.yaml"
+    - "WCAG 2.1 Guidelines"
+    - "WAI-ARIA Authoring Practices 1.2"

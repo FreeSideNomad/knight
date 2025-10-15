@@ -1,0 +1,526 @@
+# Example: Scrum Sprint Planning
+# Demonstrates Sprint, Team, and User Story structures
+
+id: "SPRINT-2025-03"
+name: "Sprint 3 - Customer Dashboard MVP"
+startDate: "2025-01-20"
+endDate: "2025-02-02"
+
+goal: |
+  Deliver a working customer dashboard that displays account information, recent orders,
+  and key account metrics. Customers should be able to view (but not edit) their profile
+  and see their last 5 orders with basic details.
+
+committedStories:
+  - "US-201"
+  - "US-202"
+  - "US-203"
+  - "US-204"
+  - "US-205"
+
+committedPoints: 38
+completedPoints: null  # Will be updated at sprint end
+velocity: null  # Will be calculated at sprint end
+
+teamId: "TEAM-WEB-FRONTEND"
+
+ceremonies:
+  planning:
+    date: "2025-01-20T09:00:00Z"
+    attendees:
+      - "product-owner-jane"
+      - "scrum-master-mike"
+      - "dev-alice"
+      - "dev-bob"
+      - "dev-carol"
+      - "dev-david"
+      - "qa-eve"
+
+  dailyStandup:
+    time: "09:30 AM"
+    location: "Team Room / Zoom"
+
+  review:
+    date: "2025-02-02T14:00:00Z"
+    attendees: []  # To be updated
+
+  retrospective:
+    date: "2025-02-02T15:30:00Z"
+    improvements: []  # To be populated after retro
+
+status: "active"
+
+metadata:
+  created: "2025-01-20T09:00:00Z"
+  updated: "2025-01-20T11:30:00Z"
+  createdBy: "scrum-master-mike"
+  updatedBy: "scrum-master-mike"
+  tags:
+    - "sprint-3"
+    - "customer-dashboard"
+    - "mvp"
+
+---
+# User Story Example 1
+
+id: "US-201"
+title: "View Account Summary Dashboard"
+
+asA: "registered customer"
+iWant: "to see a dashboard with my account summary when I log in"
+soThat: "I can quickly understand my account status without navigating multiple pages"
+
+description: |
+  Upon successful login, customers should see a personalized dashboard displaying:
+  - Welcome message with customer name
+  - Account status (active, payment due, etc.)
+  - Quick stats: number of active orders, account balance, loyalty points
+  - Recent activity summary
+  - Quick action buttons (view orders, pay invoice, contact support)
+
+acceptanceCriteria:
+  - given: "I am a logged-in customer"
+    when: "I successfully log in to the portal"
+    then: "I see a personalized dashboard with my name in the welcome message"
+
+  - given: "I am viewing my dashboard"
+    when: "the page loads"
+    then: "I see my account status clearly indicated (Active, Payment Due, etc.)"
+
+  - given: "I have active orders"
+    when: "viewing my dashboard"
+    then: "I see the count of my active orders and can click to view details"
+
+  - given: "I have an outstanding balance"
+    when: "viewing my dashboard"
+    then: "I see my current account balance prominently displayed"
+
+  - given: "I am viewing the dashboard on mobile"
+    when: "the screen width is <768px"
+    then: "the dashboard layout adapts to single column with touch-friendly buttons"
+
+storyPoints: 8
+
+investCheck:
+  independent: true
+  negotiable: true
+  valuable: true
+  estimable: true
+  small: true
+  testable: true
+
+sprintId: "SPRINT-2025-03"
+status: "in-progress"
+assignee: "dev-alice"
+
+tasks:
+  - id: "TASK-201-1"
+    description: "Create Dashboard React component structure"
+    estimateHours: 4
+    remainingHours: 2
+    status: "in-progress"
+    assignee: "dev-alice"
+
+  - id: "TASK-201-2"
+    description: "Implement API call to fetch dashboard data"
+    estimateHours: 3
+    remainingHours: 3
+    status: "todo"
+    assignee: "dev-bob"
+
+  - id: "TASK-201-3"
+    description: "Style dashboard with mobile-responsive CSS"
+    estimateHours: 4
+    remainingHours: 4
+    status: "todo"
+    assignee: "dev-carol"
+
+  - id: "TASK-201-4"
+    description: "Write unit tests for Dashboard component"
+    estimateHours: 3
+    remainingHours: 3
+    status: "todo"
+    assignee: "dev-alice"
+
+  - id: "TASK-201-5"
+    description: "Create integration tests for dashboard data loading"
+    estimateHours: 2
+    remainingHours: 2
+    status: "todo"
+    assignee: "qa-eve"
+
+metadata:
+  created: "2025-01-13T10:00:00Z"
+  updated: "2025-01-21T14:30:00Z"
+  createdBy: "product-owner-jane"
+  updatedBy: "dev-alice"
+  tags:
+    - "dashboard"
+    - "ux"
+    - "high-priority"
+
+---
+# User Story Example 2
+
+id: "US-202"
+title: "Display Recent Orders List"
+
+asA: "customer"
+iWant: "to see my 5 most recent orders on the dashboard"
+soThat: "I can quickly check the status of my recent purchases without searching"
+
+description: |
+  The dashboard should display a "Recent Orders" widget showing the last 5 orders with:
+  - Order number (clickable link to details)
+  - Order date
+  - Order status (Processing, Shipped, Delivered, etc.)
+  - Total amount
+  - "View All Orders" link at bottom
+
+acceptanceCriteria:
+  - given: "I have placed orders"
+    when: "viewing my dashboard"
+    then: "I see up to 5 of my most recent orders sorted by date (newest first)"
+
+  - given: "I have more than 5 orders"
+    when: "viewing recent orders on dashboard"
+    then: "I see only the 5 most recent with a 'View All' link"
+
+  - given: "I click an order number"
+    when: "on the dashboard"
+    then: "I am taken to the order details page for that order"
+
+  - given: "I have no orders"
+    when: "viewing my dashboard"
+    then: "I see a friendly message 'No orders yet' with a link to shop"
+
+  - given: "my order status changes"
+    when: "I refresh the dashboard"
+    then: "I see the updated status within 5 seconds"
+
+storyPoints: 5
+
+investCheck:
+  independent: true
+  negotiable: true
+  valuable: true
+  estimable: true
+  small: true
+  testable: true
+
+sprintId: "SPRINT-2025-03"
+status: "ready"
+assignee: "dev-bob"
+
+tasks:
+  - id: "TASK-202-1"
+    description: "Create RecentOrders component"
+    estimateHours: 3
+    remainingHours: 3
+    status: "todo"
+    assignee: "dev-bob"
+
+  - id: "TASK-202-2"
+    description: "Implement order list API integration"
+    estimateHours: 2
+    remainingHours: 2
+    status: "todo"
+    assignee: "dev-bob"
+
+  - id: "TASK-202-3"
+    description: "Add loading and empty states"
+    estimateHours: 2
+    remainingHours: 2
+    status: "todo"
+    assignee: "dev-carol"
+
+  - id: "TASK-202-4"
+    description: "Write tests for RecentOrders component"
+    estimateHours: 2
+    remainingHours: 2
+    status: "todo"
+    assignee: "qa-eve"
+
+metadata:
+  created: "2025-01-13T10:15:00Z"
+  updated: "2025-01-20T16:00:00Z"
+  createdBy: "product-owner-jane"
+  updatedBy: "product-owner-jane"
+  tags:
+    - "dashboard"
+    - "orders"
+
+---
+# User Story Example 3
+
+id: "US-203"
+title: "View Customer Profile Information"
+
+asA: "customer"
+iWant: "to view my profile information (name, email, phone, address)"
+soThat: "I can verify my account details are correct"
+
+description: |
+  Provide a read-only view of customer profile including:
+  - Full name
+  - Email address
+  - Phone number
+  - Billing address
+  - Shipping address
+  - Account creation date
+  - "Edit Profile" button (button visible but not functional in this sprint)
+
+acceptanceCriteria:
+  - given: "I am logged in"
+    when: "I click 'My Profile' from the dashboard"
+    then: "I see all my profile information displayed clearly"
+
+  - given: "I have multiple addresses"
+    when: "viewing my profile"
+    then: "I see my default billing and shipping addresses"
+
+  - given: "my information contains sensitive data"
+    when: "viewing my profile"
+    then: "phone number is partially masked (xxx-xxx-1234)"
+
+  - given: "I want to edit my profile"
+    when: "I click the 'Edit Profile' button"
+    then: "I see a message 'Edit functionality coming soon'"
+
+storyPoints: 5
+
+investCheck:
+  independent: true
+  negotiable: true
+  valuable: true
+  estimable: true
+  small: true
+  testable: true
+
+sprintId: "SPRINT-2025-03"
+status: "ready"
+assignee: null
+
+tasks:
+  - id: "TASK-203-1"
+    description: "Create Profile component with read-only fields"
+    estimateHours: 4
+    remainingHours: 4
+    status: "todo"
+
+  - id: "TASK-203-2"
+    description: "Implement phone number masking logic"
+    estimateHours: 2
+    remainingHours: 2
+    status: "todo"
+
+  - id: "TASK-203-3"
+    description: "Add profile data API integration"
+    estimateHours: 2
+    remainingHours: 2
+    status: "todo"
+
+  - id: "TASK-203-4"
+    description: "Write tests for Profile component"
+    estimateHours: 2
+    remainingHours: 2
+    status: "todo"
+
+metadata:
+  created: "2025-01-13T10:30:00Z"
+  updated: "2025-01-20T09:15:00Z"
+  createdBy: "product-owner-jane"
+  updatedBy: "product-owner-jane"
+  tags:
+    - "profile"
+    - "read-only"
+
+---
+# User Story Example 4
+
+id: "US-204"
+title: "Display Account Metrics Widget"
+
+asA: "customer"
+iWant: "to see key account metrics at a glance"
+soThat: "I understand my account health and activity"
+
+description: |
+  Dashboard widget showing:
+  - Total orders this year
+  - Total spent this year
+  - Loyalty points balance
+  - Next loyalty reward threshold
+  - Account age (years as customer)
+
+acceptanceCriteria:
+  - given: "I am viewing my dashboard"
+    when: "the page loads"
+    then: "I see an 'Account Metrics' card with all 5 metrics"
+
+  - given: "I have loyalty points"
+    when: "viewing metrics"
+    then: "I see my current points and how many more needed for next reward"
+
+  - given: "I hover over a metric"
+    when: "on desktop"
+    then: "I see a tooltip with more information about that metric"
+
+  - given: "metrics are being calculated"
+    when: "page is loading"
+    then: "I see loading skeleton for the metrics widget"
+
+storyPoints: 8
+
+investCheck:
+  independent: true
+  negotiable: true
+  valuable: true
+  estimable: true
+  small: true
+  testable: true
+
+sprintId: "SPRINT-2025-03"
+status: "ready"
+assignee: null
+
+tasks:
+  - id: "TASK-204-1"
+    description: "Create AccountMetrics component"
+    estimateHours: 3
+    remainingHours: 3
+    status: "todo"
+
+  - id: "TASK-204-2"
+    description: "Implement metrics calculation API"
+    estimateHours: 4
+    remainingHours: 4
+    status: "todo"
+
+  - id: "TASK-204-3"
+    description: "Add tooltip component for metric details"
+    estimateHours: 2
+    remainingHours: 2
+    status: "todo"
+
+  - id: "TASK-204-4"
+    description: "Create loading skeleton for metrics"
+    estimateHours: 2
+    remainingHours: 2
+    status: "todo"
+
+  - id: "TASK-204-5"
+    description: "Write tests for AccountMetrics"
+    estimateHours: 3
+    remainingHours: 3
+    status: "todo"
+
+metadata:
+  created: "2025-01-13T10:45:00Z"
+  updated: "2025-01-20T09:15:00Z"
+  createdBy: "product-owner-jane"
+  updatedBy: "product-owner-jane"
+  tags:
+    - "dashboard"
+    - "metrics"
+    - "loyalty"
+
+---
+# User Story Example 5
+
+id: "US-205"
+title: "Implement Dashboard Error Handling"
+
+asA: "customer"
+iWant: "to see helpful error messages when something goes wrong"
+soThat: "I understand what happened and what I can do about it"
+
+description: |
+  Comprehensive error handling for dashboard including:
+  - Network errors (API unreachable)
+  - Authentication errors (session expired)
+  - Data errors (missing or malformed data)
+  - Friendly error messages with suggested actions
+  - Retry mechanisms where appropriate
+
+acceptanceCriteria:
+  - given: "the API is unreachable"
+    when: "loading the dashboard"
+    then: "I see a friendly message 'Unable to load dashboard. Please try again.' with retry button"
+
+  - given: "my session has expired"
+    when: "the dashboard loads"
+    then: "I am redirected to login with message 'Session expired. Please log in again.'"
+
+  - given: "dashboard data is partially unavailable"
+    when: "loading the dashboard"
+    then: "I see available widgets with error messages only for failed components"
+
+  - given: "I click retry after an error"
+    when: "the issue is resolved"
+    then: "the dashboard loads successfully"
+
+  - given: "an error occurs"
+    when: "viewing any dashboard component"
+    then: "the error is logged for support team review"
+
+storyPoints: 13
+
+investCheck:
+  independent: true
+  negotiable: false  # Critical for production readiness
+  valuable: true
+  estimable: true
+  small: false  # Slightly larger, but necessary for MVP
+  testable: true
+
+sprintId: "SPRINT-2025-03"
+status: "ready"
+assignee: null
+
+tasks:
+  - id: "TASK-205-1"
+    description: "Create ErrorBoundary component"
+    estimateHours: 3
+    remainingHours: 3
+    status: "todo"
+
+  - id: "TASK-205-2"
+    description: "Implement network error handling"
+    estimateHours: 4
+    remainingHours: 4
+    status: "todo"
+
+  - id: "TASK-205-3"
+    description: "Add authentication error handling with redirect"
+    estimateHours: 3
+    remainingHours: 3
+    status: "todo"
+
+  - id: "TASK-205-4"
+    description: "Create retry mechanism for failed requests"
+    estimateHours: 3
+    remainingHours: 3
+    status: "todo"
+
+  - id: "TASK-205-5"
+    description: "Implement error logging to monitoring service"
+    estimateHours: 2
+    remainingHours: 2
+    status: "todo"
+
+  - id: "TASK-205-6"
+    description: "Write tests for all error scenarios"
+    estimateHours: 4
+    remainingHours: 4
+    status: "todo"
+
+metadata:
+  created: "2025-01-13T11:00:00Z"
+  updated: "2025-01-20T09:15:00Z"
+  createdBy: "product-owner-jane"
+  updatedBy: "product-owner-jane"
+  tags:
+    - "error-handling"
+    - "resilience"
+    - "production-ready"

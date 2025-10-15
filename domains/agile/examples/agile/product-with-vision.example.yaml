@@ -1,0 +1,336 @@
+# Example: Product with Comprehensive Vision
+# Demonstrates the Product and Vision schema structure
+
+id: "customer-portal"
+name: "Customer Self-Service Portal"
+
+description: |
+  A modern web-based customer portal that enables customers to manage their accounts,
+  view orders, track shipments, and access support resources without contacting customer service.
+
+vision:
+  futureStateDescription: |
+    Within 18 months, we will have created the industry's most intuitive customer self-service
+    portal that reduces customer service call volume by 40% while increasing customer satisfaction
+    scores by 25%. Our customers will have 24/7 access to their account information, order history,
+    and support resources through a beautifully designed, mobile-first interface that works
+    seamlessly across all devices. This portal will become the primary touchpoint for customer
+    interactions, reducing operational costs while improving customer experience.
+
+  customerNeeds:
+    targetCustomers:
+      - "Existing B2B customers managing recurring orders"
+      - "New customers onboarding to our platform"
+      - "Customer service representatives assisting customers"
+      - "Account managers monitoring customer health"
+
+    problemsBeingSolved:
+      - "Customers must call customer service for basic account information"
+      - "No visibility into order status and shipment tracking"
+      - "Password resets require manual intervention"
+      - "Invoice access requires email requests"
+      - "Returns and exchanges are time-consuming and manual"
+      - "No self-service support resources"
+
+    valueProposition: |
+      Empower customers with instant 24/7 access to their account information and self-service
+      capabilities, reducing wait times from hours to seconds while decreasing customer service
+      costs by 35%.
+
+  solutionIntent:
+    approach: |
+      Build a modern, cloud-native web application with mobile-first responsive design that
+      integrates with our existing ERP, CRM, and support systems. Implement progressive
+      disclosure to keep the interface simple while providing power users with advanced features.
+      Use industry-standard authentication with SSO support for enterprise customers.
+
+    keyCapabilities:
+      - "Secure account access with SSO and MFA support"
+      - "Real-time order tracking with shipping updates"
+      - "Digital invoice access and download"
+      - "Self-service returns and exchanges"
+      - "Subscription and recurring order management"
+      - "Integrated knowledge base and support ticket system"
+      - "Mobile-responsive design for all devices"
+      - "Personalized dashboard with relevant insights"
+
+    technicalDirection: |
+      Modern React-based SPA with Node.js backend microservices. Cloud-native deployment on AWS
+      with auto-scaling. RESTful APIs integrating with existing systems. Redis for caching and
+      session management. PostgreSQL for portal data. Implement comprehensive analytics to
+      understand user behavior and continuously improve the experience.
+
+    differentiators:
+      - "Mobile-first design vs. competitors' desktop-only portals"
+      - "Real-time data vs. batch updates (24-hour delays elsewhere)"
+      - "Integrated support vs. separate ticketing system"
+      - "Personalized experience vs. one-size-fits-all"
+      - "Progressive web app for offline capabilities"
+
+  boundaries:
+    inScope:
+      - "Customer account management (view/edit profile)"
+      - "Order history and tracking"
+      - "Invoice access and download"
+      - "Returns and exchanges initiation"
+      - "Support ticket creation and tracking"
+      - "Knowledge base access"
+      - "Subscription management"
+      - "Notification preferences"
+
+    outOfScope:
+      - "New order placement (use existing e-commerce site)"
+      - "Product catalog browsing (use existing e-commerce site)"
+      - "Payment processing (handled by existing systems)"
+      - "Vendor/supplier portal (separate future project)"
+      - "Internal employee portal (separate system)"
+      - "Marketing campaign management"
+
+    constraints:
+      - "Must integrate with legacy ERP system (SAP)"
+      - "Must comply with SOC 2 and GDPR requirements"
+      - "Must support IE11 for 6 months (enterprise customers)"
+      - "Budget cap of $800K for initial release"
+      - "Must launch initial version within 9 months"
+      - "Must support 50K concurrent users at peak"
+
+    assumptions:
+      - "ERP team will provide APIs with < 500ms response time"
+      - "Customers have basic internet access and modern browsers"
+      - "80% of customer service calls are simple information requests"
+      - "Customer service team will train on new system"
+      - "Existing authentication system can be extended"
+
+    dependencies:
+      - "ERP API availability and performance"
+      - "CRM team providing customer data APIs"
+      - "Shipping partners providing tracking APIs"
+      - "Security team approval of authentication approach"
+      - "Legal team approval of terms of service"
+
+  strategicAlignment:
+    businessObjectives:
+      - "Reduce customer service operational costs by $2M annually"
+      - "Improve customer satisfaction (NPS) from 45 to 70"
+      - "Increase customer retention rate by 15%"
+      - "Enable 24/7 customer support without increasing headcount"
+      - "Improve operational efficiency across customer service team"
+
+    strategicThemes:
+      - "Digital Transformation - modernizing customer touchpoints"
+      - "Customer Experience Excellence"
+      - "Operational Efficiency"
+      - "Self-Service Enablement"
+
+    successMetrics:
+      - name: "Customer Service Call Reduction"
+        description: "Reduction in inbound customer service calls"
+        target: 40
+        current: 0
+        unit: "percent"
+
+      - name: "Customer Satisfaction (NPS)"
+        description: "Net Promoter Score"
+        target: 70
+        current: 45
+        unit: "score"
+
+      - name: "Portal Adoption Rate"
+        description: "Percentage of customers actively using portal"
+        target: 75
+        current: 0
+        unit: "percent"
+
+      - name: "Self-Service Resolution Rate"
+        description: "Percentage of customer needs resolved without agent"
+        target: 65
+        current: 10
+        unit: "percent"
+
+      - name: "Cost per Customer Interaction"
+        description: "Average cost to serve a customer inquiry"
+        target: 2
+        current: 15
+        unit: "dollars"
+
+    outcomes:
+      - "Customer service agents focus on complex, high-value interactions"
+      - "Customers have faster access to information (seconds vs. hours)"
+      - "Reduced operational costs enable competitive pricing"
+      - "Improved customer experience drives higher retention"
+      - "Data-driven insights improve product and service offerings"
+
+  motivationalNarrative: |
+    Imagine a world where our customers never have to wait on hold to check their order status.
+    Where they can access their invoices at midnight from their phone. Where returning a product
+    takes 60 seconds instead of three phone calls. That's the world we're building.
+
+    Every day, our customer service team handles hundreds of calls asking "Where's my order?"
+    and "Can I get last month's invoice?" These are smart, dedicated people spending their time
+    on repetitive questions instead of solving complex problems and building relationships. Our
+    customers wait on hold, frustrated, just to get information that should be at their fingertips.
+
+    This portal changes everything. We're giving customers superpowers - the power to help
+    themselves, instantly, any time of day. We're freeing our customer service team to focus on
+    what they do best: solving complex problems and building relationships. We're showing the
+    industry what customer experience should look like in 2025.
+
+    This isn't just about saving money (though we'll save $2M annually). It's about respect -
+    respecting our customers' time and our employees' talents. It's about being the company
+    that customers want to do business with because we make their lives easier. It's about
+    winning in the market not by talking about customer experience, but by delivering it.
+
+    When we launch this portal, we're not just releasing software. We're making a statement about
+    who we are as a company and how we value our customers. We're building the future of customer
+    service, and we're building it together.
+
+  decisionFramework:
+    guidingPrinciples:
+      - "Customer time is precious - optimize for speed and simplicity"
+      - "Mobile-first - most customers will access from phones"
+      - "Progressive disclosure - simple by default, powerful when needed"
+      - "Real-time data - no stale information"
+      - "Accessibility for all - WCAG 2.1 AA compliance minimum"
+      - "Secure by design - protect customer data rigorously"
+      - "Measure everything - data-driven continuous improvement"
+
+    tradeoffCriteria:
+      - "When in doubt, choose simplicity over features"
+      - "Prioritize high-frequency tasks over edge cases"
+      - "Mobile experience trumps desktop convenience"
+      - "Speed of delivery trumps perfection for non-critical features"
+      - "Customer value over internal convenience"
+      - "Build vs buy: buy when commodity, build when differentiating"
+
+    alignmentMechanisms:
+      - "Weekly product reviews with stakeholders"
+      - "Monthly customer advisory board meetings"
+      - "Quarterly strategic alignment reviews with executive team"
+      - "Bi-weekly demos to customer service team"
+      - "All decisions documented in decision log with rationale"
+      - "Vision referenced in every sprint planning and PI planning"
+
+  lastUpdated: "2025-10-11"
+
+roadmap:
+  level: "product"
+  timeHorizon: "18 months (3 releases)"
+  items:
+    - timeframe: "Release 1.0 - Q1-Q2 2025 (Months 1-6)"
+      theme: "Foundation & Core Self-Service"
+      objectives:
+        - "Enable self-service account management"
+        - "Deliver order tracking and history"
+        - "Launch mobile-responsive portal"
+      features:
+        - "FEAT-101"
+        - "FEAT-102"
+        - "FEAT-103"
+        - "FEAT-104"
+      milestones:
+        - name: "Release 1.0 Launch"
+          date: "2025-06-30"
+          type: "deployment"
+      confidence: "high"
+
+    - timeframe: "Release 2.0 - Q3 2025 (Months 7-12)"
+      theme: "Advanced Features & Mobile"
+      objectives:
+        - "Deliver advanced self-service capabilities"
+        - "Launch native mobile apps"
+        - "Enable subscription management"
+      features:
+        - "FEAT-201"
+        - "FEAT-202"
+        - "FEAT-203"
+      milestones:
+        - name: "Release 2.0 Launch"
+          date: "2025-12-31"
+          type: "deployment"
+      confidence: "medium"
+      dependencies:
+        - "Release 1.0 foundation complete"
+
+    - timeframe: "Release 3.0 - Q1 2026 (Months 13-18)"
+      theme: "Personalization & Analytics"
+      objectives:
+        - "Deliver personalized user experience"
+        - "Enable advanced analytics and insights"
+      features:
+        - "FEAT-301"
+        - "FEAT-302"
+      milestones:
+        - name: "Release 3.0 Launch"
+          date: "2026-03-31"
+          type: "deployment"
+      confidence: "low"
+  lastReviewed: "2025-10-11"
+  reviewCadence: "quarterly"
+  notes: "Roadmap adjusted quarterly based on customer feedback and market conditions"
+
+releases:
+  - id: "REL-001"
+    name: "Customer Portal Foundation Release"
+    version: "1.0.0"
+    startDate: "2025-01-01"
+    endDate: "2025-06-30"
+    productId: "customer-portal"
+    status: "planning"
+    releaseType: "major"
+
+stakeholders:
+  - id: "stakeholder-1"
+    name: "Jane Smith"
+    role: "VP of Customer Service"
+    influence: "high"
+    interest: "high"
+
+  - id: "stakeholder-2"
+    name: "Bob Johnson"
+    role: "Chief Customer Officer"
+    influence: "high"
+    interest: "high"
+
+  - id: "stakeholder-3"
+    name: "Maria Garcia"
+    role: "Director of IT"
+    influence: "medium"
+    interest: "high"
+
+  - id: "stakeholder-4"
+    name: "Tom Chen"
+    role: "VP of Operations"
+    influence: "high"
+    interest: "medium"
+
+metrics:
+  northStar: "Customer Self-Service Resolution Rate"
+  kpis:
+    - name: "Portal Active Users"
+      description: "Monthly active users of the portal"
+      target: 25000
+      current: 0
+      unit: "users"
+
+    - name: "Average Session Duration"
+      description: "Time customers spend in portal per session"
+      target: 5
+      current: 0
+      unit: "minutes"
+
+    - name: "Task Completion Rate"
+      description: "Percentage of sessions where customer completes intended task"
+      target: 85
+      current: 0
+      unit: "percent"
+
+metadata:
+  created: "2025-09-01T10:00:00Z"
+  updated: "2025-10-11T14:30:00Z"
+  createdBy: "product-team"
+  updatedBy: "jane-smith"
+  tags:
+    - "customer-experience"
+    - "self-service"
+    - "digital-transformation"
+    - "strategic-initiative"

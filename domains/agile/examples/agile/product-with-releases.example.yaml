@@ -1,0 +1,378 @@
+# Example: Product with Multiple Releases
+# Demonstrates Product structure with releases and enhanced roadmap
+
+id: "commercepay-platform"
+name: "CommercePay Platform"
+
+description: |
+  A modern, cloud-native digital banking platform for commercial banking clients,
+  enabling self-service account opening, transaction management, and cash management
+  capabilities while maintaining regulatory compliance with Canadian banking standards.
+
+vision:
+  futureStateDescription: |
+    Within 18 months, Sterling Financial Group will have transformed commercial banking
+    operations with a fully digital platform that reduces account opening time from 3-4
+    weeks to minutes, provides 24/7 self-service capabilities, and positions us as the
+    digital leader in Canadian commercial banking. This platform will serve 45,000 business
+    clients with seamless online and in-branch experiences while maintaining the security,
+    compliance, and reliability expected from a Tier 1 Canadian bank.
+
+  customerNeeds:
+    targetCustomers:
+      - "Sole proprietors and small businesses seeking efficient account opening"
+      - "Growing businesses needing sophisticated cash management tools"
+      - "Enterprise clients requiring integrations with accounting systems"
+      - "In-branch relationship managers serving complex client needs"
+
+    problemsBeingSolved:
+      - "Account opening takes 3-4 weeks and requires multiple branch visits"
+      - "No online account opening capability for business clients"
+      - "KYC/AML verification is manual, slow, and inconsistent"
+      - "Limited self-service capabilities force customers to call or visit branches"
+      - "No mobile banking experience for business clients"
+      - "Poor integration with business accounting software"
+      - "Manual compliance reporting creates operational burden"
+
+    valueProposition: |
+      Empower business clients with instant account opening, 24/7 self-service banking,
+      and seamless integration with business systems, while reducing operational costs
+      by 35% and improving customer satisfaction (NPS) from 48 to 80+.
+
+  solutionIntent:
+    approach: |
+      Build a cloud-native microservices platform on OpenShift with mobile-first web and
+      native mobile applications. Implement automated KYC/AML compliance checks, integrate
+      with core banking systems, and provide open APIs for third-party integrations.
+      Deploy incrementally across three major releases over 18 months.
+
+    keyCapabilities:
+      - "Real-time online account opening with automated compliance"
+      - "24/7 self-service account and transaction management"
+      - "Mobile banking apps for iOS and Android"
+      - "Integrated cash management and forecasting tools"
+      - "Seamless integrations with QuickBooks, Xero, SAP, and Sage"
+      - "Automated compliance reporting for FINTRAC and OSFI"
+      - "Bilingual support (English and French) throughout"
+
+    technicalDirection: |
+      Microservices architecture with Spring Boot services, Angular web apps, and React
+      Native mobile apps. Deployed on OpenShift (on-premises private cloud). PostgreSQL
+      for transactional data, MongoDB for flexible schemas. GitHub Enterprise for source
+      control and CI/CD via GitHub Actions. Dynatrace for observability and monitoring.
+
+    differentiators:
+      - "Fastest account opening in Canadian commercial banking (minutes vs. weeks)"
+      - "Dual-channel digital strategy (online + in-branch)"
+      - "Full bilingual support from day one"
+      - "Open API platform for ecosystem partnerships"
+      - "Enterprise-grade security and compliance automation"
+
+  boundaries:
+    inScope:
+      - "Account opening and onboarding for all business types"
+      - "Self-service account and transaction management"
+      - "Payment operations (ACH, wire, EFT, cross-border)"
+      - "Cash management and liquidity forecasting"
+      - "Mobile banking applications"
+      - "Integrations with major accounting systems"
+      - "Automated compliance reporting"
+
+    outOfScope:
+      - "Business loan origination (separate platform)"
+      - "Merchant payment processing (existing vendor relationship)"
+      - "Trade finance and letters of credit (future consideration)"
+      - "Wealth management services (separate division)"
+      - "International banking beyond CAD/USD"
+
+    constraints:
+      - "Must comply with OSFI, FINTRAC, and PIPEDA regulations"
+      - "Customer data must remain in Canada (data sovereignty)"
+      - "Must integrate with legacy core banking system (SAP)"
+      - "Budget of $45M over 18 months"
+      - "Must support 45,000 existing clients with zero downtime migration"
+
+    assumptions:
+      - "Core banking APIs will meet performance SLAs (< 500ms)"
+      - "Business clients have modern browsers and mobile devices"
+      - "Identity verification and KYC/AML vendors available"
+      - "Regulatory approval for digital account opening achievable"
+      - "ART can scale to 9 teams (75 people) by PI-2"
+
+    dependencies:
+      - "Core banking API availability and performance"
+      - "Identity verification vendor partnerships"
+      - "Credit bureau and sanctions list API access"
+      - "GitHub Enterprise and OpenShift infrastructure readiness"
+      - "Regulatory approvals from OSFI for digital onboarding"
+
+  strategicAlignment:
+    businessObjectives:
+      - "Reduce operational costs by $12M annually"
+      - "Improve customer satisfaction (NPS) from 48 to 80+"
+      - "Capture 15% market share in SMB segment"
+      - "Position as digital leader in Canadian commercial banking"
+      - "Enable Open Banking readiness for 2026"
+
+    strategicThemes:
+      - "Digital Transformation"
+      - "Customer Experience Excellence"
+      - "Operational Efficiency"
+      - "Regulatory Excellence"
+      - "Platform Innovation"
+
+    successMetrics:
+      - name: "Account Opening Time"
+        description: "Time to open account (online)"
+        target: 15
+        current: 1680
+        unit: "minutes"
+
+      - name: "Customer Satisfaction (NPS)"
+        description: "Net Promoter Score"
+        target: 80
+        current: 48
+        unit: "score"
+
+      - name: "Operational Cost Reduction"
+        description: "Reduction in processing costs"
+        target: 35
+        current: 0
+        unit: "percent"
+
+      - name: "Digital Adoption Rate"
+        description: "Percentage of clients using digital channels"
+        target: 75
+        current: 15
+        unit: "percent"
+
+    outcomes:
+      - "Business clients have frictionless digital banking experience"
+      - "Operational staff focus on high-value advisory services"
+      - "Competitive advantage in commercial banking market"
+      - "Regulatory compliance systematized and automated"
+      - "Platform foundation for future innovation"
+
+  motivationalNarrative: |
+    Commercial banking has been stuck in the past for too long. While consumers enjoy
+    seamless digital banking, our business clients endure weeks of paperwork, manual
+    processes, and frustrating experiences. CommercePay changes everything.
+
+    We're building the platform that makes business banking as easy as consumer banking—
+    with the security, compliance, and sophistication that businesses demand. Account
+    opening in minutes, not weeks. Cash management at your fingertips. Integration with
+    the tools businesses already use. Available 24/7, bilingual, mobile-first.
+
+    This is about respect for our customers' time and our employees' expertise. We're
+    automating the tedious work so our people can focus on advisory services and
+    relationship building. We're meeting regulatory requirements faster and more
+    consistently than ever before. We're showing the market that a Tier 1 Canadian bank
+    can move fast and innovate boldly.
+
+    CommercePay is our digital foundation. Every capability we build—from account opening
+    to cash management to ecosystem integrations—makes us more competitive, more
+    efficient, and more valuable to our clients. This is how we win the next decade of
+    commercial banking.
+
+  decisionFramework:
+    guidingPrinciples:
+      - "Customer time is precious - optimize for speed and simplicity"
+      - "Mobile-first - business clients increasingly use mobile devices"
+      - "Compliance as enabler - automate to reduce risk and accelerate delivery"
+      - "API-first - build for integration and ecosystem partnerships"
+      - "Bilingual by design - French and English throughout"
+      - "Security and privacy first - protect client data rigorously"
+      - "Incremental value delivery - release early and often"
+
+    tradeoffCriteria:
+      - "Security and compliance never compromised for speed"
+      - "Customer value over feature completeness"
+      - "MVP approach - start simple, expand based on learning"
+      - "Build for scale from day one (50K+ clients)"
+      - "When in doubt, prioritize automation over manual workflows"
+
+    alignmentMechanisms:
+      - "Quarterly strategic reviews with executive leadership"
+      - "Monthly customer advisory board meetings"
+      - "Bi-weekly ART Sync for program-level alignment"
+      - "PI Planning every 12 weeks for release planning"
+      - "Vision referenced in every planning session"
+
+  lastUpdated: "2025-01-10"
+
+roadmap:
+  level: "product"
+  timeHorizon: "18 months (6 Program Increments)"
+  items:
+    - timeframe: "Release 1.0 (Q1 2025 / PI-1 & PI-2)"
+      theme: "Foundation - Account Opening & Onboarding"
+      objectives:
+        - "Enable real-time online account opening"
+        - "Automate KYC/AML compliance"
+        - "Launch digital in-branch workflows"
+      epics:
+        - "EPIC-001"
+      features:
+        - "FEAT-101"
+        - "FEAT-102"
+        - "FEAT-103"
+        - "FEAT-104"
+        - "FEAT-105"
+        - "FEAT-106"
+        - "FEAT-107"
+        - "FEAT-108"
+      milestones:
+        - name: "Release 1.0 Launch"
+          date: "2025-04-30"
+          type: "deployment"
+      confidence: "high"
+
+    - timeframe: "Release 2.0 (Q2-Q3 2025 / PI-3 & PI-4)"
+      theme: "Expansion - Self-Service & Mobile"
+      objectives:
+        - "Deliver account and transaction management"
+        - "Enable payment operations"
+        - "Launch mobile apps (iOS & Android)"
+      epics:
+        - "EPIC-002"
+        - "EPIC-003"
+        - "EPIC-007"
+      features: []
+      milestones:
+        - name: "Release 2.0 Launch"
+          date: "2025-09-30"
+          type: "deployment"
+      confidence: "high"
+      dependencies:
+        - "Release 1.0 foundation complete"
+
+    - timeframe: "Release 3.0 (Q4 2025 / PI-5 & PI-6)"
+      theme: "Intelligence - Cash Management & Integration"
+      objectives:
+        - "Deliver cash management tools"
+        - "Enable compliance reporting automation"
+        - "Launch accounting system integrations"
+      epics:
+        - "EPIC-004"
+        - "EPIC-005"
+        - "EPIC-006"
+      features: []
+      milestones:
+        - name: "Release 3.0 Launch"
+          date: "2025-12-31"
+          type: "deployment"
+      confidence: "medium"
+      dependencies:
+        - "Release 2.0 payment operations complete"
+        - "Partner agreements with QuickBooks, Xero, SAP"
+
+  lastReviewed: "2025-01-10"
+  reviewCadence: "quarterly"
+  notes: |
+    Product roadmap reviewed quarterly with business leadership. Release scope and
+    timing may adjust based on market feedback and regulatory requirements. Focus
+    remains on incremental value delivery with each release.
+
+releases:
+  - id: "REL-001"
+    name: "CommercePay Foundation Release"
+    version: "1.0.0"
+    startDate: "2025-01-15"
+    endDate: "2025-04-30"
+    productId: "commercepay-platform"
+    status: "development"
+    releaseType: "major"
+
+  - id: "REL-002"
+    name: "CommercePay Expansion Release"
+    version: "2.0.0"
+    startDate: "2025-05-01"
+    endDate: "2025-09-30"
+    productId: "commercepay-platform"
+    status: "planning"
+    releaseType: "major"
+
+  - id: "REL-003"
+    name: "CommercePay Intelligence Release"
+    version: "3.0.0"
+    startDate: "2025-10-01"
+    endDate: "2025-12-31"
+    productId: "commercepay-platform"
+    status: "planning"
+    releaseType: "major"
+
+stakeholders:
+  - id: "sarah-chen"
+    name: "Sarah Chen"
+    role: "Senior VP Commercial Banking / Product Owner"
+    influence: "high"
+    interest: "high"
+
+  - id: "marcus-thompson"
+    name: "Marcus Thompson"
+    role: "Chief Compliance Officer"
+    influence: "high"
+    interest: "high"
+
+  - id: "jennifer-rodriguez"
+    name: "Jennifer Rodriguez"
+    role: "SVP Operations"
+    influence: "high"
+    interest: "high"
+
+  - id: "david-kim"
+    name: "David Kim"
+    role: "Chief Financial Officer"
+    influence: "high"
+    interest: "medium"
+
+  - id: "raj-patel"
+    name: "Raj Patel"
+    role: "Chief Technology Officer / Solution Architect"
+    influence: "high"
+    interest: "high"
+
+  - id: "emily-carter"
+    name: "Emily Carter"
+    role: "VP Engineering / Release Train Engineer"
+    influence: "high"
+    interest: "high"
+
+metrics:
+  northStar: "Digital Adoption Rate (clients using digital channels)"
+  kpis:
+    - name: "Monthly Active Users"
+      description: "Business clients actively using the platform"
+      target: 33750
+      current: 0
+      unit: "users"
+
+    - name: "Platform Availability"
+      description: "Platform uptime"
+      target: 99.95
+      current: 0
+      unit: "percent"
+
+    - name: "Transaction Success Rate"
+      description: "Successful transactions / total transactions"
+      target: 99.5
+      current: 0
+      unit: "percent"
+
+    - name: "Customer Effort Score"
+      description: "Ease of using platform (1-7 scale)"
+      target: 6.5
+      current: 4.2
+      unit: "score"
+
+metadata:
+  created: "2024-10-01T10:00:00Z"
+  updated: "2025-01-10T14:30:00Z"
+  createdBy: "sarah-chen"
+  updatedBy: "sarah-chen"
+  tags:
+    - "commercepay"
+    - "commercial-banking"
+    - "digital-transformation"
+    - "platform"
+    - "strategic-initiative"

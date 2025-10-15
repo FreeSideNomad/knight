@@ -1,0 +1,410 @@
+# Example: SAFe Program Increment Planning
+# Demonstrates ART, PI, Teams, Features structure
+
+id: "PI-2025-Q1"
+name: "Program Increment 2025 Q1"
+number: 5
+startDate: "2025-01-06"
+endDate: "2025-03-27"
+artId: "ART-CUSTOMER-PLATFORM"
+
+iterations:
+  - "ITER-2025-Q1-1"
+  - "ITER-2025-Q1-2"
+  - "ITER-2025-Q1-3"
+  - "ITER-2025-Q1-4"
+  - "ITER-2025-Q1-5"
+  - "ITER-2025-Q1-IP"  # Innovation & Planning iteration
+
+objectives:
+  - teamId: "TEAM-001-FRONTEND"
+    objectives:
+      - description: "Complete customer portal authentication and account access"
+        businessValue: 9
+        committed: true
+        status: "in-progress"
+
+      - description: "Implement responsive mobile-first dashboard"
+        businessValue: 8
+        committed: true
+        status: "in-progress"
+
+      - description: "Integrate with legacy SSO system"
+        businessValue: 7
+        committed: true
+        status: "not-started"
+
+      - description: "Implement accessibility features (WCAG 2.1 AA)"
+        businessValue: 6
+        committed: false
+        status: "not-started"
+
+  - teamId: "TEAM-002-BACKEND"
+    objectives:
+      - description: "Build customer data API with sub-500ms response time"
+        businessValue: 10
+        committed: true
+        status: "in-progress"
+
+      - description: "Implement order history service with pagination"
+        businessValue: 9
+        committed: true
+        status: "in-progress"
+
+      - description: "Create invoice retrieval microservice"
+        businessValue: 8
+        committed: true
+        status: "not-started"
+
+      - description: "Implement caching layer for performance"
+        businessValue: 7
+        committed: false
+        status: "not-started"
+
+  - teamId: "TEAM-003-INTEGRATION"
+    objectives:
+      - description: "Complete ERP integration for customer data"
+        businessValue: 10
+        committed: true
+        status: "in-progress"
+
+      - description: "Integrate with shipping partners for tracking"
+        businessValue: 9
+        committed: true
+        status: "not-started"
+
+      - description: "Build API gateway with rate limiting"
+        businessValue: 7
+        committed: true
+        status: "not-started"
+
+  - teamId: "TEAM-004-QA-DEVOPS"
+    objectives:
+      - description: "Establish CI/CD pipeline with automated testing"
+        businessValue: 8
+        committed: true
+        status: "in-progress"
+
+      - description: "Implement performance testing framework"
+        businessValue: 7
+        committed: true
+        status: "not-started"
+
+      - description: "Setup production monitoring and alerting"
+        businessValue: 8
+        committed: true
+        status: "not-started"
+
+      - description: "Conduct security penetration testing"
+        businessValue: 6
+        committed: false
+        status: "not-started"
+
+features:
+  - "FEAT-101"  # Customer Authentication
+  - "FEAT-102"  # Account Dashboard
+  - "FEAT-103"  # Order History
+  - "FEAT-104"  # Invoice Access
+
+planning:
+  date: "2024-12-18"
+  location: "Conference Center / Virtual"
+  attendees:
+    - "RTE: Sarah Martinez"
+    - "Product Manager: David Lee"
+    - "System Architect: Kumar Patel"
+    - "Business Owner: Jane Smith (VP Customer Service)"
+    - "Business Owner: Tom Chen (VP Operations)"
+    - "All team members (48 people)"
+  confidenceVote: 4.2
+
+risks:
+  - id: "RISK-001"
+    description: "ERP API performance may not meet 500ms target"
+    impact: "high"
+    probability: "medium"
+    roam: "mitigated"
+    owner: "kumar-patel"
+    mitigation: |
+      Working with ERP team to optimize queries. Implementing caching layer as backup.
+      Will validate performance in Iteration 1. If not met, will use cached data with
+      5-minute refresh instead of real-time.
+
+  - id: "RISK-002"
+    description: "Legacy SSO integration more complex than estimated"
+    impact: "high"
+    probability: "medium"
+    roam: "owned"
+    owner: "frontend-team-lead"
+    mitigation: |
+      Allocated spike story in Iteration 1 to validate integration approach. Security
+      team committed to provide support. Backup plan: implement standard OAuth2 if SSO
+      integration blocked.
+
+  - id: "RISK-003"
+    description: "Dependency on Shipping API availability from Partner A"
+    impact: "medium"
+    probability: "low"
+    roam: "owned"
+    owner: "david-lee"
+    mitigation: |
+      Product Management in contact with Partner A. Signed API access agreement.
+      Contingency: start with Partner B and C who have confirmed API access.
+
+  - id: "RISK-004"
+    description: "WCAG accessibility requirements may require design rework"
+    impact: "medium"
+    probability: "medium"
+    roam: "accepted"
+    owner: "ux-lead"
+    mitigation: |
+      Acknowledged as stretch goal (uncommitted objective). Will address in PI+1 if
+      not completed. Already have accessibility expert consulting on design.
+
+predictability: null  # Will be calculated at PI end
+status: "executing"
+
+metadata:
+  created: "2024-12-18T09:00:00Z"
+  updated: "2025-01-15T16:45:00Z"
+  createdBy: "sarah-martinez"
+  updatedBy: "sarah-martinez"
+  tags:
+    - "customer-portal"
+    - "pi-5"
+    - "q1-2025"
+
+---
+# Agile Release Train Definition
+
+id: "ART-CUSTOMER-PLATFORM"
+name: "Customer Platform ART"
+
+mission: |
+  Deliver exceptional customer-facing digital experiences that enable self-service,
+  reduce support costs, and increase customer satisfaction.
+
+valueStream: "Customer Experience Value Stream"
+
+teams:
+  - "TEAM-001-FRONTEND"
+  - "TEAM-002-BACKEND"
+  - "TEAM-003-INTEGRATION"
+  - "TEAM-004-QA-DEVOPS"
+
+roles:
+  releaseTrainEngineer: "sarah-martinez"
+  productManager: "david-lee"
+  systemArchitect: "kumar-patel"
+  businessOwners:
+    - "jane-smith"    # VP Customer Service
+    - "tom-chen"      # VP Operations
+    - "maria-garcia"  # Director IT
+
+cadence:
+  piDurationWeeks: 11  # 5 iterations + 1 IP iteration (2 weeks each, minus holidays)
+  iterationDurationWeeks: 2
+
+programBacklog:
+  - "FEAT-101"
+  - "FEAT-102"
+  - "FEAT-103"
+  - "FEAT-104"
+  - "FEAT-201"
+  - "FEAT-202"
+  - "FEAT-203"
+
+currentPI: "PI-2025-Q1"
+
+metadata:
+  created: "2024-06-01T00:00:00Z"
+  updated: "2025-01-15T16:45:00Z"
+  createdBy: "safe-transformation-team"
+  updatedBy: "sarah-martinez"
+  tags:
+    - "customer-platform"
+    - "art"
+    - "safe"
+
+---
+# Feature Example (referenced in PI)
+
+id: "FEAT-101"
+title: "Secure Customer Authentication & Account Access"
+type: "business"
+
+description: |
+  Enable customers to securely log into the portal using their existing credentials
+  or SSO for enterprise customers. Customers should be able to access their account
+  information including profile, preferences, and notification settings.
+
+benefitHypothesis: |
+  Providing secure, easy authentication will enable customers to access self-service
+  features, reducing password-related customer service calls by 25% and enabling all
+  other portal features.
+
+acceptanceCriteria:
+  - "Customer can log in using email/password"
+  - "Enterprise customers can use SSO (SAML 2.0)"
+  - "Multi-factor authentication available as opt-in"
+  - "Password reset flow requires no customer service intervention"
+  - "Session management with 30-minute idle timeout"
+  - "Account lockout after 5 failed attempts"
+  - "Accessibility: WCAG 2.1 AA compliant"
+  - "Performance: Login completes in <2 seconds at p95"
+
+nonfunctionalRequirements:
+  - "SOC 2 compliance for authentication"
+  - "GDPR compliance for user data"
+  - "Support 10,000 concurrent logins"
+  - "99.9% authentication service uptime"
+
+epicId: "EPIC-100"
+
+stories:
+  - "US-101"
+  - "US-102"
+  - "US-103"
+  - "US-104"
+  - "US-105"
+
+status: "in-progress"
+
+wsjf:
+  userBusinessValue: 13
+  timeCriticality: 8
+  riskReductionOpportunity: 13
+  jobSize: 8
+  wsjfScore: 4.25  # (13 + 8 + 13) / 8
+
+piId: "PI-2025-Q1"
+teamId: "TEAM-001-FRONTEND"
+
+metadata:
+  created: "2024-11-15T00:00:00Z"
+  updated: "2025-01-15T10:30:00Z"
+  createdBy: "david-lee"
+  updatedBy: "frontend-po"
+  tags:
+    - "authentication"
+    - "security"
+    - "foundation"
+
+---
+# Team Example
+
+id: "TEAM-001-FRONTEND"
+name: "Frontend Experience Team"
+type: "scrum"
+
+members:
+  - id: "dev-001"
+    name: "Alice Johnson"
+    email: "alice.johnson@company.com"
+    role: "Senior Frontend Developer"
+    skills:
+      - "React"
+      - "TypeScript"
+      - "CSS/SCSS"
+      - "Accessibility"
+    capacity: 90
+
+  - id: "dev-002"
+    name: "Bob Williams"
+    email: "bob.williams@company.com"
+    role: "Frontend Developer"
+    skills:
+      - "React"
+      - "JavaScript"
+      - "HTML/CSS"
+    capacity: 100
+
+  - id: "dev-003"
+    name: "Carol Martinez"
+    email: "carol.martinez@company.com"
+    role: "UX Engineer"
+    skills:
+      - "React"
+      - "UI Design"
+      - "Figma"
+      - "User Testing"
+    capacity: 85
+
+  - id: "dev-004"
+    name: "David Brown"
+    email: "david.brown@company.com"
+    role: "Frontend Developer"
+    skills:
+      - "React"
+      - "Redux"
+      - "Testing"
+    capacity: 100
+
+  - id: "qa-001"
+    name: "Eve Davis"
+    email: "eve.davis@company.com"
+    role: "QA Engineer"
+    skills:
+      - "Test Automation"
+      - "Selenium"
+      - "Accessibility Testing"
+    capacity: 100
+
+  - id: "po-001"
+    name: "Frank Wilson"
+    email: "frank.wilson@company.com"
+    role: "Product Owner"
+    skills:
+      - "Product Management"
+      - "Customer Research"
+      - "Story Writing"
+    capacity: 80
+
+  - id: "sm-001"
+    name: "Grace Lee"
+    email: "grace.lee@company.com"
+    role: "Scrum Master"
+    skills:
+      - "Facilitation"
+      - "Agile Coaching"
+      - "Impediment Removal"
+    capacity: 70
+
+roles:
+  productOwner: "po-001"
+  scrumMaster: "sm-001"
+  techLead: "dev-001"
+
+capacity:
+  velocityAverage: 42
+  hoursPerSprint: 280  # 7 people * 40 hours, accounting for capacity %
+
+backlog:
+  - "US-101"
+  - "US-102"
+  - "US-103"
+  - "US-106"
+  - "US-107"
+
+currentIteration: "ITER-2025-Q1-2"
+artId: "ART-CUSTOMER-PLATFORM"
+
+practices:
+  - "daily-standup"
+  - "sprint-planning"
+  - "sprint-review"
+  - "sprint-retrospective"
+  - "backlog-refinement"
+  - "test-driven-development"
+  - "pair-programming"
+  - "code-review"
+  - "continuous-integration"
+
+metadata:
+  created: "2024-06-01T00:00:00Z"
+  updated: "2025-01-15T09:00:00Z"
+  createdBy: "safe-transformation-team"
+  updatedBy: "grace-lee"
+  tags:
+    - "frontend"
+    - "customer-portal"
