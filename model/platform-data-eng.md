@@ -66,6 +66,10 @@ Quick navigation to all identified objects:
 
 ### Other
 
+- [sch-account-status-change](#sch-account-status-change)
+- [sch-client-reference](#sch-client-reference)
+- [sch-daily-srf-sync](#sch-daily-srf-sync)
+- [sch-express-user-sync](#sch-express-user-sync)
 - [trx-clean-accounts](#trx-clean-accounts)
 - [trx-consume-events](#trx-consume-events)
 - [trx-map-users](#trx-map-users)
@@ -189,9 +193,9 @@ Quick navigation to all identified objects:
 <a id="data-products"></a>
 ## Data Products
 
-| Id | Name | Description | Access Patterns | Bounded Context Ref | Contracts | Datasets |
-| --- | --- | --- | --- | --- | --- | --- |
-| [Account Serving Data Product](#dp-account-serving) | Account Data Serving Product | Read-only serving layer for Service Profile domain | *list* | ddd:BoundedContext:bc_account_data_serving | *list* | *list* |
+| Id | Name | Description | Access Patterns | Bounded Context Ref | Contracts | Datasets | Owner |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| [Account Serving Data Product](#dp-account-serving) | Account Data Serving Product | Read-only serving layer for Service Profile domain | *list* | ddd:BoundedContext:bc_account_data_serving | *list* | *list* | *dict* |
 
 
 ---

@@ -44,7 +44,7 @@ $defs:
         type: array
         description: Programs or ARTs delivering this product
         items:
-          $ref: '#/$defs/Program'
+          $ref: '#/$defs/agile_release_train'
       stakeholders:
         type: array
         description: product stakeholders
@@ -947,7 +947,7 @@ $defs:
         pattern: ^[0-9]+\.[0-9]+\.[0-9]+$
         description: Semantic version number
       vision:
-        $ref: '#/$defs/releasevision'
+        $ref: '#/$defs/release_vision'
       startDate:
         type: string
         format: date
@@ -1955,7 +1955,7 @@ oneOf:
 - $ref: '#/$defs/program_increment'
 - $ref: '#/$defs/release'
 - $ref: '#/$defs/team'
-- $ref: '#/$defs/AgilereleaseTrain'
+- $ref: '#/$defs/agile_release_train'
 - $ref: '#/$defs/non_functional_requirement'
 - $ref: '#/$defs/architectural_runway'
 - $ref: '#/$defs/enabler'
@@ -1965,7 +1965,7 @@ oneOf:
 - $ref: '#/$defs/technical_debt'
 - $ref: '#/$defs/estimation_technique'
 - $ref: '#/$defs/definition_of_ready'
-- $ref: '#/$defs/teamTopology'
+- $ref: '#/$defs/team_topology'
 - $ref: '#/$defs/working_agreement'
 - $ref: '#/$defs/feedback_loop'
 - $ref: '#/$defs/increment'

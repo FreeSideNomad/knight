@@ -46,48 +46,65 @@ pipelines:
     description: "Daily batch sync of client-owned accounts from SRF"
     mode: "batch"
     schedule:
+      id: "sch-daily-srf-sync"
       type: "cron"
       cron_expression: "0 6 * * *"  # Daily at 6 AM
     stages:
-      - "stg-srf-extract"
-      - "stg-account-transform"
-      - "stg-account-load"
-      - "stg-change-detection"
+      - id: "stg-srf-extract"
+        name: "Extract SRF Account Data"
+      - id: "stg-account-transform"
+        name: "Transform Account Data"
+      - id: "stg-account-load"
+        name: "Load Account Gold Copy"
+      - id: "stg-change-detection"
+        name: "Detect Account Changes"
 
   - id: "pip-account-status-change"
     name: "Account Status Change Detection"
     description: "Detect new and closed accounts for auto-enrollment"
     mode: "batch"
     schedule:
+      id: "sch-account-status-change"
       type: "event"
       trigger: "pip-srf-account-sync completion"
     stages:
-      - "stg-compare-snapshots"
-      - "stg-identify-changes"
-      - "stg-notify-enrollment"
+      - id: "stg-compare-snapshots"
+        name: "Compare Account Snapshots"
+      - id: "stg-identify-changes"
+        name: "Identify New/Closed Accounts"
+      - id: "stg-notify-enrollment"
+        name: "Notify Auto-Enrollment"
 
   - id: "pip-express-user-sync"
     name: "Express User Synchronization"
     description: "Near real-time sync of direct client users from Express"
     mode: "streaming"
     schedule:
+      id: "sch-express-user-sync"
       type: "continuous"
     stages:
-      - "stg-express-consume"
-      - "stg-user-transform"
-      - "stg-user-persist"
+      - id: "stg-express-consume"
+        name: "Consume Express User Events"
+      - id: "stg-user-transform"
+        name: "Transform User Data"
+      - id: "stg-user-persist"
+        name: "Persist User Gold Copy"
 
   - id: "pip-client-reference"
     name: "Client Reference Data"
     description: "Daily sync of client demographics from SRF"
     mode: "batch"
     schedule:
+      id: "sch-client-reference"
       type: "cron"
       cron_expression: "0 5 * * *"  # Daily at 5 AM
     stages:
-      - "stg-client-extract"
-      - "stg-client-transform"
-      - "stg-client-load"
+      - id: "stg-client-extract"
+        name: "Extract Client Data"
+      - id: "stg-client-transform"
+        name: "Transform Client Data"
+      - id: "stg-client-load"
+        name: "Load Client Gold Copy"
 
 # ==============================================================================
 # STAGES
@@ -394,6 +411,9 @@ data_products:
   - id: "dp-account-serving"
     name: "Account Data Serving Product"
     description: "Read-only serving layer for Service Profile domain"
+    owner:
+      team: "data-engineering-team"
+      contact: "data-eng@bank.com"
     bounded_context_ref: "ddd:BoundedContext:bc_account_data_serving"
     datasets:
       - "ds-account-gold"

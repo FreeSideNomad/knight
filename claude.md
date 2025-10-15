@@ -258,6 +258,22 @@ To resume work, ask the user:
 - **Refine**: Enhance through iteration → Ask 3-5 questions → Loop until user says "done for this turn"
 - User can redirect at any time
 
+## Python Environment
+
+**CRITICAL**: Always use wrapper scripts that handle venv activation:
+
+```bash
+# Use wrapper scripts (they handle venv automatically)
+./validate-schema.sh              # Validate all models
+./validate-schema.sh model/platform-ddd.yaml  # Validate single model
+./convert-yaml.sh model/platform-ddd.yaml     # Convert YAML to MD
+```
+
+**Requirements**:
+- `venv/` directory exists in project root
+- All Python dependencies installed in venv
+- Use `.sh` wrapper scripts (not direct Python calls)
+
 ## Schema Validation Requirements
 
 **CRITICAL**: All models MUST be validated against their schemas:
@@ -267,12 +283,22 @@ To resume work, ask the user:
 - `platform-ux.yaml` → `domains/ux/model-schema.yaml`
 - `platform-qe.yaml` → `domains/qe/model-schema.yaml`
 
+**Validation Tool**: `./validate-schema.sh` (wraps `validate-schema.py`)
+
+```bash
+# Validate all models
+./validate-schema.sh
+
+# Validate single model
+./validate-schema.sh model/platform-ddd.yaml
+```
+
 **Validation Workflow**:
 1. Generate model YAML
-2. Validate against schema
-3. Fix any validation errors
+2. Validate against schema using `./validate-schema.sh`
+3. Fix any validation errors in YAML
 4. Re-validate until compliant
-5. Convert to MD for review
+5. Convert to MD using `./convert-yaml.sh` for review
 
 ---
 
