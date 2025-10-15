@@ -25,14 +25,12 @@ domains:
     description: >
       Core domain managing SERVICE PROFILES for clients (not clients themselves - client
       data from SRF/GID). Three profile types: servicing, online (direct client), indirect
-      (payor). Includes all service enrollment (stand-alone like BTR, online like Receivables,
-      indirect like receivable-approval). Indirect client management is part of this domain
-      since indirect clients exist only to serve indirect service profiles.
+      (payor). Service enrollment managed through application services (stand-alone like BTR,
+      online like Receivables, indirect like receivable-approval). Indirect client management
+      is part of this domain since indirect clients exist only to serve indirect service profiles.
     bounded_contexts:
       - bc_service_profile_management
       - bc_indirect_client_management
-      - bc_receivables_service
-      - bc_receivable_approval_service
 
   dom_user_management:
     id: dom_user_management
@@ -82,15 +80,18 @@ bounded_contexts:
     domain_ref: dom_service_profiles
     description: >
       Manages SERVICE PROFILES (not clients). Links to client data (SRF/GID/IND). Three
-      types: servicing, online, indirect. Enrolls services and accounts. Consumes account
-      data from bc_account_data_serving (read-only).
+      types: servicing, online, indirect. Enrolls services and accounts through application
+      services. Consumes account and client data from serving layers (read-only).
     responsibilities:
       - Create/manage service profiles (servicing, online, indirect)
       - Link profile to SRF/GID client data (external)
-      - Enroll services to profiles (stand-alone, online, indirect)
+      - Enroll services to profiles through application services
       - Enroll accounts to profiles (via serving layer)
       - Link online profile to Express (site-id)
       - Store permission/approval policies (owned by profile)
+    application_services:
+      - svc_app_receivables_enrollment
+      - svc_app_receivable_approval_enrollment
 
   bc_indirect_client_management:
     id: bc_indirect_client_management
@@ -106,33 +107,33 @@ bounded_contexts:
       - Link to direct client service profile
       - Support self-service management
 
-  bc_receivables_service:
-    id: bc_receivables_service
-    name: Receivables Service
-    domain_ref: dom_service_profiles
+  svc_app_receivables_enrollment:
+    id: svc_app_receivables_enrollment
+    name: Receivables Enrollment Service
+    bounded_context_ref: bc_service_profile_management
     description: >
-      Online service for direct clients. ONE OF MANY services in Service Profile domain.
-      Enrolls GSAN accounts, onboards indirect clients (payors). MVP focus but not special
-      - just another service type.
+      Application service for enrolling Receivables (online) service to direct client profiles.
+      Manages GSAN account linkage and indirect client (payor) onboarding for receivables.
+      ONE OF MANY service enrollment types.
     responsibilities:
       - Enroll receivables service for online profiles
       - Link GSAN accounts to service
       - Onboard indirect clients for direct client
       - Configure receivables settings
 
-  bc_receivable_approval_service:
-    id: bc_receivable_approval_service
-    name: Receivable-Approval Service
-    domain_ref: dom_service_profiles
+  svc_app_receivable_approval_enrollment:
+    id: svc_app_receivable_approval_enrollment
+    name: Receivable-Approval Enrollment Service
+    bounded_context_ref: bc_service_profile_management
     description: >
-      Indirect service enrolled by INDIRECT CLIENTS (payors). Separate business service
-      from Receivables. Uses generic approval engine for invoice approval workflows.
-      Parallel approval only (MVP).
+      Application service for enrolling Receivable-Approval (indirect) service to indirect
+      client profiles. Manages approval rule configuration and payor DDA account linkage.
+      Coordinates with Approval Engine for invoice approval workflows.
     responsibilities:
       - Enroll receivable-approval service for indirect profiles
       - Configure approval rules (via bc_approval_engine)
       - Link payor DDA accounts for payments
-      - Process invoice approvals (via bc_approval_engine)
+      - Coordinate invoice approvals (via bc_approval_engine)
 
   bc_user_lifecycle:
     id: bc_user_lifecycle
@@ -255,12 +256,13 @@ context_mappings:
 
   cm_receivable_approval_to_approval_engine:
     id: cm_receivable_approval_to_approval_engine
-    upstream_context: bc_receivable_approval_service
+    upstream_context: bc_service_profile_management
     downstream_context: bc_approval_engine
     relationship_type: customer_supplier
     description: >
-      Receivable-Approval Service triggers invoice approvals via generic Approval Engine.
-      Approval Engine provides reusable workflow logic.
+      Service Profile Management (via Receivable-Approval Enrollment application service)
+      triggers invoice approvals via generic Approval Engine. Approval Engine provides
+      reusable workflow logic.
 
   cm_service_profile_to_indirect_clients:
     id: cm_service_profile_to_indirect_clients
