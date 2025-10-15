@@ -35,25 +35,27 @@ domains:
   dom_user_management:
     id: dom_user_management
     name: User Management
-    type: supporting
-    strategic_importance: important
+    type: core
+    strategic_importance: critical
     description: >
       User lifecycle for direct clients (Express sync) and indirect clients (Okta managed).
-      Identity provider integration with dual providers.
+      Identity provider integration with dual providers. Permission and approval policy
+      management (AWS IAM-inspired). Policies define WHO can DO WHAT on WHICH resources.
     bounded_contexts:
       - bc_user_lifecycle
       - bc_identity_integration
+      - bc_permission_management
 
   dom_approval_workflows:
     id: dom_approval_workflows
     name: Approval Workflows
-    type: core
-    strategic_importance: critical
+    type: supporting
+    strategic_importance: important
     description: >
-      Generic approval workflow engine. AWS IAM-inspired permission model. Parallel approval
-      only (MVP). Reusable across all services.
+      Generic approval workflow execution engine. Executes approval workflows based on
+      policies defined in User Management domain. Parallel approval only (MVP). Reusable
+      across all services.
     bounded_contexts:
-      - bc_permission_management
       - bc_approval_engine
 
   dom_client_account_integration:
@@ -164,23 +166,26 @@ bounded_contexts:
   bc_permission_management:
     id: bc_permission_management
     name: Permission Management
-    domain_ref: dom_approval_workflows
+    domain_ref: dom_user_management
     description: >
-      AWS IAM-inspired permission/approval policies. Subject (user), action (URN), resource
-      (accounts). Approval policy adds approver count and thresholds.
+      AWS IAM-inspired permission and approval policy management. Subject (user), action (URN),
+      resource (accounts). Approval policy adds approver count and thresholds. Defines WHO can
+      DO WHAT on WHICH resources. Policies consumed by Approval Engine for workflow execution.
     responsibilities:
       - Store permission policies (profiles and indirect clients)
       - Store approval policies with approver rules
       - Validate user permissions
-      - Determine approval requirements
+      - Determine approval requirements for actions
+      - Provide policy evaluation API for approval workflows
 
   bc_approval_engine:
     id: bc_approval_engine
     name: Approval Engine
     domain_ref: dom_approval_workflows
     description: >
-      Generic approval workflow engine. Parallel approval only (MVP). Single or multiple
-      approvers. Amount-based thresholds. States: pending, approved, rejected, expired.
+      Generic approval workflow execution engine. Executes workflows based on policies from
+      Permission Management. Parallel approval only (MVP). Single or multiple approvers.
+      Amount-based thresholds. States: pending, approved, rejected, expired.
       Reusable across all services.
     responsibilities:
       - Create approval workflow instances
@@ -254,6 +259,16 @@ context_mappings:
       from Client Data Serving (upstream) for profile creation and validation. Read-only
       access to gold copy.
 
+  cm_approval_engine_to_permission_management:
+    id: cm_approval_engine_to_permission_management
+    upstream_context: bc_permission_management
+    downstream_context: bc_approval_engine
+    relationship_type: customer_supplier
+    description: >
+      Approval Engine (downstream) consumes permission and approval policies from Permission
+      Management (upstream). Evaluates policies to determine approval requirements and enforce
+      rules during workflow execution.
+
   cm_receivable_approval_to_approval_engine:
     id: cm_receivable_approval_to_approval_engine
     upstream_context: bc_service_profile_management
@@ -262,7 +277,7 @@ context_mappings:
     description: >
       Service Profile Management (via Receivable-Approval Enrollment application service)
       triggers invoice approvals via generic Approval Engine. Approval Engine provides
-      reusable workflow logic.
+      reusable workflow execution.
 
   cm_service_profile_to_indirect_clients:
     id: cm_service_profile_to_indirect_clients

@@ -34,6 +34,7 @@ Quick navigation to all identified objects:
 ### Context Mappings
 
 - [Account Sync To Srf Context Mapping](#cm-account-sync-to-srf)
+- [Approval Engine To Permission Management Context Mapping](#cm-approval-engine-to-permission-management)
 - [Identity Integration To Express Context Mapping](#cm-identity-integration-to-express)
 - [Receivable Approval To Approval Engine Context Mapping](#cm-receivable-approval-to-approval-engine)
 - [Service Profile To Account Serving Context Mapping](#cm-service-profile-to-account-serving)
@@ -106,17 +107,18 @@ Core domain managing SERVICE PROFILES for clients (not clients themselves - clie
 
 **Name**: User Management
 
-**Type**: supporting
+**Type**: core
 
-**Strategic Importance**: important
+**Strategic Importance**: critical
 
 **Description**: 
-User lifecycle for direct clients (Express sync) and indirect clients (Okta managed). Identity provider integration with dual providers.
+User lifecycle for direct clients (Express sync) and indirect clients (Okta managed). Identity provider integration with dual providers. Permission and approval policy management (AWS IAM-inspired). Policies define WHO can DO WHAT on WHICH resources.
 
 ##### Bounded Contexts
 
 - bc_user_lifecycle
 - bc_identity_integration
+- bc_permission_management
 
 #### Dom Approval Workflows
 
@@ -125,16 +127,15 @@ User lifecycle for direct clients (Express sync) and indirect clients (Okta mana
 
 **Name**: Approval Workflows
 
-**Type**: core
+**Type**: supporting
 
-**Strategic Importance**: critical
+**Strategic Importance**: important
 
 **Description**: 
-Generic approval workflow engine. AWS IAM-inspired permission model. Parallel approval only (MVP). Reusable across all services.
+Generic approval workflow execution engine. Executes approval workflows based on policies defined in User Management domain. Parallel approval only (MVP). Reusable across all services.
 
 ##### Bounded Contexts
 
-- bc_permission_management
 - bc_approval_engine
 
 #### Dom Client Account Integration
@@ -290,17 +291,18 @@ Anti-corruption layer for dual identity providers. Consumes Express user events 
 
 **Name**: Permission Management
 
-**Domain Ref**: [Approval Workflows Domain](#dom-approval-workflows)
+**Domain Ref**: [User Management Domain](#dom-user-management)
 
 **Description**: 
-AWS IAM-inspired permission/approval policies. Subject (user), action (URN), resource (accounts). Approval policy adds approver count and thresholds.
+AWS IAM-inspired permission and approval policy management. Subject (user), action (URN), resource (accounts). Approval policy adds approver count and thresholds. Defines WHO can DO WHAT on WHICH resources. Policies consumed by Approval Engine for workflow execution.
 
 ##### Responsibilities
 
 - Store permission policies (profiles and indirect clients)
 - Store approval policies with approver rules
 - Validate user permissions
-- Determine approval requirements
+- Determine approval requirements for actions
+- Provide policy evaluation API for approval workflows
 
 #### Bc Approval Engine
 
@@ -312,7 +314,7 @@ AWS IAM-inspired permission/approval policies. Subject (user), action (URN), res
 **Domain Ref**: [Approval Workflows Domain](#dom-approval-workflows)
 
 **Description**: 
-Generic approval workflow engine. Parallel approval only (MVP). Single or multiple approvers. Amount-based thresholds. States: pending, approved, rejected, expired. Reusable across all services.
+Generic approval workflow execution engine. Executes workflows based on policies from Permission Management. Parallel approval only (MVP). Single or multiple approvers. Amount-based thresholds. States: pending, approved, rejected, expired. Reusable across all services.
 
 ##### Responsibilities
 
@@ -413,6 +415,20 @@ Service Profile Management (downstream) consumes account data from Account Data 
 **Description**: 
 Service Profile Management (downstream) consumes client demographics and user data from Client Data Serving (upstream) for profile creation and validation. Read-only access to gold copy.
 
+#### Cm Approval Engine To Permission Management
+
+<a id="cm-approval-engine-to-permission-management"></a>
+**ID**: `cm_approval_engine_to_permission_management` (Approval Engine To Permission Management Context Mapping)
+
+**Upstream Context**: [Permission Management Bounded Context](#bc-permission-management)
+
+**Downstream Context**: [Approval Engine Bounded Context](#bc-approval-engine)
+
+**Relationship Type**: customer_supplier
+
+**Description**: 
+Approval Engine (downstream) consumes permission and approval policies from Permission Management (upstream). Evaluates policies to determine approval requirements and enforce rules during workflow execution.
+
 #### Cm Receivable Approval To Approval Engine
 
 <a id="cm-receivable-approval-to-approval-engine"></a>
@@ -425,7 +441,7 @@ Service Profile Management (downstream) consumes client demographics and user da
 **Relationship Type**: customer_supplier
 
 **Description**: 
-Service Profile Management (via Receivable-Approval Enrollment application service) triggers invoice approvals via generic Approval Engine. Approval Engine provides reusable workflow logic.
+Service Profile Management (via Receivable-Approval Enrollment application service) triggers invoice approvals via generic Approval Engine. Approval Engine provides reusable workflow execution.
 
 #### Cm Service Profile To Indirect Clients
 
