@@ -148,11 +148,10 @@ Generic approval workflow engine. AWS IAM-inspired permission model. Parallel ap
 **Strategic Importance**: important
 
 **Description**: 
-Data replication from external systems (SRF for client demographics and accounts via daily batch, Express users via events). Creates GOLD COPY of representative data. Provides SERVING LAYER (read-only) for Service Profile domain to access client demographics, account data, and user information for profile creation and account linkage.
+Provides SERVING LAYER (read-only) for Service Profile domain to access client demographics, account data, and user information for profile creation and account linkage. Consumes gold copy data created by data engineering pipelines.
 
 ##### Bounded Contexts
 
-- bc_account_data_sync
 - bc_account_data_serving
 - bc_client_data_serving
 
@@ -324,10 +323,8 @@ Generic approval workflow engine. Parallel approval only (MVP). Single or multip
 
 **Name**: Account Data Sync
 
-**Domain Ref**: [Client Account Integration Domain](#dom-client-account-integration)
-
 **Description**: 
-Data engineering ETL. Daily batch from SRF for client-owned accounts. Creates GOLD COPY of account data. Detects new/closed accounts. Data quality checks.
+Data engineering ETL infrastructure. Daily batch from SRF for client-owned accounts. Creates GOLD COPY of account data consumed by serving layer. Detects new/closed accounts. Data quality checks. Infrastructure supporting Client and Account Integration domain.
 
 ##### Responsibilities
 

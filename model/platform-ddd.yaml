@@ -64,12 +64,10 @@ domains:
     type: supporting
     strategic_importance: important
     description: >
-      Data replication from external systems (SRF for client demographics and accounts via daily
-      batch, Express users via events). Creates GOLD COPY of representative data. Provides SERVING
-      LAYER (read-only) for Service Profile domain to access client demographics, account data, and
-      user information for profile creation and account linkage.
+      Provides SERVING LAYER (read-only) for Service Profile domain to access client demographics,
+      account data, and user information for profile creation and account linkage. Consumes gold copy
+      data created by data engineering pipelines.
     bounded_contexts:
-      - bc_account_data_sync
       - bc_account_data_serving
       - bc_client_data_serving
 
@@ -193,10 +191,10 @@ bounded_contexts:
   bc_account_data_sync:
     id: bc_account_data_sync
     name: Account Data Sync
-    domain_ref: dom_client_account_integration
     description: >
-      Data engineering ETL. Daily batch from SRF for client-owned accounts. Creates GOLD
-      COPY of account data. Detects new/closed accounts. Data quality checks.
+      Data engineering ETL infrastructure. Daily batch from SRF for client-owned accounts.
+      Creates GOLD COPY of account data consumed by serving layer. Detects new/closed accounts.
+      Data quality checks. Infrastructure supporting Client and Account Integration domain.
     responsibilities:
       - Consume SRF daily batch feed
       - Create gold copy of account data
