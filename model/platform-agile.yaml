@@ -219,8 +219,7 @@ vision:
     successMetrics:
       - name: "MVP launch date"
         description: "Platform ready to support one large Receivables client with 700 payors"
-        target: 2026-06-30
-        current: null
+        target: 20260630
         unit: "date"
       - name: "Direct client onboarding"
         description: "Large Receivables client onboarded via employee portal (bank-managed, not self-service)"
@@ -245,17 +244,14 @@ vision:
       - name: "Invoice approval processing"
         description: "Average time for indirect client to approve invoice via receivable-approval workflow"
         target: 24
-        current: null
         unit: "hours"
       - name: "Express user sync latency"
         description: "Time from user add/update event in Express to replication in platform (direct clients)"
         target: 5
-        current: null
         unit: "minutes"
       - name: "Okta user lifecycle latency"
         description: "Time from platform user create/update to Okta provisioning (indirect clients)"
         target: 2
-        current: null
         unit: "seconds"
       - name: "Platform uptime"
         description: "System availability for client-facing services"

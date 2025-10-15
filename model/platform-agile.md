@@ -6,21 +6,40 @@
 
 # Table of Contents
 
-- [Product](#product)
+- [Id](#id)
+- [Name](#name)
+- [Description](#description)
+- [Vision](#vision)
+- [Metadata](#metadata)
 
 ---
 
-<a id="product"></a>
-## Product
+<a id="id"></a>
+## Id
 
-<a id="cash-mgmt-platform"></a>
-**ID**: `cash-mgmt-platform` (Cash Mgmt Platform)
+[Cash Mgmt Platform](#cash-mgmt-platform)
 
-**Name**: Commercial Banking Cash Management Platform
 
-**Description**: Unified platform for commercial banking cash management services, supporting client onboarding, service enrollment, user management, and approval workflows across North American markets
+---
 
-#### Vision
+<a id="name"></a>
+## Name
+
+Commercial Banking Cash Management Platform
+
+
+---
+
+<a id="description"></a>
+## Description
+
+Unified platform for commercial banking cash management services, supporting client onboarding, service enrollment, user management, and approval workflows across North American markets
+
+
+---
+
+<a id="vision"></a>
+## Vision
 
 **Future State Description**: 
 A modern, scalable cash management platform that empowers commercial banking clients across Canada and the US
@@ -28,9 +47,9 @@ to self-manage their banking services, users, and approval workflows through a u
 The platform eliminates manual processes, reduces operational overhead, and provides clients with real-time
 control over their banking relationships while maintaining robust security and compliance standards.
 
-##### Customer Needs
+#### Customer Needs
 
-###### Target Customers
+##### Target Customers
 
 - Existing Canadian commercial clients (Payedge initiative) requiring online Receivables service enrollment
 - Indirect clients (payors) managed by direct commercial clients, requiring receivable-approval service access
@@ -38,7 +57,7 @@ control over their banking relationships while maintaining robust security and c
 - Small business clients needing basic receivables and payment management capabilities
 - Future: US-based commercial clients requiring cross-border receivables capabilities
 
-###### Problems Being Solved
+##### Problems Being Solved
 
 - Payedge Receivables initiative cannot launch without platform support for client onboarding and user management
 - No existing receivables service to digitize - this is a new service offering requiring greenfield platform
@@ -57,14 +76,14 @@ for bank staff to manage client enrollment and monitor indirect client relations
 for indirect clients (payors) to independently manage their users, permissions, and approval rules. Generic
 approval workflow engine supports flexible invoice approval patterns (single/dual approver, thresholds).
 
-##### Solution Intent
+#### Solution Intent
 
 **Approach**: 
 Build a domain-driven, API-first platform with clear bounded contexts for client management, service enrollment,
 user management, and permission/approval orchestration. Leverage event-driven architecture for cross-context
 communication and maintain loose coupling with external account systems through adapter patterns.
 
-###### Key Capabilities
+##### Key Capabilities
 
 - Employee portal for bank staff to manage Canadian online profile enrollment (primary use case for MVP)
 - Employee portal provides unified view into direct clients and their indirect client (payor) relationships
@@ -100,7 +119,7 @@ capabilities for managing data replication, transformation, and quality from ext
 federation with dual providers: A-and-P (direct clients via Express) and Okta (indirect clients). Data
 residency and sovereignty considerations for multi-region deployment.
 
-###### Differentiators
+##### Differentiators
 
 - Dual-portal architecture: Employee portal for bank operations + self-service portal for indirect clients
 - Dual identity provider strategy: A-and-P (direct clients via Express) + Okta (indirect clients via platform)
@@ -115,9 +134,9 @@ residency and sovereignty considerations for multi-region deployment.
 - Future: Corporate structure support via secondary client linking (post-MVP)
 - Future: Migrate direct client users to Okta when Express is decommissioned
 
-##### Boundaries
+#### Boundaries
 
-###### In Scope
+##### In Scope
 
 - MVP: Employee portal for bank staff to manage Canadian online profile enrollment
 - MVP: Employee portal view into direct client + indirect client (payor) relationships and profiles
@@ -158,7 +177,7 @@ residency and sovereignty considerations for multi-region deployment.
 - Future: Migrate direct client users from A-and-P to Okta (post-MVP, when Express is decommissioned)
 - Future: Additional cash management services (BTR, Interac Send, other online services)
 
-###### Out Of Scope
+##### Out Of Scope
 
 - Core banking functionality (account opening, transaction processing)
 - Payment processing and execution (platform manages enrollment only)
@@ -169,7 +188,7 @@ residency and sovereignty considerations for multi-region deployment.
 - Billing and invoicing for banking services
 - Document management and archival
 
-###### Constraints
+##### Constraints
 
 - Express platform (legacy) will require modification to publish user events (add, update)
 - Express already has self-serve user management - cannot change or replace this functionality (only add event publishing)
@@ -183,7 +202,7 @@ residency and sovereignty considerations for multi-region deployment.
 - Limited control over account system APIs and data quality
 - Account data updates via daily batch feeds (low velocity), not real-time
 
-###### Assumptions
+##### Assumptions
 
 - MVP: Bank employee portal sufficient for onboarding one large client (no client self-service required)
 - MVP: 700 business payors (NO individuals) with ~1050 users can be onboarded within MVP timeline (June 2026)
@@ -206,7 +225,7 @@ residency and sovereignty considerations for multi-region deployment.
 - Permission and approval models are consistent enough across services to use generic engine
 - Bank-managed permission/approval rules acceptable for MVP; client self-service in future releases
 
-###### Dependencies
+##### Dependencies
 
 - Legacy Express platform - WILL BE MODIFIED to publish user events (add, update) via event streaming
 - Express continues to own user management for direct clients via existing self-serve UI
@@ -221,9 +240,9 @@ residency and sovereignty considerations for multi-region deployment.
 - GID system for Capital Markets client identification (future)
 - Future: Additional account systems (OLB, MTG, RIBS, TSYS) for expanded services
 
-##### Strategic Alignment
+#### Strategic Alignment
 
-###### Business Objectives
+##### Business Objectives
 
 - Enable Payedge to launch new Receivables service (not replacing existing service - this is greenfield)
 - Provide employee portal for bank staff to efficiently manage online profile enrollment and monitor relationships
@@ -236,7 +255,7 @@ residency and sovereignty considerations for multi-region deployment.
 - Reduce risk through standardized permission and approval controls for receivables workflows
 - Establish modern identity foundation (Okta) for future migration of direct client users from A-and-P
 
-###### Strategic Themes
+##### Strategic Themes
 
 - Enable Payedge Receivables initiative (MVP priority)
 - Three-tier client relationship management (Bank → Client → Payors)
@@ -245,11 +264,11 @@ residency and sovereignty considerations for multi-region deployment.
 - Platform thinking for service innovation and reuse
 - Operational efficiency and cost reduction
 
-###### Success Metrics
+##### Success Metrics
 
 | Name | Description | Current | Target | Unit |
 | --- | --- | --- | --- | --- |
-| MVP launch date | Platform ready to support one large Receivables client with 700 payors |  | 2026-06-30 | date |
+| MVP launch date | Platform ready to support one large Receivables client with 700 payors |  | 20260630 | date |
 | Direct client onboarding | Large Receivables client onboarded via employee portal (bank-managed, not self-service) | 0 | 1 | clients |
 | Indirect client (payor) onboarding | Number of business payors onboarded for the large Receivables client (NO individuals) | 0 | 700 | payors |
 | Okta user creation | Number of indirect client users created and managed in Okta by platform | 0 | 1050 | users |
@@ -260,7 +279,7 @@ residency and sovereignty considerations for multi-region deployment.
 | Platform uptime | System availability for client-facing services | 0 | 99.95 | percent |
 | Indirect client self-service adoption | Percentage of indirect clients managing their own users (via Okta) and approval rules | 0 | 75 | percent |
 
-###### Outcomes
+##### Outcomes
 
 - Payedge successfully launches NEW Receivables service by June 2026 with one large client and 700 business payors
 - Bank employees can efficiently manage online profile enrollment via employee portal
@@ -302,9 +321,9 @@ workflows. We prove the model works. Then we scale—more clients, more services
 expansion. We're not just enabling Payedge. We're building the foundation for the next decade of commercial banking
 innovation.
 
-##### Decision Framework
+#### Decision Framework
 
-###### Guiding Principles
+##### Guiding Principles
 
 - Client empowerment first - enable self-service wherever possible
 - Build for reuse - every component should serve multiple services
@@ -317,7 +336,7 @@ innovation.
 - Do not modify legacy systems (Express) - consume via events, translate into domain model
 - Separate concerns: Express owns direct client users, platform owns indirect client users
 
-###### Tradeoff Criteria
+##### Tradeoff Criteria
 
 - Speed to market vs. perfect architecture - favor iterative delivery with solid foundations
 - Feature richness vs. platform stability - stability wins, add features incrementally
@@ -325,7 +344,7 @@ innovation.
 - Real-time integration vs. batch - use batch where latency is acceptable to reduce coupling
 - Build vs. buy - buy for identity, build for domain-specific capabilities
 
-###### Alignment Mechanisms
+##### Alignment Mechanisms
 
 - Bi-weekly product review with stakeholders to validate priorities
 - Architecture review board for technical decisions impacting multiple teams
@@ -335,13 +354,17 @@ innovation.
 
 **Last Updated**: 2025-10-15
 
-#### Metadata
+
+---
+
+<a id="metadata"></a>
+## Metadata
 
 **Created**: 2025-10-15T00:00:00Z
 
 **Created By**: Product Team
 
-##### Tags
+#### Tags
 
 - commercial-banking
 - cash-management
