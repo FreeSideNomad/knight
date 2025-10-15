@@ -254,9 +254,25 @@ To resume work, ask the user:
 
 ## Terminology Reminder
 
-- **Define**: Create initial version → Ask 3-5 clarifying questions → Incorporate feedback → Check ripple effects
+- **Define**: Create initial version → **Validate against schema** → Fix errors → Convert to MD → Ask 3-5 clarifying questions → Incorporate feedback → Check ripple effects
 - **Refine**: Enhance through iteration → Ask 3-5 questions → Loop until user says "done for this turn"
 - User can redirect at any time
+
+## Schema Validation Requirements
+
+**CRITICAL**: All models MUST be validated against their schemas:
+- `platform-ddd.yaml` → `domains/ddd/model-schema.yaml`
+- `platform-data-eng.yaml` → `domains/data-eng/model-schema.yaml`
+- `platform-agile.yaml` → `domains/agile/model-schema.yaml`
+- `platform-ux.yaml` → `domains/ux/model-schema.yaml`
+- `platform-qe.yaml` → `domains/qe/model-schema.yaml`
+
+**Validation Workflow**:
+1. Generate model YAML
+2. Validate against schema
+3. Fix any validation errors
+4. Re-validate until compliant
+5. Convert to MD for review
 
 ---
 

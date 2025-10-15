@@ -21,10 +21,6 @@ Quick navigation to all identified objects:
 - [bc_service_profile_management](#bc-service-profile-management) - Service Profile Management
 - [bc_user_lifecycle](#bc-user-lifecycle) - User Lifecycle
 
-### CASH
-
-- [cash-mgmt-platform](#cash-mgmt-platform) - Commercial Banking Cash Management Platform
-
 ### CM
 
 - [cm_account_sync_to_srf](#cm-account-sync-to-srf)
@@ -39,6 +35,10 @@ Quick navigation to all identified objects:
 - [dom_data_engineering](#dom-data-engineering) - Data Engineering
 - [dom_service_profiles](#dom-service-profiles) - Service Profiles
 - [dom_user_management](#dom-user-management) - User Management
+
+### SYS
+
+- [sys_cash_mgmt_platform](#sys-cash-mgmt-platform) - Commercial Banking Cash Management Platform
 
 ---
 
@@ -55,8 +55,8 @@ Quick navigation to all identified objects:
 <a id="system"></a>
 ## System
 
-<a id="cash-mgmt-platform"></a>
-**ID**: `cash-mgmt-platform`
+<a id="sys-cash-mgmt-platform"></a>
+**ID**: `sys_cash_mgmt_platform`
 
 **Name**: Commercial Banking Cash Management Platform
 

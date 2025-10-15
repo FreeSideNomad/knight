@@ -25,13 +25,24 @@ Relationships defined in `domains/interdomain-map.yaml` show 28 groundings betwe
 ### "Define"
 When you see "define" in this workflow, it means:
 1. Create an initial version of the domain model based on schema and context
-2. **IMMEDIATELY convert YAML to MD using `./convert-yaml.sh`** before asking questions
-3. Ask 3-5 meaningful clarifying questions based on the model schema and business context
-4. Accept user feedback and modify models accordingly
-5. Convert updated YAML to MD again after modifications
-6. When changes are made to one model, check if ripple effects require updates to other models
+2. **VALIDATE model against schema** (e.g., validate platform-ddd.yaml against domains/ddd/model-schema.yaml)
+3. Fix any validation errors and re-validate until compliant
+4. **IMMEDIATELY convert YAML to MD using `./convert-yaml.sh`** before asking questions
+5. Ask 3-5 meaningful clarifying questions based on the model schema and business context
+6. Accept user feedback and modify models accordingly
+7. Re-validate, fix if needed, and convert updated YAML to MD again after modifications
+8. When changes are made to one model, check if ripple effects require updates to other models
 
-**IMPORTANT**: Always create .md files BEFORE asking for review, not at the end of the process
+**CRITICAL**:
+- ALWAYS validate YAML models against their schemas BEFORE converting to MD
+- Schema files are in `domains/{domain-name}/model-schema.yaml`
+- Model validation mapping:
+  - `platform-ddd.yaml` → `domains/ddd/model-schema.yaml`
+  - `platform-data-eng.yaml` → `domains/data-eng/model-schema.yaml`
+  - `platform-agile.yaml` → `domains/agile/model-schema.yaml`
+  - `platform-ux.yaml` → `domains/ux/model-schema.yaml`
+  - `platform-qe.yaml` → `domains/qe/model-schema.yaml`
+- Always create .md files BEFORE asking for review, not at the end of the process
 
 ### "Refine"
 When you see "refine" in this workflow, it means:

@@ -3,7 +3,7 @@
 # Version: 0.2.0
 
 system:
-  id: cash-mgmt-platform
+  id: sys_cash_mgmt_platform
   name: Commercial Banking Cash Management Platform
   version: 0.2.0
   domains:
