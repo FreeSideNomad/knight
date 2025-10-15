@@ -14,7 +14,7 @@
 ## Product
 
 <a id="cash-mgmt-platform"></a>
-**ID**: `cash-mgmt-platform`
+**ID**: `cash-mgmt-platform` (Cash Mgmt Platform)
 
 **Name**: Commercial Banking Cash Management Platform
 
@@ -247,18 +247,18 @@ residency and sovereignty considerations for multi-region deployment.
 
 ###### Success Metrics
 
-| name | description | current | target | unit |
+| Name | Description | Current | Target | Unit |
 | --- | --- | --- | --- | --- |
-| MVP launch date | Platform ready to support one large Receivables... |  | 2026-06-30 | date |
-| Direct client onboarding | Large Receivables client onboarded via employee... | 0 | 1 | clients |
-| Indirect client (payor) onboarding | Number of business payors onboarded for the lar... | 0 | 700 | payors |
-| Okta user creation | Number of indirect client users created and man... | 0 | 1050 | users |
-| Approval workflow configuration | Number of approval rules configured for indirec... | 0 | 700 | rules |
-| Invoice approval processing | Average time for indirect client to approve inv... |  | 24 | hours |
-| Express user sync latency | Time from user add/update event in Express to r... |  | 5 | minutes |
-| Okta user lifecycle latency | Time from platform user create/update to Okta p... |  | 2 | seconds |
+| MVP launch date | Platform ready to support one large Receivables client with 700 payors |  | 2026-06-30 | date |
+| Direct client onboarding | Large Receivables client onboarded via employee portal (bank-managed, not self-service) | 0 | 1 | clients |
+| Indirect client (payor) onboarding | Number of business payors onboarded for the large Receivables client (NO individuals) | 0 | 700 | payors |
+| Okta user creation | Number of indirect client users created and managed in Okta by platform | 0 | 1050 | users |
+| Approval workflow configuration | Number of approval rules configured for indirect clients (single/dual approver, thresholds) | 0 | 700 | rules |
+| Invoice approval processing | Average time for indirect client to approve invoice via receivable-approval workflow |  | 24 | hours |
+| Express user sync latency | Time from user add/update event in Express to replication in platform (direct clients) |  | 5 | minutes |
+| Okta user lifecycle latency | Time from platform user create/update to Okta provisioning (indirect clients) |  | 2 | seconds |
 | Platform uptime | System availability for client-facing services | 0 | 99.95 | percent |
-| Indirect client self-service adoption | Percentage of indirect clients managing their o... | 0 | 75 | percent |
+| Indirect client self-service adoption | Percentage of indirect clients managing their own users (via Okta) and approval rules | 0 | 75 | percent |
 
 ###### Outcomes
 
