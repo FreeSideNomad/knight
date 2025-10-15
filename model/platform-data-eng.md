@@ -58,11 +58,13 @@ Quick navigation to all identified objects:
 
 - [Account Events Contract](#ctr-account-events) - Account Change Events Contract
 - [Account Gold Contract](#ctr-account-gold) - Account Gold Copy Contract
+- [Client Gold Contract](#ctr-client-gold) - Client Gold Copy Contract
 - [User Gold Contract](#ctr-user-gold) - User Gold Copy Contract
 
 ### Data Products
 
 - [Account Serving Data Product](#dp-account-serving) - Account Data Serving Product
+- [Client Serving Data Product](#dp-client-serving) - Client Data Serving Product
 
 ### Other
 
@@ -185,6 +187,7 @@ Quick navigation to all identified objects:
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [Account Gold Contract](#ctr-account-gold) | Account Gold Copy Contract | Contract for Service Profile domain to consume account data | *list* | ds-account-gold | backward-compatible | *dict* | 1.0.0 |
 | [User Gold Contract](#ctr-user-gold) | User Gold Copy Contract | Contract for direct client user data | *list* | ds-user-gold | backward-compatible | *dict* | 1.0.0 |
+| [Client Gold Contract](#ctr-client-gold) | Client Gold Copy Contract | Contract for Service Profile domain to consume client reference data | *list* | ds-client-gold | backward-compatible | *dict* | 1.0.0 |
 | [Account Events Contract](#ctr-account-events) | Account Change Events Contract | Events for new/closed accounts | *list* | ds-account-events | forward-compatible | *dict* | 1.0.0 |
 
 
@@ -195,7 +198,8 @@ Quick navigation to all identified objects:
 
 | Id | Name | Description | Access Patterns | Bounded Context Ref | Contracts | Datasets | Owner |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [Account Serving Data Product](#dp-account-serving) | Account Data Serving Product | Read-only serving layer for Service Profile domain | *list* | ddd:BoundedContext:bc_account_data_serving | *list* | *list* | *dict* |
+| [Account Serving Data Product](#dp-account-serving) | Account Data Serving Product | Read-only serving layer for Service Profile domain to access account data | *list* | ddd:BoundedContext:bc_account_data_serving | *list* | *list* | *dict* |
+| [Client Serving Data Product](#dp-client-serving) | Client Data Serving Product | Read-only serving layer for Service Profile domain to access client reference data | *list* | ddd:BoundedContext:bc_client_data_serving | *list* | *list* | *dict* |
 
 
 ---
@@ -215,9 +219,10 @@ Quick navigation to all identified objects:
 
 | Data Domains | Data Products | Ddd Context | Ddd Domain | Pipelines |
 | --- | --- | --- | --- | --- |
-| *list* |  |  | dom_data_engineering |  |
+| *list* |  |  | dom_client_account_integration |  |
 |  |  | bc_account_data_sync |  | *list* |
 |  | *list* | bc_account_data_serving |  |  |
+|  | *list* | bc_client_data_serving |  |  |
 
 
 ---

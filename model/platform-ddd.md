@@ -15,7 +15,7 @@ Quick navigation to all identified objects:
 ### Domains
 
 - [Approval Workflows Domain](#dom-approval-workflows) - Approval Workflows
-- [Data Engineering Domain](#dom-data-engineering) - Data Engineering
+- [Client Account Integration Domain](#dom-client-account-integration) - Client and Account Integration
 - [Service Profiles Domain](#dom-service-profiles) - Service Profiles
 - [User Management Domain](#dom-user-management) - User Management
 
@@ -24,6 +24,7 @@ Quick navigation to all identified objects:
 - [Account Data Serving Bounded Context](#bc-account-data-serving) - Account Data Serving
 - [Account Data Sync Bounded Context](#bc-account-data-sync) - Account Data Sync
 - [Approval Engine Bounded Context](#bc-approval-engine) - Approval Engine
+- [Client Data Serving Bounded Context](#bc-client-data-serving) - Client Data Serving
 - [Identity Integration Bounded Context](#bc-identity-integration) - Identity Integration
 - [Indirect Client Management Bounded Context](#bc-indirect-client-management) - Indirect Client Management
 - [Permission Management Bounded Context](#bc-permission-management) - Permission Management
@@ -38,6 +39,7 @@ Quick navigation to all identified objects:
 - [Identity Integration To Express Context Mapping](#cm-identity-integration-to-express)
 - [Receivable Approval To Approval Engine Context Mapping](#cm-receivable-approval-to-approval-engine)
 - [Service Profile To Account Serving Context Mapping](#cm-service-profile-to-account-serving)
+- [Service Profile To Client Serving Context Mapping](#cm-service-profile-to-client-serving)
 - [Service Profile To Indirect Clients Context Mapping](#cm-service-profile-to-indirect-clients)
 
 ---
@@ -67,7 +69,7 @@ Quick navigation to all identified objects:
 - dom_service_profiles
 - dom_user_management
 - dom_approval_workflows
-- dom_data_engineering
+- dom_client_account_integration
 
 
 ---
@@ -134,24 +136,25 @@ Generic approval workflow engine. AWS IAM-inspired permission model. Parallel ap
 - bc_permission_management
 - bc_approval_engine
 
-#### Dom Data Engineering
+#### Dom Client Account Integration
 
-<a id="dom-data-engineering"></a>
-**ID**: `dom_data_engineering` (Data Engineering Domain)
+<a id="dom-client-account-integration"></a>
+**ID**: `dom_client_account_integration` (Client Account Integration Domain)
 
-**Name**: Data Engineering
+**Name**: Client and Account Integration
 
 **Type**: supporting
 
 **Strategic Importance**: important
 
 **Description**: 
-Data replication from external systems (SRF accounts via daily batch, Express users via events). Creates GOLD COPY of representative data. Provides SERVING LAYER (read-only) for Service Profile domain to access account data for profile creation and account linkage.
+Data replication from external systems (SRF for client demographics and accounts via daily batch, Express users via events). Creates GOLD COPY of representative data. Provides SERVING LAYER (read-only) for Service Profile domain to access client demographics, account data, and user information for profile creation and account linkage.
 
 ##### Bounded Contexts
 
 - bc_account_data_sync
 - bc_account_data_serving
+- bc_client_data_serving
 
 
 ---
@@ -321,7 +324,7 @@ Generic approval workflow engine. Parallel approval only (MVP). Single or multip
 
 **Name**: Account Data Sync
 
-**Domain Ref**: [Data Engineering Domain](#dom-data-engineering)
+**Domain Ref**: [Client Account Integration Domain](#dom-client-account-integration)
 
 **Description**: 
 Data engineering ETL. Daily batch from SRF for client-owned accounts. Creates GOLD COPY of account data. Detects new/closed accounts. Data quality checks.
@@ -341,10 +344,10 @@ Data engineering ETL. Daily batch from SRF for client-owned accounts. Creates GO
 
 **Name**: Account Data Serving
 
-**Domain Ref**: [Data Engineering Domain](#dom-data-engineering)
+**Domain Ref**: [Client Account Integration Domain](#dom-client-account-integration)
 
 **Description**: 
-SERVING LAYER providing READ-ONLY access to gold copy account data. Service Profile domain consumes this for account enrollment and validation. Part of Data Engineering but serves Service Profile domain needs.
+SERVING LAYER providing READ-ONLY access to gold copy account data. Service Profile domain consumes this for account enrollment and validation.
 
 ##### Responsibilities
 
@@ -352,6 +355,26 @@ SERVING LAYER providing READ-ONLY access to gold copy account data. Service Prof
 - Query account data by client ID
 - Validate account existence and status
 - Support account enrollment workflows
+
+#### Bc Client Data Serving
+
+<a id="bc-client-data-serving"></a>
+**ID**: `bc_client_data_serving` (Client Data Serving Bounded Context)
+
+**Name**: Client Data Serving
+
+**Domain Ref**: [Client Account Integration Domain](#dom-client-account-integration)
+
+**Description**: 
+SERVING LAYER providing READ-ONLY access to gold copy client demographics and user data. Service Profile domain consumes this for client validation and user synchronization.
+
+##### Responsibilities
+
+- Provide read-only API to client gold copy
+- Query client demographics by client ID
+- Validate client existence and status
+- Provide user data for permission and approval enforcement
+- Support profile creation and validation workflows
 
 
 ---
@@ -372,6 +395,20 @@ SERVING LAYER providing READ-ONLY access to gold copy account data. Service Prof
 
 **Description**: 
 Service Profile Management (downstream) consumes account data from Account Data Serving (upstream) for account enrollment. Read-only access to gold copy.
+
+#### Cm Service Profile To Client Serving
+
+<a id="cm-service-profile-to-client-serving"></a>
+**ID**: `cm_service_profile_to_client_serving` (Service Profile To Client Serving Context Mapping)
+
+**Upstream Context**: [Client Data Serving Bounded Context](#bc-client-data-serving)
+
+**Downstream Context**: [Service Profile Management Bounded Context](#bc-service-profile-management)
+
+**Relationship Type**: customer_supplier
+
+**Description**: 
+Service Profile Management (downstream) consumes client demographics and user data from Client Data Serving (upstream) for profile creation and validation. Read-only access to gold copy.
 
 #### Cm Receivable Approval To Approval Engine
 

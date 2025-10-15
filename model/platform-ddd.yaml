@@ -10,7 +10,7 @@ system:
     - dom_service_profiles
     - dom_user_management
     - dom_approval_workflows
-    - dom_data_engineering
+    - dom_client_account_integration
 
 # ==============================================================================
 # DOMAINS
@@ -58,18 +58,20 @@ domains:
       - bc_permission_management
       - bc_approval_engine
 
-  dom_data_engineering:
-    id: dom_data_engineering
-    name: Data Engineering
+  dom_client_account_integration:
+    id: dom_client_account_integration
+    name: Client and Account Integration
     type: supporting
     strategic_importance: important
     description: >
-      Data replication from external systems (SRF accounts via daily batch, Express users
-      via events). Creates GOLD COPY of representative data. Provides SERVING LAYER (read-only)
-      for Service Profile domain to access account data for profile creation and account linkage.
+      Data replication from external systems (SRF for client demographics and accounts via daily
+      batch, Express users via events). Creates GOLD COPY of representative data. Provides SERVING
+      LAYER (read-only) for Service Profile domain to access client demographics, account data, and
+      user information for profile creation and account linkage.
     bounded_contexts:
       - bc_account_data_sync
       - bc_account_data_serving
+      - bc_client_data_serving
 
 # ==============================================================================
 # BOUNDED CONTEXTS
@@ -191,7 +193,7 @@ bounded_contexts:
   bc_account_data_sync:
     id: bc_account_data_sync
     name: Account Data Sync
-    domain_ref: dom_data_engineering
+    domain_ref: dom_client_account_integration
     description: >
       Data engineering ETL. Daily batch from SRF for client-owned accounts. Creates GOLD
       COPY of account data. Detects new/closed accounts. Data quality checks.
@@ -205,16 +207,29 @@ bounded_contexts:
   bc_account_data_serving:
     id: bc_account_data_serving
     name: Account Data Serving
-    domain_ref: dom_data_engineering
+    domain_ref: dom_client_account_integration
     description: >
       SERVING LAYER providing READ-ONLY access to gold copy account data. Service Profile
-      domain consumes this for account enrollment and validation. Part of Data Engineering
-      but serves Service Profile domain needs.
+      domain consumes this for account enrollment and validation.
     responsibilities:
       - Provide read-only API to account gold copy
       - Query account data by client ID
       - Validate account existence and status
       - Support account enrollment workflows
+
+  bc_client_data_serving:
+    id: bc_client_data_serving
+    name: Client Data Serving
+    domain_ref: dom_client_account_integration
+    description: >
+      SERVING LAYER providing READ-ONLY access to gold copy client demographics and user data.
+      Service Profile domain consumes this for client validation and user synchronization.
+    responsibilities:
+      - Provide read-only API to client gold copy
+      - Query client demographics by client ID
+      - Validate client existence and status
+      - Provide user data for permission and approval enforcement
+      - Support profile creation and validation workflows
 
 # ==============================================================================
 # CONTEXT MAPPINGS
@@ -229,6 +244,16 @@ context_mappings:
     description: >
       Service Profile Management (downstream) consumes account data from Account Data
       Serving (upstream) for account enrollment. Read-only access to gold copy.
+
+  cm_service_profile_to_client_serving:
+    id: cm_service_profile_to_client_serving
+    upstream_context: bc_client_data_serving
+    downstream_context: bc_service_profile_management
+    relationship_type: customer_supplier
+    description: >
+      Service Profile Management (downstream) consumes client demographics and user data
+      from Client Data Serving (upstream) for profile creation and validation. Read-only
+      access to gold copy.
 
   cm_receivable_approval_to_approval_engine:
     id: cm_receivable_approval_to_approval_engine

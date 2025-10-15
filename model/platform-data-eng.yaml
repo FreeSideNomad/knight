@@ -389,6 +389,20 @@ contracts:
       - team: "user-management-team"
         use_case: "User synchronization and validation"
 
+  - id: "ctr-client-gold"
+    name: "Client Gold Copy Contract"
+    dataset: "ds-client-gold"
+    version: "1.0.0"
+    description: "Contract for Service Profile domain to consume client reference data"
+    sla:
+      freshness_minutes: 1440  # 24 hours (daily batch)
+      completeness_percent: 99.5
+      availability_percent: 99.9
+    evolution_policy: "backward-compatible"
+    consumers:
+      - team: "service-profile-team"
+        use_case: "Client demographics and validation"
+
   - id: "ctr-account-events"
     name: "Account Change Events Contract"
     dataset: "ds-account-events"
@@ -410,14 +424,13 @@ contracts:
 data_products:
   - id: "dp-account-serving"
     name: "Account Data Serving Product"
-    description: "Read-only serving layer for Service Profile domain"
+    description: "Read-only serving layer for Service Profile domain to access account data"
     owner:
       team: "data-engineering-team"
       contact: "data-eng@bank.com"
     bounded_context_ref: "ddd:BoundedContext:bc_account_data_serving"
     datasets:
       - "ds-account-gold"
-      - "ds-client-gold"
     contracts:
       - "ctr-account-gold"
     access_patterns:
@@ -426,15 +439,36 @@ data_products:
       - "List all accounts for profile enrollment"
       - "Validate account existence and status"
 
+  - id: "dp-client-serving"
+    name: "Client Data Serving Product"
+    description: "Read-only serving layer for Service Profile domain to access client reference data"
+    owner:
+      team: "data-engineering-team"
+      contact: "data-eng@bank.com"
+    bounded_context_ref: "ddd:BoundedContext:bc_client_data_serving"
+    datasets:
+      - "ds-client-gold"
+      - "ds-user-gold"
+    contracts:
+      - "ctr-client-gold"
+      - "ctr-user-gold"
+    access_patterns:
+      - "Query client demographics by client_id"
+      - "Validate client existence and status"
+      - "Query user data by user_id"
+      - "List users for a client"
+
 metadata:
   phase: "phase_2_strategic"
   last_updated: "2025-10-15"
   alignment:
     ddd_model: "platform-ddd.yaml"
     key_mappings:
-      - ddd_domain: "dom_data_engineering"
+      - ddd_domain: "dom_client_account_integration"
         data_domains: ["dom-account-data", "dom-user-data", "dom-reference-data"]
       - ddd_context: "bc_account_data_sync"
         pipelines: ["pip-srf-account-sync", "pip-account-status-change"]
       - ddd_context: "bc_account_data_serving"
         data_products: ["dp-account-serving"]
+      - ddd_context: "bc_client_data_serving"
+        data_products: ["dp-client-serving"]
