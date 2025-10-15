@@ -49,12 +49,12 @@ domains:
   dom_approval_workflows:
     id: dom_approval_workflows
     name: Approval Workflows
-    type: supporting
-    strategic_importance: important
+    type: core
+    strategic_importance: critical
     description: >
       Generic approval workflow execution engine. Executes approval workflows based on
       policies defined in User Management domain. Parallel approval only (MVP). Reusable
-      across all services.
+      across all services. Critical for business operations requiring approval controls.
     bounded_contexts:
       - bc_approval_engine
 
@@ -129,12 +129,12 @@ bounded_contexts:
     bounded_context_ref: bc_service_profile_management
     description: >
       Application service for enrolling Receivable-Approval (indirect) service to indirect
-      client profiles. Manages approval rule configuration and payor DDA account linkage.
-      Coordinates with Approval Engine for invoice approval workflows.
+      client profiles. Manages approval rule configuration and payor Canadian bank account
+      linkage. Coordinates with Approval Engine for invoice approval workflows.
     responsibilities:
       - Enroll receivable-approval service for indirect profiles
       - Configure approval rules (via bc_approval_engine)
-      - Link payor DDA accounts for payments
+      - Link payor Canadian bank accounts for invoice payments
       - Coordinate invoice approvals (via bc_approval_engine)
 
   bc_user_lifecycle:
