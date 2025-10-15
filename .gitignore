@@ -31,3 +31,5 @@ build/
 *.bak
 *.backup
 .pre-*
+*-v2.md
+*-v[0-9].md
