@@ -4,12 +4,35 @@
 
 ---
 
+# Reference Index
+
+Quick navigation to all identified objects:
+
+### Other
+
+- [REL-1](#rel-1)
+- [RISK-001](#risk-001)
+- [RISK-002](#risk-002)
+- [RISK-003](#risk-003)
+- [RISK-004](#risk-004)
+- [RISK-005](#risk-005)
+- [STAKE-001](#stake-001)
+- [STAKE-002](#stake-002)
+- [STAKE-003](#stake-003)
+- [STAKE-004](#stake-004)
+- [STAKE-005](#stake-005)
+- [STAKE-006](#stake-006)
+- [cash-mgmt-platform](#cash-mgmt-platform)
+
+---
+
 # Table of Contents
 
 - [Id](#id)
 - [Name](#name)
 - [Description](#description)
 - [Vision](#vision)
+- [Releases](#releases)
 - [Metadata](#metadata)
 
 ---
@@ -353,6 +376,16 @@ innovation.
 - Cross-functional working groups for domain modeling and API design
 
 **Last Updated**: 2025-10-15
+
+
+---
+
+<a id="releases"></a>
+## Releases
+
+| Id | Name | Status | Deployment Strategy | End Date | Metrics | Milestones | Product Id |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| [1 Release](#rel-1) | MVP Release - Payedge Receivables Launch | planning | phased | 2026-06-30 | *list* | *list* | cash-mgmt-platform |
 
 
 ---

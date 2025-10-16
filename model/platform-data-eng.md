@@ -15,13 +15,14 @@ Quick navigation to all identified objects:
 ### Domains
 
 - [Account Data Domain](#dom-account-data) - Account Data Domain
+- [Express Site Data Domain](#dom-express-site-data) - Express Site Data Domain
 - [Reference Data Domain](#dom-reference-data) - Reference Data Domain
-- [User Data Domain](#dom-user-data) - User Data Domain
 
 ### Pipelines
 
 - [Account Status Change Pipeline](#pip-account-status-change) - Account Status Change Detection
 - [Client Reference Pipeline](#pip-client-reference) - Client Reference Data
+- [Express Site Batch Pipeline](#pip-express-site-batch) - Express Site Batch Synchronization
 - [Express User Sync Pipeline](#pip-express-user-sync) - Express User Synchronization
 - [Srf Account Sync Pipeline](#pip-srf-account-sync) - SRF Account Synchronization
 
@@ -37,6 +38,9 @@ Quick navigation to all identified objects:
 - [Express Consume Stage](#stg-express-consume) - Consume Express User Events
 - [Identify Changes Stage](#stg-identify-changes) - Identify New/Closed Accounts
 - [Notify Enrollment Stage](#stg-notify-enrollment) - Notify Auto-Enrollment
+- [Site Extract Stage](#stg-site-extract) - Extract Express Site Data
+- [Site Load Stage](#stg-site-load) - Load Site Gold Copy
+- [Site Transform Stage](#stg-site-transform) - Transform Site Data
 - [Srf Extract Stage](#stg-srf-extract) - Extract SRF Account Data
 - [User Persist Stage](#stg-user-persist) - Persist User Gold Copy
 - [User Transform Stage](#stg-user-transform) - Transform User Data
@@ -49,7 +53,10 @@ Quick navigation to all identified objects:
 - [Account Gold Dataset](#ds-account-gold) - Account Gold Copy
 - [Client Clean Dataset](#ds-client-clean) - Clean Client Data
 - [Client Gold Dataset](#ds-client-gold) - Client Gold Copy
+- [Express Raw Sites Dataset](#ds-express-raw-sites) - Express Raw Site Data
 - [Express User Events Dataset](#ds-express-user-events) - Express User Event Stream
+- [Site Clean Dataset](#ds-site-clean) - Clean Site Data
+- [Site Gold Dataset](#ds-site-gold) - Site Gold Copy
 - [Srf Raw Accounts Dataset](#ds-srf-raw-accounts) - SRF Raw Account Data
 - [User Clean Dataset](#ds-user-clean) - Clean User Data
 - [User Gold Dataset](#ds-user-gold) - User Gold Copy
@@ -59,21 +66,24 @@ Quick navigation to all identified objects:
 - [Account Events Contract](#ctr-account-events) - Account Change Events Contract
 - [Account Gold Contract](#ctr-account-gold) - Account Gold Copy Contract
 - [Client Gold Contract](#ctr-client-gold) - Client Gold Copy Contract
+- [Site Gold Contract](#ctr-site-gold) - Site Gold Copy Contract
 - [User Gold Contract](#ctr-user-gold) - User Gold Copy Contract
 
 ### Data Products
 
-- [Account Serving Data Product](#dp-account-serving) - Account Data Serving Product
-- [Client Serving Data Product](#dp-client-serving) - Client Data Serving Product
+- [External Data Serving Data Product](#dp-external-data-serving) - External Data Serving Product
 
 ### Other
 
 - [sch-account-status-change](#sch-account-status-change)
 - [sch-client-reference](#sch-client-reference)
 - [sch-daily-srf-sync](#sch-daily-srf-sync)
+- [sch-express-site-batch](#sch-express-site-batch)
 - [sch-express-user-sync](#sch-express-user-sync)
 - [trx-clean-accounts](#trx-clean-accounts)
 - [trx-consume-events](#trx-consume-events)
+- [trx-extract-sites](#trx-extract-sites)
+- [trx-map-sites](#trx-map-sites)
 - [trx-map-users](#trx-map-users)
 - [trx-merge-accounts](#trx-merge-accounts)
 - [trx-publish-events](#trx-publish-events)
@@ -108,7 +118,7 @@ Quick navigation to all identified objects:
 #### Domains
 
 - dom-account-data
-- dom-user-data
+- dom-express-site-data
 - dom-reference-data
 
 
@@ -120,7 +130,7 @@ Quick navigation to all identified objects:
 | Id | Name | Description | Pipelines |
 | --- | --- | --- | --- |
 | [Account Data Domain](#dom-account-data) | Account Data Domain | Gold copy of account data from SRF and other account systems | *list* |
-| [User Data Domain](#dom-user-data) | User Data Domain | User data from Express platform (direct clients) and Okta (indirect clients) | *list* |
+| [Express Site Data Domain](#dom-express-site-data) | Express Site Data Domain | Express site information (batch) and user data (streaming) for direct clients. Site-id links online profiles to Express. | *list* |
 | [Reference Data Domain](#dom-reference-data) | Reference Data Domain | Reference data for client demographics, identity mapping | *list* |
 
 
@@ -131,9 +141,10 @@ Quick navigation to all identified objects:
 
 | Id | Name | Description | Mode | Schedule | Stages |
 | --- | --- | --- | --- | --- | --- |
-| [Srf Account Sync Pipeline](#pip-srf-account-sync) | SRF Account Synchronization | Daily batch sync of client-owned accounts from SRF | batch | *dict* | *list* |
+| [Srf Account Sync Pipeline](#pip-srf-account-sync) | SRF Account Synchronization | Daily batch sync of client-owned accounts from SRF. Raw data format: mainframe copybook. | batch | *dict* | *list* |
 | [Account Status Change Pipeline](#pip-account-status-change) | Account Status Change Detection | Detect new and closed accounts for auto-enrollment | batch | *dict* | *list* |
-| [Express User Sync Pipeline](#pip-express-user-sync) | Express User Synchronization | Near real-time sync of direct client users from Express | streaming | *dict* | *list* |
+| [Express Site Batch Pipeline](#pip-express-site-batch) | Express Site Batch Synchronization | Daily batch sync of Express site information. Site-id used to link online profiles to Express for user synchronization. | batch | *dict* | *list* |
+| [Express User Sync Pipeline](#pip-express-user-sync) | Express User Synchronization | Streaming sync of direct client user events from Express (add, update). Near real-time (<5 min latency). | streaming | *dict* | *list* |
 | [Client Reference Pipeline](#pip-client-reference) | Client Reference Data | Daily sync of client demographics from SRF | batch | *dict* | *list* |
 
 
@@ -151,6 +162,9 @@ Quick navigation to all identified objects:
 | [Compare Snapshots Stage](#stg-compare-snapshots) | Compare Account Snapshots |  | *list* | *list* |  |
 | [Identify Changes Stage](#stg-identify-changes) | Identify New/Closed Accounts |  | *list* | *list* |  |
 | [Notify Enrollment Stage](#stg-notify-enrollment) | Notify Auto-Enrollment |  | *list* | *list* | *list* |
+| [Site Extract Stage](#stg-site-extract) | Extract Express Site Data |  | *list* | *list* | *list* |
+| [Site Transform Stage](#stg-site-transform) | Transform Site Data |  | *list* | *list* | *list* |
+| [Site Load Stage](#stg-site-load) | Load Site Gold Copy |  | *list* | *list* |  |
 | [Express Consume Stage](#stg-express-consume) | Consume Express User Events |  | *list* | *list* | *list* |
 | [User Transform Stage](#stg-user-transform) | Transform User Data |  | *list* | *list* | *list* |
 | [User Persist Stage](#stg-user-persist) | Persist User Gold Copy |  | *list* | *list* |  |
@@ -164,18 +178,21 @@ Quick navigation to all identified objects:
 <a id="datasets"></a>
 ## Datasets
 
-| Id | Name | Type | Classification | Contains Pii | Format | Location | Pii Fields |
+| Id | Name | Type | Classification | Contains Pii | Format | Format Description | Location |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [Srf Raw Accounts Dataset](#ds-srf-raw-accounts) | SRF Raw Account Data | file | internal | ✗ | csv | s3://data-lake/bronze/srf/accounts/ |  |
-| [Express User Events Dataset](#ds-express-user-events) | Express User Event Stream | stream | restricted | ✓ | json | kafka://express-user-events | *list* |
-| [Account Clean Dataset](#ds-account-clean) | Clean Account Data | table | internal |  | delta | s3://data-lake/silver/accounts/ |  |
-| [User Clean Dataset](#ds-user-clean) | Clean User Data | table | restricted | ✓ | delta | s3://data-lake/silver/users/ |  |
-| [Client Clean Dataset](#ds-client-clean) | Clean Client Data | table | internal | ✓ | delta | s3://data-lake/silver/clients/ |  |
-| [Account Gold Dataset](#ds-account-gold) | Account Gold Copy | table | internal | ✗ | delta | s3://data-lake/gold/accounts/ |  |
-| [User Gold Dataset](#ds-user-gold) | User Gold Copy | table | restricted | ✓ | delta | s3://data-lake/gold/users/ | *list* |
-| [Client Gold Dataset](#ds-client-gold) | Client Gold Copy | table | internal | ✓ | delta | s3://data-lake/gold/clients/ | *list* |
-| [Account Changes Dataset](#ds-account-changes) | Account Change Events | table | internal |  | delta | s3://data-lake/events/account-changes/ |  |
-| [Account Events Dataset](#ds-account-events) | Account Events for Publishing | stream | internal |  | json | kafka://account-events |  |
+| [Srf Raw Accounts Dataset](#ds-srf-raw-accounts) | SRF Raw Account Data | file | internal | ✗ | custom | Mainframe COBOL copybook | s3://data-lake/bronze/srf/accounts/ |
+| [Express Raw Sites Dataset](#ds-express-raw-sites) | Express Raw Site Data | file | internal |  | json |  | s3://data-lake/bronze/express/sites/ |
+| [Express User Events Dataset](#ds-express-user-events) | Express User Event Stream | stream | restricted | ✓ | json |  | kafka://express-user-events |
+| [Site Clean Dataset](#ds-site-clean) | Clean Site Data | table | internal |  | delta |  | s3://data-lake/silver/sites/ |
+| [Account Clean Dataset](#ds-account-clean) | Clean Account Data | table | internal |  | delta |  | s3://data-lake/silver/accounts/ |
+| [User Clean Dataset](#ds-user-clean) | Clean User Data | table | restricted | ✓ | delta |  | s3://data-lake/silver/users/ |
+| [Client Clean Dataset](#ds-client-clean) | Clean Client Data | table | internal | ✓ | delta |  | s3://data-lake/silver/clients/ |
+| [Account Gold Dataset](#ds-account-gold) | Account Gold Copy | table | internal | ✗ | delta |  | s3://data-lake/gold/accounts/ |
+| [Site Gold Dataset](#ds-site-gold) | Site Gold Copy | table | internal | ✗ | delta |  | s3://data-lake/gold/sites/ |
+| [User Gold Dataset](#ds-user-gold) | User Gold Copy | table | restricted | ✓ | delta |  | s3://data-lake/gold/users/ |
+| [Client Gold Dataset](#ds-client-gold) | Client Gold Copy | table | internal | ✓ | delta |  | s3://data-lake/gold/clients/ |
+| [Account Changes Dataset](#ds-account-changes) | Account Change Events | table | internal |  | delta |  | s3://data-lake/events/account-changes/ |
+| [Account Events Dataset](#ds-account-events) | Account Events for Publishing | stream | internal |  | json |  | kafka://account-events |
 
 
 ---
@@ -186,7 +203,8 @@ Quick navigation to all identified objects:
 | Id | Name | Description | Consumers | Dataset | Evolution Policy | Sla | Version |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [Account Gold Contract](#ctr-account-gold) | Account Gold Copy Contract | Contract for Service Profile domain to consume account data | *list* | ds-account-gold | backward-compatible | *dict* | 1.0.0 |
-| [User Gold Contract](#ctr-user-gold) | User Gold Copy Contract | Contract for direct client user data | *list* | ds-user-gold | backward-compatible | *dict* | 1.0.0 |
+| [Site Gold Contract](#ctr-site-gold) | Site Gold Copy Contract | Contract for Express site information linking online profiles to Express | *list* | ds-site-gold | backward-compatible | *dict* | 1.0.0 |
+| [User Gold Contract](#ctr-user-gold) | User Gold Copy Contract | Contract for direct client user data (streaming from Express) | *list* | ds-user-gold | backward-compatible | *dict* | 1.0.0 |
 | [Client Gold Contract](#ctr-client-gold) | Client Gold Copy Contract | Contract for Service Profile domain to consume client reference data | *list* | ds-client-gold | backward-compatible | *dict* | 1.0.0 |
 | [Account Events Contract](#ctr-account-events) | Account Change Events Contract | Events for new/closed accounts | *list* | ds-account-events | forward-compatible | *dict* | 1.0.0 |
 
@@ -198,8 +216,7 @@ Quick navigation to all identified objects:
 
 | Id | Name | Description | Access Patterns | Bounded Context Ref | Contracts | Datasets | Owner |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [Account Serving Data Product](#dp-account-serving) | Account Data Serving Product | Read-only serving layer for Service Profile domain to access account data | *list* | ddd:BoundedContext:bc_account_data_serving | *list* | *list* | *dict* |
-| [Client Serving Data Product](#dp-client-serving) | Client Data Serving Product | Read-only serving layer for Service Profile domain to access client reference data | *list* | ddd:BoundedContext:bc_client_data_serving | *list* | *list* | *dict* |
+| [External Data Serving Data Product](#dp-external-data-serving) | External Data Serving Product | Read-only serving layer for Service Profile and User Management domains to access external data (SRF and Express) | *list* | ddd:BoundedContext:bc_external_data_serving | *list* | *list* | *dict* |
 
 
 ---
@@ -217,12 +234,14 @@ Quick navigation to all identified objects:
 
 ##### Key Mappings
 
-| Data Domains | Data Products | Ddd Context | Ddd Domain | Pipelines |
+| Contracts | Data Domains | Data Products | Datasets | Ddd App Service |
 | --- | --- | --- | --- | --- |
-| *list* |  |  | dom_client_account_integration |  |
-|  |  | bc_account_data_sync |  | *list* |
-|  | *list* | bc_account_data_serving |  |  |
-|  | *list* | bc_client_data_serving |  |  |
+|  | *list* |  |  |  |
+|  |  |  |  |  |
+|  |  | *list* |  |  |
+| *list* |  |  | *list* | svc_app_account_data |
+| *list* |  |  | *list* | svc_app_client_data |
+| *list* |  |  | *list* | svc_app_user_data |
 
 
 ---

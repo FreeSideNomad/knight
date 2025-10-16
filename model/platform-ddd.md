@@ -15,36 +15,38 @@ Quick navigation to all identified objects:
 ### Domains
 
 - [Approval Workflows Domain](#dom-approval-workflows) - Approval Workflows
-- [Client Account Integration Domain](#dom-client-account-integration) - Client and Account Integration
+- [External Data Domain](#dom-external-data) - External Data
 - [Service Profiles Domain](#dom-service-profiles) - Service Profiles
 - [User Management Domain](#dom-user-management) - User Management
 
 ### Bounded Contexts
 
-- [Account Data Serving Bounded Context](#bc-account-data-serving) - Account Data Serving
 - [Account Data Sync Bounded Context](#bc-account-data-sync) - Account Data Sync
 - [Approval Engine Bounded Context](#bc-approval-engine) - Approval Engine
-- [Client Data Serving Bounded Context](#bc-client-data-serving) - Client Data Serving
+- [External Data Serving Bounded Context](#bc-external-data-serving) - External Data Serving
 - [Identity Integration Bounded Context](#bc-identity-integration) - Identity Integration
 - [Indirect Client Management Bounded Context](#bc-indirect-client-management) - Indirect Client Management
-- [Permission Management Bounded Context](#bc-permission-management) - Permission Management
+- [Policy Bounded Context](#bc-policy) - Policy
 - [Service Profile Management Bounded Context](#bc-service-profile-management) - Service Profile Management
-- [User Lifecycle Bounded Context](#bc-user-lifecycle) - User Lifecycle
+- [Users Bounded Context](#bc-users) - Users
 
 ### Context Mappings
 
 - [Account Sync To Srf Context Mapping](#cm-account-sync-to-srf)
-- [Approval Engine To Permission Management Context Mapping](#cm-approval-engine-to-permission-management)
+- [Approval Engine To Policy Context Mapping](#cm-approval-engine-to-policy)
 - [Identity Integration To Express Context Mapping](#cm-identity-integration-to-express)
 - [Receivable Approval To Approval Engine Context Mapping](#cm-receivable-approval-to-approval-engine)
-- [Service Profile To Account Serving Context Mapping](#cm-service-profile-to-account-serving)
-- [Service Profile To Client Serving Context Mapping](#cm-service-profile-to-client-serving)
+- [Service Profile To External Data Context Mapping](#cm-service-profile-to-external-data)
 - [Service Profile To Indirect Clients Context Mapping](#cm-service-profile-to-indirect-clients)
 
 ### Other
 
-- [svc_app_receivable_approval_enrollment](#svc-app-receivable-approval-enrollment)
-- [svc_app_receivables_enrollment](#svc-app-receivables-enrollment)
+- [svc_app_account_data](#svc-app-account-data)
+- [svc_app_client_data](#svc-app-client-data)
+- [svc_app_indirect_profile](#svc-app-indirect-profile)
+- [svc_app_online_profile](#svc-app-online-profile)
+- [svc_app_servicing_profile](#svc-app-servicing-profile)
+- [svc_app_user_data](#svc-app-user-data)
 
 ---
 
@@ -73,7 +75,7 @@ Quick navigation to all identified objects:
 - dom_service_profiles
 - dom_user_management
 - dom_approval_workflows
-- dom_client_account_integration
+- dom_external_data
 
 
 ---
@@ -116,9 +118,9 @@ User lifecycle for direct clients (Express sync) and indirect clients (Okta mana
 
 ##### Bounded Contexts
 
-- bc_user_lifecycle
+- bc_users
 - bc_identity_integration
-- bc_permission_management
+- bc_policy
 
 #### Dom Approval Workflows
 
@@ -127,35 +129,34 @@ User lifecycle for direct clients (Express sync) and indirect clients (Okta mana
 
 **Name**: Approval Workflows
 
-**Type**: supporting
+**Type**: core
 
-**Strategic Importance**: important
+**Strategic Importance**: critical
 
 **Description**: 
-Generic approval workflow execution engine. Executes approval workflows based on policies defined in User Management domain. Parallel approval only (MVP). Reusable across all services.
+Generic approval workflow execution engine. Executes approval workflows based on policies defined in User Management domain. Parallel approval only (MVP). Reusable across all services. Critical for business operations requiring approval controls.
 
 ##### Bounded Contexts
 
 - bc_approval_engine
 
-#### Dom Client Account Integration
+#### Dom External Data
 
-<a id="dom-client-account-integration"></a>
-**ID**: `dom_client_account_integration` (Client Account Integration Domain)
+<a id="dom-external-data"></a>
+**ID**: `dom_external_data` (External Data Domain)
 
-**Name**: Client and Account Integration
+**Name**: External Data
 
 **Type**: supporting
 
 **Strategic Importance**: important
 
 **Description**: 
-Provides SERVING LAYER (read-only) for Service Profile domain to access client demographics, account data, and user information for profile creation and account linkage. Consumes gold copy data created by data engineering pipelines.
+Provides SERVING LAYER (read-only) for Service Profile domain to access external data: client demographics (SRF), account data (SRF), and user data (Express). Consumes gold copy data created by data engineering pipelines. Serving layer abstracts external systems from domain model.
 
 ##### Bounded Contexts
 
-- bc_account_data_serving
-- bc_client_data_serving
+- bc_external_data_serving
 
 
 ---
@@ -186,8 +187,9 @@ Manages SERVICE PROFILES (not clients). Links to client data (SRF/GID/IND). Thre
 
 ##### Application Services
 
-- svc_app_receivables_enrollment
-- svc_app_receivable_approval_enrollment
+- svc_app_servicing_profile
+- svc_app_online_profile
+- svc_app_indirect_profile
 
 #### Bc Indirect Client Management
 
@@ -208,62 +210,94 @@ Manages indirect clients (BUSINESS payors only, MVP). Part of Service Profiles d
 - Link to direct client service profile
 - Support self-service management
 
-#### Svc App Receivables Enrollment
+#### Svc App Servicing Profile
 
-<a id="svc-app-receivables-enrollment"></a>
-**ID**: `svc_app_receivables_enrollment` (Receivables Enrollment Application Service)
+<a id="svc-app-servicing-profile"></a>
+**ID**: `svc_app_servicing_profile` (Servicing Profile Application Service)
 
-**Name**: Receivables Enrollment Service
-
-**Bounded Context Ref**: [Service Profile Management Bounded Context](#bc-service-profile-management)
-
-**Description**: 
-Application service for enrolling Receivables (online) service to direct client profiles. Manages GSAN account linkage and indirect client (payor) onboarding for receivables. ONE OF MANY service enrollment types.
-
-##### Responsibilities
-
-- Enroll receivables service for online profiles
-- Link GSAN accounts to service
-- Onboard indirect clients for direct client
-- Configure receivables settings
-
-#### Svc App Receivable Approval Enrollment
-
-<a id="svc-app-receivable-approval-enrollment"></a>
-**ID**: `svc_app_receivable_approval_enrollment` (Receivable Approval Enrollment Application Service)
-
-**Name**: Receivable-Approval Enrollment Service
+**Name**: Servicing Profile Service
 
 **Bounded Context Ref**: [Service Profile Management Bounded Context](#bc-service-profile-management)
 
 **Description**: 
-Application service for enrolling Receivable-Approval (indirect) service to indirect client profiles. Manages approval rule configuration and payor DDA account linkage. Coordinates with Approval Engine for invoice approval workflows.
+Application service for managing servicing profiles. Creates new servicing profile linked to SRF/GID client. Adds, modifies, and removes services linked to this profile. Enrolls accounts. Manages permission/approval policies owned by servicing profile.
 
 ##### Responsibilities
 
-- Enroll receivable-approval service for indirect profiles
-- Configure approval rules (via bc_approval_engine)
-- Link payor DDA accounts for payments
-- Coordinate invoice approvals (via bc_approval_engine)
+- Create new servicing profile (link to SRF/GID client)
+- Add services to servicing profile
+- Modify service configurations on profile
+- Remove services from profile
+- Enroll accounts to services on profile
+- Manage permission/approval policies for profile
+- Use users and user groups as policy subjects
 
-#### Bc User Lifecycle
+#### Svc App Online Profile
 
-<a id="bc-user-lifecycle"></a>
-**ID**: `bc_user_lifecycle` (User Lifecycle Bounded Context)
+<a id="svc-app-online-profile"></a>
+**ID**: `svc_app_online_profile` (Online Profile Application Service)
 
-**Name**: User Lifecycle
+**Name**: Online Profile Service
+
+**Bounded Context Ref**: [Service Profile Management Bounded Context](#bc-service-profile-management)
+
+**Description**: 
+Application service for managing online profiles (direct client). Creates new online profile with single primary client (MVP). Links to Express via site-id. Adds, modifies, removes services like Receivables. Onboards indirect clients (payors). Manages bank-configured permission/approval policies.
+
+##### Responsibilities
+
+- Create new online profile (link to SRF primary client + Express site-id)
+- Add services to online profile (Receivables, etc.)
+- Modify service configurations on profile
+- Remove services from profile
+- Enroll GSAN and other accounts to services
+- Onboard indirect clients for Receivables service
+- Manage permission/approval policies (bank-configured, MVP)
+- Use users and user groups as policy subjects
+
+#### Svc App Indirect Profile
+
+<a id="svc-app-indirect-profile"></a>
+**ID**: `svc_app_indirect_profile` (Indirect Profile Application Service)
+
+**Name**: Indirect Profile Service
+
+**Bounded Context Ref**: [Service Profile Management Bounded Context](#bc-service-profile-management)
+
+**Description**: 
+Application service for managing indirect profiles (business payors). Creates new indirect profile linked to IND client. Adds, modifies, removes services like Receivable-Approval. Links Canadian bank accounts. Manages self-service permission/approval policies configured by payor.
+
+##### Responsibilities
+
+- Create new indirect profile (link to IND indirect client)
+- Add services to indirect profile (Receivable-Approval, etc.)
+- Modify service configurations on profile
+- Remove services from profile
+- Link payor Canadian bank accounts for invoice payments
+- Manage permission/approval policies (self-service configured)
+- Use users and user groups as policy subjects
+- Coordinate invoice approvals via bc_approval_engine
+
+#### Bc Users
+
+<a id="bc-users"></a>
+**ID**: `bc_users` (Users Bounded Context)
+
+**Name**: Users
 
 **Domain Ref**: [User Management Domain](#dom-user-management)
 
 **Description**: 
-Direct client users (replicated from Express) and indirect client users (managed in Okta). ~1050 indirect users across 700 business payors (MVP).
+Manages users and user groups. Direct client users (replicated from Express) and indirect client users (managed in Okta). ~1050 indirect users across 700 business payors (MVP). Users and user groups used as subjects in permission/approval policies.
 
 ##### Responsibilities
 
 - Replicate direct client users from Express (read-only)
 - Manage indirect client users in Okta (full lifecycle)
+- Manage user groups for policy subjects
 - Track user roles and states
 - Enforce dual admin requirement
+- Provide users and user groups for policy evaluation
 
 #### Bc Identity Integration
 
@@ -284,23 +318,24 @@ Anti-corruption layer for dual identity providers. Consumes Express user events 
 - Abstract identity provider differences
 - Translate to platform user model
 
-#### Bc Permission Management
+#### Bc Policy
 
-<a id="bc-permission-management"></a>
-**ID**: `bc_permission_management` (Permission Management Bounded Context)
+<a id="bc-policy"></a>
+**ID**: `bc_policy` (Policy Bounded Context)
 
-**Name**: Permission Management
+**Name**: Policy
 
 **Domain Ref**: [User Management Domain](#dom-user-management)
 
 **Description**: 
-AWS IAM-inspired permission and approval policy management. Subject (user), action (URN), resource (accounts). Approval policy adds approver count and thresholds. Defines WHO can DO WHAT on WHICH resources. Policies consumed by Approval Engine for workflow execution.
+Permission and approval policy management (AWS IAM-inspired). Policies owned by service profiles. Subject (user/user group from bc_users), action (URN), resource (accounts/services). Approval policy adds approver count and thresholds. Defines WHO can DO WHAT on WHICH resources. Policies consumed by Approval Engine for workflow execution.
 
 ##### Responsibilities
 
-- Store permission policies (profiles and indirect clients)
-- Store approval policies with approver rules
-- Validate user permissions
+- Store permission policies owned by service profiles
+- Store approval policies with approver rules owned by profiles
+- Use users and user groups from bc_users as policy subjects
+- Validate user/user group permissions
 - Determine approval requirements for actions
 - Provide policy evaluation API for approval workflows
 
@@ -332,7 +367,7 @@ Generic approval workflow execution engine. Executes workflows based on policies
 **Name**: Account Data Sync
 
 **Description**: 
-Data engineering ETL infrastructure. Daily batch from SRF for client-owned accounts. Creates GOLD COPY of account data consumed by serving layer. Detects new/closed accounts. Data quality checks. Infrastructure supporting Client and Account Integration domain.
+Data engineering ETL infrastructure. Daily batch from SRF for client-owned accounts. Creates GOLD COPY of account data consumed by serving layer. Detects new/closed accounts. Data quality checks. Infrastructure supporting External Data domain.
 
 ##### Responsibilities
 
@@ -342,44 +377,89 @@ Data engineering ETL infrastructure. Daily batch from SRF for client-owned accou
 - Data quality and transformation
 - Trigger auto-enrollment notifications
 
-#### Bc Account Data Serving
+#### Bc External Data Serving
 
-<a id="bc-account-data-serving"></a>
-**ID**: `bc_account_data_serving` (Account Data Serving Bounded Context)
+<a id="bc-external-data-serving"></a>
+**ID**: `bc_external_data_serving` (External Data Serving Bounded Context)
 
-**Name**: Account Data Serving
+**Name**: External Data Serving
 
-**Domain Ref**: [Client Account Integration Domain](#dom-client-account-integration)
+**Domain Ref**: [External Data Domain](#dom-external-data)
 
 **Description**: 
-SERVING LAYER providing READ-ONLY access to gold copy account data. Service Profile domain consumes this for account enrollment and validation.
+SERVING LAYER providing READ-ONLY access to gold copy external data from SRF and Express. Service Profile domain consumes this for profile creation, account enrollment, and user synchronization. Three application services provide specialized access: client demographics, account data, and user data.
 
 ##### Responsibilities
 
-- Provide read-only API to account gold copy
+- Provide read-only API to external data gold copies
+- Abstract SRF and Express systems from domain model
+- Support profile creation and validation workflows
+- Support account enrollment workflows
+- Support user synchronization for permission/approval enforcement
+
+##### Application Services
+
+- svc_app_client_data
+- svc_app_account_data
+- svc_app_user_data
+
+#### Svc App Client Data
+
+<a id="svc-app-client-data"></a>
+**ID**: `svc_app_client_data` (Client Data Application Service)
+
+**Name**: Client Data Service
+
+**Bounded Context Ref**: [External Data Serving Bounded Context](#bc-external-data-serving)
+
+**Description**: 
+Application service providing read-only access to client demographics gold copy from SRF. Service Profile domain consumes this for profile creation and client validation.
+
+##### Responsibilities
+
+- Provide read-only API to client gold copy (SRF demographics)
+- Query client demographics by client ID (SRF/GID)
+- Validate client existence and status
+- Support online and servicing profile creation workflows
+
+#### Svc App Account Data
+
+<a id="svc-app-account-data"></a>
+**ID**: `svc_app_account_data` (Account Data Application Service)
+
+**Name**: Account Data Service
+
+**Bounded Context Ref**: [External Data Serving Bounded Context](#bc-external-data-serving)
+
+**Description**: 
+Application service providing read-only access to account data gold copy from SRF daily batch. Service Profile domain consumes this for account enrollment and validation.
+
+##### Responsibilities
+
+- Provide read-only API to account gold copy (SRF batch)
 - Query account data by client ID
 - Validate account existence and status
-- Support account enrollment workflows
+- Support account enrollment workflows for all profile types
 
-#### Bc Client Data Serving
+#### Svc App User Data
 
-<a id="bc-client-data-serving"></a>
-**ID**: `bc_client_data_serving` (Client Data Serving Bounded Context)
+<a id="svc-app-user-data"></a>
+**ID**: `svc_app_user_data` (User Data Application Service)
 
-**Name**: Client Data Serving
+**Name**: User Data Service
 
-**Domain Ref**: [Client Account Integration Domain](#dom-client-account-integration)
+**Bounded Context Ref**: [External Data Serving Bounded Context](#bc-external-data-serving)
 
 **Description**: 
-SERVING LAYER providing READ-ONLY access to gold copy client demographics and user data. Service Profile domain consumes this for client validation and user synchronization.
+Application service providing read-only access to user data gold copy from Express events. User Management domain (bc_users) consumes this for direct client user synchronization and Policy domain (bc_policy) consumes for permission/approval enforcement.
 
 ##### Responsibilities
 
-- Provide read-only API to client gold copy
-- Query client demographics by client ID
-- Validate client existence and status
-- Provide user data for permission and approval enforcement
-- Support profile creation and validation workflows
+- Provide read-only API to user gold copy (Express events)
+- Query user data by Express site-id
+- Validate user existence and status
+- Support user synchronization for bc_users
+- Support policy evaluation for bc_policy (permission/approval enforcement)
 
 
 ---
@@ -387,47 +467,33 @@ SERVING LAYER providing READ-ONLY access to gold copy client demographics and us
 <a id="context-mappings"></a>
 ## Context Mappings
 
-#### Cm Service Profile To Account Serving
+#### Cm Service Profile To External Data
 
-<a id="cm-service-profile-to-account-serving"></a>
-**ID**: `cm_service_profile_to_account_serving` (Service Profile To Account Serving Context Mapping)
+<a id="cm-service-profile-to-external-data"></a>
+**ID**: `cm_service_profile_to_external_data` (Service Profile To External Data Context Mapping)
 
-**Upstream Context**: [Account Data Serving Bounded Context](#bc-account-data-serving)
-
-**Downstream Context**: [Service Profile Management Bounded Context](#bc-service-profile-management)
-
-**Relationship Type**: customer_supplier
-
-**Description**: 
-Service Profile Management (downstream) consumes account data from Account Data Serving (upstream) for account enrollment. Read-only access to gold copy.
-
-#### Cm Service Profile To Client Serving
-
-<a id="cm-service-profile-to-client-serving"></a>
-**ID**: `cm_service_profile_to_client_serving` (Service Profile To Client Serving Context Mapping)
-
-**Upstream Context**: [Client Data Serving Bounded Context](#bc-client-data-serving)
+**Upstream Context**: [External Data Serving Bounded Context](#bc-external-data-serving)
 
 **Downstream Context**: [Service Profile Management Bounded Context](#bc-service-profile-management)
 
 **Relationship Type**: customer_supplier
 
 **Description**: 
-Service Profile Management (downstream) consumes client demographics and user data from Client Data Serving (upstream) for profile creation and validation. Read-only access to gold copy.
+Service Profile Management (downstream) consumes external data from External Data Serving (upstream) for profile creation, account enrollment, and validation. Read-only access to gold copies via three application services: svc_app_client_data (SRF demographics), svc_app_account_data (SRF batch), svc_app_user_data (Express events).
 
-#### Cm Approval Engine To Permission Management
+#### Cm Approval Engine To Policy
 
-<a id="cm-approval-engine-to-permission-management"></a>
-**ID**: `cm_approval_engine_to_permission_management` (Approval Engine To Permission Management Context Mapping)
+<a id="cm-approval-engine-to-policy"></a>
+**ID**: `cm_approval_engine_to_policy` (Approval Engine To Policy Context Mapping)
 
-**Upstream Context**: [Permission Management Bounded Context](#bc-permission-management)
+**Upstream Context**: [Policy Bounded Context](#bc-policy)
 
 **Downstream Context**: [Approval Engine Bounded Context](#bc-approval-engine)
 
 **Relationship Type**: customer_supplier
 
 **Description**: 
-Approval Engine (downstream) consumes permission and approval policies from Permission Management (upstream). Evaluates policies to determine approval requirements and enforce rules during workflow execution.
+Approval Engine (downstream) consumes permission and approval policies from Policy (upstream). Evaluates policies owned by service profiles to determine approval requirements and enforce rules during workflow execution. Policies use users/user groups from bc_users as subjects.
 
 #### Cm Receivable Approval To Approval Engine
 
