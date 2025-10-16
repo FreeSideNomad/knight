@@ -316,35 +316,311 @@ At any point, the user may decide not to answer questions and change direction. 
 **Objective**: Detail domain model with tactical patterns
 
 **Actions**:
-1. **Refine DDD Model** in `model/platform-ddd.yaml` (Tactical focus)
-   - Define Aggregates for priority bounded contexts
-   - Identify Aggregate Roots and Entities
-   - Model Value Objects (e.g., ClientId, AccountNumber, Email, Address)
-   - Define Repositories for aggregate persistence
-   - Document Domain Services and Application Services
-   - Model Domain Events
-   - Create Factories where complex construction is needed
-   - Define Invariants and consistency rules
+
+1. **Define Value Objects** (pattern: `vo_<name>`)
+   - Immutable objects representing domain concepts
+   - Attributes with types, descriptions, and validation rules
+   - Validation rules (format, range, dependencies)
+   - Equality based on value, not identity
+   - Examples: ClientId (URN-based), ProfileId hierarchy, Email, AccountNumber
+
+2. **Define Aggregates** (pattern: `agg_<name>`)
+   - Aggregate root entity reference
+   - Child entities within aggregate boundary
+   - Value objects used by aggregate
+   - Consistency rules (invariants across entities)
+   - Invariants (must-hold conditions)
+   - Lifecycle hooks (on_create, on_update, on_delete)
+   - Size estimate (small/medium/large)
+   - Examples: ServicingProfile, OnlineProfile, IndirectProfile, User, PermissionStatement
+
+3. **Define Entities** (pattern: `ent_<name>`)
+   - Entity attributes with types and descriptions
+   - Methods (behavior) with parameters and return types
+   - Lifecycle states (if applicable)
+   - State transition rules
+   - Identity generation strategy
+   - Validation rules
+   - Examples: ent_online_profile, ent_user, ent_service_enrollment, ent_permission_statement
+
+4. **Define Domain Events** (pattern: `evt_<name>`)
+   - Event payload (attributes with types)
+   - Publishing aggregate reference
+   - Bounded context reference
+   - Timestamp and causation tracking
+   - Examples: ProfileCreated, UserCreated, PermissionStatementCreated, ApprovalWorkflowStarted
+
+5. **Define Domain Services** (pattern: `svc_dom_<name>`)
+   - Stateless operations spanning multiple aggregates
+   - Methods with clear input/output contracts
+   - When to use: Operations that don't belong to single aggregate
+   - Examples: Profile validation across contexts, account enrollment eligibility checks
+
+6. **Define Application Services** (pattern: `svc_app_<name>`)
+   - Orchestration of domain logic
+   - Methods implementing use cases
+   - Transaction boundaries
+   - Integration with repositories
+   - Event publishing
+   - Examples: svc_app_online_profile (create, add service, enroll accounts)
+
+7. **Define Repositories** (pattern: `repo_<name>`)
+   - Aggregate reference
+   - Operations: save, findById, findBy<criteria>, delete, update
+   - Query methods with filters and pagination
+   - Persistence technology hints (SQL, NoSQL, etc.)
+   - Examples: repo_online_profile, repo_user, repo_permission_statement
+
+8. **Define Factories** (pattern: `factory_<name>`) - Optional
+   - Complex object construction
+   - Validation during creation
+   - When to use: Multi-step construction, validation logic
+   - Examples: ProfileFactory (validates client exists, generates sequence)
+
+**Detailed Definition Guidelines**:
+
+**Entities**:
+```yaml
+entities:
+  ent_online_profile:
+    id: ent_online_profile
+    name: OnlineProfile
+    bounded_context_ref: bc_service_profile_management
+    is_aggregate_root: true
+    attributes:
+      - name: profile_id
+        type: value_object
+        value_object_ref: vo_online_profile_id
+        description: "Unique profile identifier"
+      - name: client_id
+        type: value_object
+        value_object_ref: vo_client_id
+        description: "SRF client reference"
+      - name: site_id
+        type: string
+        description: "Express site-id link"
+      - name: status
+        type: enum
+        enum_values: [PENDING, ACTIVE, SUSPENDED, CLOSED]
+      - name: created_at
+        type: timestamp
+      - name: updated_at
+        type: timestamp
+    methods:
+      - name: enrollService
+        description: "Enroll a service to this profile"
+        parameters:
+          - name: service_type
+            type: enum
+            enum_values: [RECEIVABLES, BTR, INTERAC_SEND]
+          - name: configuration
+            type: object
+        returns:
+          type: entity
+          entity_ref: ent_service_enrollment
+        validation:
+          - "Profile must be ACTIVE"
+          - "Service not already enrolled"
+      - name: enrollAccount
+        description: "Enroll account to a service"
+        parameters:
+          - name: service_enrollment_id
+            type: string
+          - name: account_id
+            type: string
+        validation:
+          - "Service must be enrolled"
+          - "Account must belong to client"
+    lifecycle_states:
+      - PENDING: "Created but not activated"
+      - ACTIVE: "Active and can enroll services"
+      - SUSPENDED: "Temporarily suspended"
+      - CLOSED: "Permanently closed"
+    state_transitions:
+      - from: PENDING
+        to: ACTIVE
+        trigger: "Bank approval"
+      - from: ACTIVE
+        to: SUSPENDED
+        trigger: "Admin or bank suspension"
+      - from: SUSPENDED
+        to: ACTIVE
+        trigger: "Reinstatement"
+    identity_generation: "Composite: clientId + sequence (unique within client)"
+```
+
+**Domain Services**:
+```yaml
+domain_services:
+  svc_dom_profile_validation:
+    id: svc_dom_profile_validation
+    name: ProfileValidationService
+    bounded_context_ref: bc_service_profile_management
+    description: >
+      Validates profile creation rules across contexts. Checks client existence
+      via External Data serving layer, validates business rules.
+    methods:
+      - name: validateOnlineProfileCreation
+        description: "Validate online profile can be created"
+        parameters:
+          - name: client_id
+            type: value_object
+            value_object_ref: vo_client_id
+          - name: site_id
+            type: string
+        returns:
+          type: object
+          properties:
+            valid: boolean
+            errors: array
+        validation:
+          - "Client exists in SRF via svc_app_client_data"
+          - "Site-id exists in Express via svc_app_user_data"
+          - "Site-id links to same client"
+```
+
+**Application Services**:
+```yaml
+application_services:
+  svc_app_online_profile:
+    id: svc_app_online_profile
+    name: OnlineProfileApplicationService
+    bounded_context_ref: bc_service_profile_management
+    description: >
+      Orchestrates online profile use cases. Creates profiles, enrolls services,
+      manages accounts. Coordinates with repositories and domain services.
+    methods:
+      - name: createOnlineProfile
+        description: "Create new online profile with primary client"
+        parameters:
+          - name: client_id
+            type: value_object
+            value_object_ref: vo_client_id
+          - name: site_id
+            type: string
+        returns:
+          type: aggregate
+          aggregate_ref: agg_online_profile
+        transaction: true
+        publishes_events:
+          - evt_online_profile_created
+        workflow:
+          - "Validate via ProfileValidationService"
+          - "Generate sequence via SequenceGeneratorService"
+          - "Create OnlineProfile aggregate"
+          - "Save via repo_online_profile"
+          - "Publish OnlineProfileCreated event"
+      - name: enrollService
+        parameters:
+          - name: profile_id
+            type: value_object
+            value_object_ref: vo_online_profile_id
+          - name: service_type
+            type: enum
+          - name: configuration
+            type: object
+        returns:
+          type: entity
+          entity_ref: ent_service_enrollment
+        transaction: true
+        publishes_events:
+          - evt_service_enrolled
+```
+
+**Repositories**:
+```yaml
+repositories:
+  repo_online_profile:
+    id: repo_online_profile
+    name: OnlineProfileRepository
+    bounded_context_ref: bc_service_profile_management
+    aggregate_ref: agg_online_profile
+    description: "Repository for OnlineProfile aggregate persistence"
+    operations:
+      - name: save
+        description: "Persist new or updated profile"
+        parameters:
+          - name: profile
+            type: aggregate
+            aggregate_ref: agg_online_profile
+        returns:
+          type: void
+      - name: findById
+        description: "Find profile by ID"
+        parameters:
+          - name: profile_id
+            type: value_object
+            value_object_ref: vo_online_profile_id
+        returns:
+          type: aggregate
+          aggregate_ref: agg_online_profile
+          nullable: true
+      - name: findByClientId
+        description: "Find all profiles for a client"
+        parameters:
+          - name: client_id
+            type: value_object
+            value_object_ref: vo_client_id
+          - name: page_number
+            type: integer
+          - name: page_size
+            type: integer
+        returns:
+          type: array
+          items:
+            type: aggregate
+            aggregate_ref: agg_online_profile
+      - name: findBySiteId
+        description: "Find profile by Express site-id"
+        parameters:
+          - name: site_id
+            type: string
+        returns:
+          type: aggregate
+          aggregate_ref: agg_online_profile
+          nullable: true
+      - name: delete
+        description: "Delete profile (soft delete - status=CLOSED)"
+        parameters:
+          - name: profile_id
+            type: value_object
+            value_object_ref: vo_online_profile_id
+        returns:
+          type: void
+    persistence_technology: "SQL (PostgreSQL recommended)"
+    table_strategy: "Single table per aggregate root"
+```
 
 **Clarifying Questions Focus**:
-- Aggregate boundaries and consistency requirements
-- Value object validation rules (e.g., account number format per region)
-- Domain events for cross-context communication
-- Identity generation strategies (client IDs, profile IDs, user IDs)
-- Lifecycle states for key entities (user: pending registration, active, locked)
-- Permission and approval policy structures (AWS IAM-like model)
+- **Aggregate Boundaries**: What entities belong inside aggregate vs. separate aggregates?
+- **Entity Attributes**: What data needs to be persisted? What's computed?
+- **Entity Methods**: What business logic belongs on entities vs. domain services?
+- **Value Object Validation**: What format/range rules? (e.g., account number format per region)
+- **Domain Events**: What events are critical for cross-context communication?
+- **Identity Generation**: How are IDs generated? (UUID, sequence, composite?)
+- **Lifecycle States**: What states exist? What transitions are allowed?
+- **Repository Queries**: What query patterns are needed? Pagination requirements?
+- **Application Service Methods**: What use cases? Transaction boundaries?
+- **Domain Service Scope**: What operations span multiple aggregates?
 
 **Key Domain Concepts to Model**:
-- Client Profile (servicing vs. online)
-- Account Enrollment (auto-enroll vs. manual)
-- User (with identity provider integration)
-- Service Enrollment (stand-alone, online, indirect)
-- Permission Policy (subject, action URN, resource)
-- Approval Policy (extends permission with approver count)
+- **Profile Aggregates**: ServicingProfile, OnlineProfile, IndirectProfile
+- **Policy Aggregates**: PermissionStatement, ApprovalStatement
+- **User Aggregates**: User, UserGroup
+- **Client Aggregates**: IndirectClient
+- **Service Entities**: ServiceEnrollment, AccountEnrollment
+- **Value Objects**: ClientId (URN), ProfileId hierarchy, Email, PhoneNumber
+- **Domain Events**: Profile lifecycle, service enrollment, user management, policy changes, approval workflows
 
 **Outputs**:
-- `model/platform-ddd.yaml` with complete tactical patterns
-- Detailed aggregate models, value objects, and domain events
+- `model/platform-ddd.yaml` with complete tactical patterns:
+  - Value Objects with validation rules
+  - Aggregates with consistency rules and invariants
+  - Entities with attributes, methods, and lifecycle states
+  - Domain Events with payloads
+  - Domain Services with methods
+  - Application Services with use case orchestration
+  - Repositories with operations
 
 ---
 
