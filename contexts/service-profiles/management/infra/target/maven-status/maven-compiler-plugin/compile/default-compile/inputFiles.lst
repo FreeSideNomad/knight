@@ -1,0 +1,3 @@
+/Users/igor/code/knight/contexts/service-profiles/management/infra/src/main/java/com/knight/contexts/serviceprofiles/management/infra/ServiceProfileManagementApplication.java
+/Users/igor/code/knight/contexts/service-profiles/management/infra/src/main/java/com/knight/contexts/serviceprofiles/management/infra/persistence/InMemoryServicingProfileRepository.java
+/Users/igor/code/knight/contexts/service-profiles/management/infra/src/main/java/com/knight/contexts/serviceprofiles/management/infra/rest/SpmCommandController.java

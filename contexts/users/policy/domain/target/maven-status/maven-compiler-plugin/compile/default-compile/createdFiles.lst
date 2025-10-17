@@ -1,0 +1,5 @@
+com/knight/contexts/users/policy/domain/service/PolicyEvaluatorService$ApprovalEvaluation.class
+com/knight/contexts/users/policy/domain/aggregate/ApprovalStatement.class
+com/knight/contexts/users/policy/domain/service/PolicyEvaluatorService$PermissionEvaluation.class
+com/knight/contexts/users/policy/domain/service/PolicyEvaluatorService.class
+com/knight/contexts/users/policy/domain/aggregate/PermissionStatement.class

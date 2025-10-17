@@ -1,0 +1,12 @@
+com/knight/contexts/users/policy/infra/persistence/InMemoryPermissionStatementRepository.class
+com/knight/contexts/users/policy/infra/rest/PolicyQueryController$EvaluatePermissionRequest.class
+com/knight/contexts/users/policy/infra/rest/PolicyQueryController$EvaluateApprovalRequest.class
+com/knight/contexts/users/policy/infra/rest/PolicyCommandController$CreatePermissionRequest.class
+com/knight/contexts/users/policy/infra/rest/PolicyCommandController$UpdateApprovalRequest.class
+com/knight/contexts/users/policy/infra/rest/PolicyCommandController.class
+com/knight/contexts/users/policy/infra/PolicyApplication.class
+com/knight/contexts/users/policy/infra/persistence/InMemoryApprovalStatementRepository.class
+com/knight/contexts/users/policy/infra/rest/PolicyCommandController$CreateStatementResult.class
+com/knight/contexts/users/policy/infra/rest/PolicyQueryController.class
+com/knight/contexts/users/policy/infra/rest/PolicyCommandController$CreateApprovalRequest.class
+com/knight/contexts/users/policy/infra/rest/PolicyCommandController$UpdatePermissionRequest.class

@@ -1,0 +1,5 @@
+/Users/igor/code/knight/contexts/approval-workflows/engine/api/src/main/java/com/knight/contexts/approvalworkflows/engine/api/commands/ApprovalEngineCommands.java
+/Users/igor/code/knight/contexts/approval-workflows/engine/api/src/main/java/com/knight/contexts/approvalworkflows/engine/api/events/ApprovalReceived.java
+/Users/igor/code/knight/contexts/approval-workflows/engine/api/src/main/java/com/knight/contexts/approvalworkflows/engine/api/events/ApprovalWorkflowCompleted.java
+/Users/igor/code/knight/contexts/approval-workflows/engine/api/src/main/java/com/knight/contexts/approvalworkflows/engine/api/events/ApprovalWorkflowStarted.java
+/Users/igor/code/knight/contexts/approval-workflows/engine/api/src/main/java/com/knight/contexts/approvalworkflows/engine/api/queries/ApprovalEngineQueries.java

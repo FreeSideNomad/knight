@@ -1,0 +1,7 @@
+com/knight/contexts/serviceprofiles/management/infra/rest/SpmCommandController$CreateProfileRequest.class
+com/knight/contexts/serviceprofiles/management/infra/rest/SpmCommandController.class
+com/knight/contexts/serviceprofiles/management/infra/ServiceProfileManagementApplication.class
+com/knight/contexts/serviceprofiles/management/infra/rest/SpmCommandController$EnrollServiceRequest.class
+com/knight/contexts/serviceprofiles/management/infra/rest/SpmCommandController$CreateProfileResult.class
+com/knight/contexts/serviceprofiles/management/infra/rest/SpmCommandController$EnrollAccountRequest.class
+com/knight/contexts/serviceprofiles/management/infra/persistence/InMemoryServicingProfileRepository.class

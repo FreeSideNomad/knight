@@ -1,0 +1,3 @@
+/Users/igor/code/knight/contexts/service-profiles/indirect-clients/infra/src/main/java/com/knight/contexts/serviceprofiles/indirectclients/infra/IndirectClientManagementApplication.java
+/Users/igor/code/knight/contexts/service-profiles/indirect-clients/infra/src/main/java/com/knight/contexts/serviceprofiles/indirectclients/infra/persistence/InMemoryIndirectClientRepository.java
+/Users/igor/code/knight/contexts/service-profiles/indirect-clients/infra/src/main/java/com/knight/contexts/serviceprofiles/indirectclients/infra/rest/IndirectClientCommandController.java

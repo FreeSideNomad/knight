@@ -1,0 +1,6 @@
+com/knight/contexts/serviceprofiles/indirectclients/domain/aggregate/IndirectClient$RelatedPerson$Status.class
+com/knight/contexts/serviceprofiles/indirectclients/domain/aggregate/IndirectClient$Type.class
+com/knight/contexts/serviceprofiles/indirectclients/domain/aggregate/IndirectClient$RelatedPerson.class
+com/knight/contexts/serviceprofiles/indirectclients/domain/aggregate/IndirectClient.class
+com/knight/contexts/serviceprofiles/indirectclients/domain/aggregate/IndirectClient$Status.class
+com/knight/contexts/serviceprofiles/indirectclients/domain/aggregate/IndirectClient$RelatedPerson$Role.class

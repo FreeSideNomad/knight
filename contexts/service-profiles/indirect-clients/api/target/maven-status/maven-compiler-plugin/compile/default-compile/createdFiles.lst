@@ -1,0 +1,7 @@
+com/knight/contexts/serviceprofiles/indirectclients/api/events/IndirectClientOnboarded.class
+com/knight/contexts/serviceprofiles/indirectclients/api/commands/IndirectClientCommands$UpdateBusinessInfoCmd.class
+com/knight/contexts/serviceprofiles/indirectclients/api/commands/IndirectClientCommands$CreateIndirectClientCmd.class
+com/knight/contexts/serviceprofiles/indirectclients/api/commands/IndirectClientCommands$AddRelatedPersonCmd.class
+com/knight/contexts/serviceprofiles/indirectclients/api/queries/IndirectClientQueries.class
+com/knight/contexts/serviceprofiles/indirectclients/api/queries/IndirectClientQueries$IndirectClientSummary.class
+com/knight/contexts/serviceprofiles/indirectclients/api/commands/IndirectClientCommands.class

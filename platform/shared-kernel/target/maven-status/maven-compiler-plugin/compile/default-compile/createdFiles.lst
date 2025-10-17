@@ -1,0 +1,8 @@
+com/knight/platform/sharedkernel/IndirectClientId.class
+com/knight/platform/sharedkernel/OnlineProfileId.class
+com/knight/platform/sharedkernel/UserId.class
+com/knight/platform/sharedkernel/IndirectProfileId.class
+com/knight/platform/sharedkernel/ProfileId.class
+com/knight/platform/sharedkernel/ClientId.class
+com/knight/platform/sharedkernel/UserGroupId.class
+com/knight/platform/sharedkernel/ServicingProfileId.class

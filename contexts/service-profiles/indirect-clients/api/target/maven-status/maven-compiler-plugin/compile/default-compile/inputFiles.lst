@@ -1,0 +1,3 @@
+/Users/igor/code/knight/contexts/service-profiles/indirect-clients/api/src/main/java/com/knight/contexts/serviceprofiles/indirectclients/api/commands/IndirectClientCommands.java
+/Users/igor/code/knight/contexts/service-profiles/indirect-clients/api/src/main/java/com/knight/contexts/serviceprofiles/indirectclients/api/events/IndirectClientOnboarded.java
+/Users/igor/code/knight/contexts/service-profiles/indirect-clients/api/src/main/java/com/knight/contexts/serviceprofiles/indirectclients/api/queries/IndirectClientQueries.java

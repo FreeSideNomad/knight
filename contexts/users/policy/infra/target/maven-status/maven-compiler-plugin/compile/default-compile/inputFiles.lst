@@ -1,0 +1,5 @@
+/Users/igor/code/knight/contexts/users/policy/infra/src/main/java/com/knight/contexts/users/policy/infra/PolicyApplication.java
+/Users/igor/code/knight/contexts/users/policy/infra/src/main/java/com/knight/contexts/users/policy/infra/persistence/InMemoryApprovalStatementRepository.java
+/Users/igor/code/knight/contexts/users/policy/infra/src/main/java/com/knight/contexts/users/policy/infra/persistence/InMemoryPermissionStatementRepository.java
+/Users/igor/code/knight/contexts/users/policy/infra/src/main/java/com/knight/contexts/users/policy/infra/rest/PolicyCommandController.java
+/Users/igor/code/knight/contexts/users/policy/infra/src/main/java/com/knight/contexts/users/policy/infra/rest/PolicyQueryController.java

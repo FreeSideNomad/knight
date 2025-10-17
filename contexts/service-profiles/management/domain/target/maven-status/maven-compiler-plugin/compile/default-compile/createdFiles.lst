@@ -1,0 +1,6 @@
+com/knight/contexts/serviceprofiles/management/domain/aggregate/ServicingProfile$ServiceEnrollment.class
+com/knight/contexts/serviceprofiles/management/domain/aggregate/ServicingProfile$AccountEnrollment.class
+com/knight/contexts/serviceprofiles/management/domain/aggregate/ServicingProfile$ServiceEnrollment$Status.class
+com/knight/contexts/serviceprofiles/management/domain/aggregate/ServicingProfile.class
+com/knight/contexts/serviceprofiles/management/domain/aggregate/ServicingProfile$Status.class
+com/knight/contexts/serviceprofiles/management/domain/aggregate/ServicingProfile$AccountEnrollment$Status.class

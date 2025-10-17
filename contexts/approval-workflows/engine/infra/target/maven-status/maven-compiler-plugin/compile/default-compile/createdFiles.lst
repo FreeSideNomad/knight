@@ -1,0 +1,9 @@
+com/knight/contexts/approvalworkflows/engine/infra/rest/ApprovalEngineCommandController$RejectWorkflowRequest.class
+com/knight/contexts/approvalworkflows/engine/infra/rest/ApprovalEngineCommandController$StartWorkflowRequest.class
+com/knight/contexts/approvalworkflows/engine/infra/rest/ApprovalEngineQueryController.class
+com/knight/contexts/approvalworkflows/engine/infra/rest/ApprovalEngineCommandController$StartWorkflowResult.class
+com/knight/contexts/approvalworkflows/engine/infra/rest/ApprovalEngineCommandController.class
+com/knight/contexts/approvalworkflows/engine/infra/rest/ApprovalEngineCommandController$CancelWorkflowRequest.class
+com/knight/contexts/approvalworkflows/engine/infra/rest/ApprovalEngineCommandController$ApproveWorkflowRequest.class
+com/knight/contexts/approvalworkflows/engine/infra/ApprovalEngineApplication.class
+com/knight/contexts/approvalworkflows/engine/infra/persistence/InMemoryApprovalWorkflowRepository.class

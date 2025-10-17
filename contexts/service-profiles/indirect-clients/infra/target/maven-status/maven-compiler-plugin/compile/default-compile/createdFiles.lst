@@ -1,0 +1,7 @@
+com/knight/contexts/serviceprofiles/indirectclients/infra/rest/IndirectClientCommandController$UpdateBusinessInfoRequest.class
+com/knight/contexts/serviceprofiles/indirectclients/infra/persistence/InMemoryIndirectClientRepository.class
+com/knight/contexts/serviceprofiles/indirectclients/infra/rest/IndirectClientCommandController.class
+com/knight/contexts/serviceprofiles/indirectclients/infra/rest/IndirectClientCommandController$AddRelatedPersonRequest.class
+com/knight/contexts/serviceprofiles/indirectclients/infra/IndirectClientManagementApplication.class
+com/knight/contexts/serviceprofiles/indirectclients/infra/rest/IndirectClientCommandController$CreateIndirectClientResult.class
+com/knight/contexts/serviceprofiles/indirectclients/infra/rest/IndirectClientCommandController$CreateIndirectClientRequest.class
