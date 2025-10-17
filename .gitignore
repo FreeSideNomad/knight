@@ -23,6 +23,9 @@ build/
 *.swo
 *~
 
+# Maven
+**/target/**
+
 # Logs
 *.log
 

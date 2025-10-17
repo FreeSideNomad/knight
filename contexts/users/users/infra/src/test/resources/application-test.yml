@@ -1,0 +1,21 @@
+# Test Configuration
+# Datasource configured dynamically by TestPropertyProvider in integration tests
+
+flyway:
+  datasources:
+    default:
+      enabled: true
+      schemas: users
+
+kafka:
+  enabled: false  # Disable in repository tests
+
+jpa:
+  default:
+    entity-scan:
+      packages: 'com.knight.contexts.users.users.infra.persistence.entity'
+    properties:
+      hibernate:
+        default_schema: users
+        show_sql: true
+        format_sql: true

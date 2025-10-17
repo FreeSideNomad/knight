@@ -1,0 +1,31 @@
+# Test Configuration (Testcontainers)
+
+micronaut:
+  application:
+    name: spm-test
+
+datasources:
+  default:
+    db-type: postgresql
+    dialect: POSTGRES
+    driver-class-name: org.postgresql.Driver
+
+flyway:
+  datasources:
+    default:
+      enabled: true
+      clean-disabled: false
+
+kafka:
+  enabled: false  # Disable Kafka in unit tests
+
+jpa:
+  default:
+    entity-scan:
+      packages: 'com.knight.contexts.serviceprofiles.management.infra.persistence.entity'
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+        show_sql: true
+        format_sql: true

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.knight</groupId>
+        <artifactId>knight-platform</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>bff-web</artifactId>
+    <packaging>jar</packaging>
+
+    <name>BFF - Web</name>
+    <description>Backend-for-Frontend layer for UI composition</description>
+
+    <dependencies>
+        <!-- Shared Kernel -->
+        <dependency>
+            <groupId>com.knight</groupId>
+            <artifactId>shared-kernel</artifactId>
+        </dependency>
+
+        <!-- BC APIs (query only - no domain/app) -->
+        <dependency>
+            <groupId>com.knight.contexts.service-profiles</groupId>
+            <artifactId>management-api</artifactId>
+        </dependency>
+        <!-- TODO: Add when users module is complete -->
+        <!--
+        <dependency>
+            <groupId>com.knight.contexts.users</groupId>
+            <artifactId>users-api</artifactId>
+        </dependency>
+        -->
+
+        <!-- Micronaut -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-server-netty</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-inject-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-jackson-databind</artifactId>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>io.micronaut.test</groupId>
+            <artifactId>micronaut-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>io.micronaut.maven</groupId>
+                <artifactId>micronaut-maven-plugin</artifactId>
+                <version>4.7.0</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>

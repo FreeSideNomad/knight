@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Knight Platform - Local",
+      "Group": "Development",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "knight",
+      "Username": "knight",
+      "SSLMode": "prefer",
+      "PassFile": "/tmp/pgpassfile"
+    }
+  }
+}

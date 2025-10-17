@@ -1,0 +1,5 @@
+micronaut:
+  application:
+    name: bff-web
+  server:
+    port: 8080

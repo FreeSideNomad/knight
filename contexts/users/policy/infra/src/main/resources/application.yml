@@ -1,0 +1,27 @@
+micronaut:
+  application:
+    name: policy-management
+  server:
+    port: 8084
+
+datasources:
+  default:
+    url: jdbc:postgresql://localhost:5432/knight_policy
+    driverClassName: org.postgresql.Driver
+    username: knight
+    password: knight
+    dialect: POSTGRES
+
+jpa:
+  default:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: validate
+        show_sql: false
+
+flyway:
+  datasources:
+    default:
+      enabled: true
+      locations: classpath:db/migration

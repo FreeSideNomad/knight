@@ -1,0 +1,33 @@
+# Test Configuration (Testcontainers)
+
+micronaut:
+  application:
+    name: icm-test
+
+datasources:
+  default:
+    db-type: postgresql
+    dialect: POSTGRES
+    driver-class-name: org.postgresql.Driver
+
+flyway:
+  datasources:
+    default:
+      enabled: true
+      clean-disabled: false
+      schemas: icm
+
+kafka:
+  enabled: false  # Disable Kafka in unit tests
+
+jpa:
+  default:
+    entity-scan:
+      packages: 'com.knight.contexts.serviceprofiles.indirectclients.infra.persistence.entity'
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+        show_sql: true
+        format_sql: true
+        default_schema: icm

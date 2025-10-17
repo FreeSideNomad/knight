@@ -1,0 +1,96 @@
+micronaut:
+  application:
+    name: service-profile-management
+  server:
+    port: 8081
+
+# PostgreSQL Configuration
+datasources:
+  default:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:knight}
+    driverClassName: org.postgresql.Driver
+    username: ${DB_USER:knight}
+    password: ${DB_PASSWORD:knight}
+    schema-generate: NONE
+    dialect: POSTGRES
+
+    # HikariCP Connection Pool
+    maximum-pool-size: 10
+    minimum-idle: 5
+    connection-timeout: 30000
+    idle-timeout: 600000
+    max-lifetime: 1800000
+
+# JPA Configuration
+jpa:
+  default:
+    entity-scan:
+      packages:
+        - 'com.knight.contexts.serviceprofiles.management.infra.persistence.entity'
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: validate
+        show_sql: false
+        format_sql: true
+        default_schema: spm
+
+        # Performance tuning
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+        # Statistics (disable in production)
+        generate_statistics: false
+
+# Flyway Configuration
+flyway:
+  datasources:
+    default:
+      enabled: true
+      schemas: spm
+      locations: classpath:db/migration
+      baseline-on-migrate: true
+      validate-on-migrate: true
+
+# Kafka Configuration
+kafka:
+  enabled: ${KAFKA_ENABLED:true}
+
+  bootstrap:
+    servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+  producer:
+    bootstrap-servers: ${kafka.bootstrap.servers}
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    acks: all
+    retries: 3
+    max-in-flight-requests-per-connection: 1
+    enable-idempotence: true
+    compression-type: snappy
+
+  consumer:
+    bootstrap-servers: ${kafka.bootstrap.servers}
+    group-id: service-profile-management
+    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    auto-offset-reset: earliest
+    enable-auto-commit: false
+    max-poll-records: 10
+
+  # Topic Configuration (auto-create in dev)
+  topics:
+    servicing-profile-created:
+      name: service-profiles.management.servicing-profile-created
+      partitions: 3
+      replication-factor: 1
+
+# Logging
+logger:
+  levels:
+    com.knight: DEBUG
+    io.micronaut: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

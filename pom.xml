@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.knight</groupId>
+    <artifactId>knight-platform</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Knight - Commercial Banking Platform</name>
+    <description>DDD Modular Monolith for Cash Management</description>
+
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Micronaut -->
+        <micronaut.version>4.9.3</micronaut.version>
+        <micronaut.data.version>4.6.0</micronaut.data.version>
+        <micronaut.test.version>4.8.0</micronaut.test.version>
+
+        <!-- Dependencies -->
+        <lombok.version>1.18.40</lombok.version>
+        <archunit.version>1.4.1</archunit.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <postgresql.version>42.7.5</postgresql.version>
+        <flyway.version>11.3.3</flyway.version>
+        <junit.version>5.11.4</junit.version>
+        <jackson.version>2.18.2</jackson.version>
+
+        <!-- Kafka -->
+        <micronaut.kafka.version>5.3.0</micronaut.kafka.version>
+        <kafka.version>3.6.0</kafka.version>
+
+        <!-- Testing -->
+        <testcontainers.version>1.20.4</testcontainers.version>
+        <awaitility.version>4.2.0</awaitility.version>
+        <assertj.version>3.24.2</assertj.version>
+    </properties>
+
+    <modules>
+        <!-- Platform -->
+        <module>platform/shared-kernel</module>
+
+        <!-- BFF -->
+        <module>bff/web</module>
+
+        <!-- Service Profiles Domain -->
+        <module>contexts/service-profiles/management</module>
+        <module>contexts/service-profiles/indirect-clients</module>
+
+        <!-- User Management Domain -->
+        <module>contexts/users/users</module>
+        <module>contexts/users/policy</module>
+
+        <!-- Approval Workflows Domain -->
+        <module>contexts/approval-workflows/engine</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Micronaut BOM -->
+            <dependency>
+                <groupId>io.micronaut.platform</groupId>
+                <artifactId>micronaut-platform</artifactId>
+                <version>${micronaut.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Micronaut Data BOM -->
+            <dependency>
+                <groupId>io.micronaut.data</groupId>
+                <artifactId>micronaut-data-bom</artifactId>
+                <version>${micronaut.data.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Shared Kernel -->
+            <dependency>
+                <groupId>com.knight</groupId>
+                <artifactId>shared-kernel</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Service Profiles - Management -->
+            <dependency>
+                <groupId>com.knight.contexts.service-profiles</groupId>
+                <artifactId>management-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.knight.contexts.service-profiles</groupId>
+                <artifactId>management-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.knight.contexts.service-profiles</groupId>
+                <artifactId>management-app</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Service Profiles - Indirect Clients -->
+            <dependency>
+                <groupId>com.knight.contexts.service-profiles</groupId>
+                <artifactId>indirect-clients-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.knight.contexts.service-profiles</groupId>
+                <artifactId>indirect-clients-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.knight.contexts.service-profiles</groupId>
+                <artifactId>indirect-clients-app</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Users -->
+            <dependency>
+                <groupId>com.knight.contexts.users</groupId>
+                <artifactId>users-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.knight.contexts.users</groupId>
+                <artifactId>users-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.knight.contexts.users</groupId>
+                <artifactId>users-app</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Policy -->
+            <dependency>
+                <groupId>com.knight.contexts.users</groupId>
+                <artifactId>policy-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.knight.contexts.users</groupId>
+                <artifactId>policy-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.knight.contexts.users</groupId>
+                <artifactId>policy-app</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Approval Engine -->
+            <dependency>
+                <groupId>com.knight.contexts.approval-workflows</groupId>
+                <artifactId>engine-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.knight.contexts.approval-workflows</groupId>
+                <artifactId>engine-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.knight.contexts.approval-workflows</groupId>
+                <artifactId>engine-app</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- External Dependencies -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${flyway.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-database-postgresql</artifactId>
+                <version>${flyway.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.tngtech.archunit</groupId>
+                <artifactId>archunit-junit5</artifactId>
+                <version>${archunit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- Kafka -->
+            <dependency>
+                <groupId>io.micronaut.kafka</groupId>
+                <artifactId>micronaut-kafka</artifactId>
+                <version>${micronaut.kafka.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+
+            <!-- Testcontainers BOM -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Test Utilities -->
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>${awaitility.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.14.0</version>
+                    <configuration>
+                        <release>${maven.compiler.release}</release>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>io.micronaut</groupId>
+                                <artifactId>micronaut-context</artifactId>
+                                <version>${micronaut.version}</version>
+                            </path>
+                            <path>
+                                <groupId>io.micronaut</groupId>
+                                <artifactId>micronaut-inject-java</artifactId>
+                                <version>${micronaut.version}</version>
+                            </path>
+                            <path>
+                                <groupId>io.micronaut</groupId>
+                                <artifactId>micronaut-graal</artifactId>
+                                <version>${micronaut.version}</version>
+                            </path>
+                            <path>
+                                <groupId>io.micronaut.data</groupId>
+                                <artifactId>micronaut-data-processor</artifactId>
+                                <version>${micronaut.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                        <compilerArgs>
+                            <arg>-Amicronaut.processing.incremental=true</arg>
+                            <arg>-Amicronaut.processing.annotations=com.knight.*</arg>
+                        </compilerArgs>
+                        <fork>true</fork>
+                        <jvmArgs>
+                            <jvmArg>--add-opens</jvmArg>
+                            <jvmArg>jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</jvmArg>
+                            <jvmArg>--add-opens</jvmArg>
+                            <jvmArg>jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</jvmArg>
+                            <jvmArg>--add-opens</jvmArg>
+                            <jvmArg>jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</jvmArg>
+                            <jvmArg>--add-opens</jvmArg>
+                            <jvmArg>jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</jvmArg>
+                            <jvmArg>--add-opens</jvmArg>
+                            <jvmArg>jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</jvmArg>
+                            <jvmArg>--add-opens</jvmArg>
+                            <jvmArg>jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</jvmArg>
+                            <jvmArg>--add-opens</jvmArg>
+                            <jvmArg>jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</jvmArg>
+                            <jvmArg>--add-opens</jvmArg>
+                            <jvmArg>jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</jvmArg>
+                            <jvmArg>--add-opens</jvmArg>
+                            <jvmArg>jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</jvmArg>
+                            <jvmArg>--add-opens</jvmArg>
+                            <jvmArg>jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED</jvmArg>
+                        </jvmArgs>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.5.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
