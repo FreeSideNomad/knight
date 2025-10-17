@@ -1,7 +1,0 @@
-com/knight/contexts/serviceprofiles/management/api/commands/SpmCommands.class
-com/knight/contexts/serviceprofiles/management/api/commands/SpmCommands$EnrollServiceCmd.class
-com/knight/contexts/serviceprofiles/management/api/commands/SpmCommands$EnrollAccountCmd.class
-com/knight/contexts/serviceprofiles/management/api/events/ServicingProfileCreated.class
-com/knight/contexts/serviceprofiles/management/api/queries/SpmQueries$ServicingProfileSummary.class
-com/knight/contexts/serviceprofiles/management/api/commands/SpmCommands$SuspendProfileCmd.class
-com/knight/contexts/serviceprofiles/management/api/queries/SpmQueries.class

@@ -1,6 +1,0 @@
-/Users/igor/code/knight/contexts/users/users/infra/src/main/java/com/knight/contexts/users/users/infra/UserManagementApplication.java
-/Users/igor/code/knight/contexts/users/users/infra/src/main/java/com/knight/contexts/users/users/infra/persistence/InMemoryUserGroupRepository.java
-/Users/igor/code/knight/contexts/users/users/infra/src/main/java/com/knight/contexts/users/users/infra/persistence/InMemoryUserRepository.java
-/Users/igor/code/knight/contexts/users/users/infra/src/main/java/com/knight/contexts/users/users/infra/rest/UserCommandController.java
-/Users/igor/code/knight/contexts/users/users/infra/src/main/java/com/knight/contexts/users/users/infra/rest/UserGroupController.java
-/Users/igor/code/knight/contexts/users/users/infra/src/main/java/com/knight/contexts/users/users/infra/rest/UserQueryController.java
