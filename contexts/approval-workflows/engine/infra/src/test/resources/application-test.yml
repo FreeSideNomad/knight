@@ -1,0 +1,19 @@
+# Test Configuration - Disables Kafka, uses test database
+
+flyway:
+  datasources:
+    default:
+      enabled: true
+      schemas: approvals
+
+kafka:
+  enabled: false
+
+jpa:
+  default:
+    entity-scan:
+      packages: 'com.knight.contexts.approvalworkflows.engine.infra.persistence.entity'
+    properties:
+      hibernate:
+        default_schema: approvals
+        show_sql: true

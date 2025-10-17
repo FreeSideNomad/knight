@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * In-memory repository for Policy (MVP - replace with JPA in production).
  */
 @Singleton
+@io.micronaut.context.annotation.Secondary
 public class InMemoryPolicyRepository implements PolicyApplicationService.PolicyRepository {
 
     private final Map<String, Policy> store = new ConcurrentHashMap<>();

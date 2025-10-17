@@ -4,24 +4,86 @@ micronaut:
   server:
     port: 8085
 
+# PostgreSQL Configuration
 datasources:
   default:
-    url: jdbc:postgresql://localhost:5432/knight_approvals
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:knight}
     driverClassName: org.postgresql.Driver
-    username: knight
-    password: knight
+    username: ${DB_USER:knight}
+    password: ${DB_PASSWORD:knight}
+    schema-generate: NONE
     dialect: POSTGRES
 
+    # HikariCP Connection Pool
+    maximum-pool-size: 10
+    minimum-idle: 5
+    connection-timeout: 30000
+    idle-timeout: 600000
+    max-lifetime: 1800000
+
+# JPA Configuration
 jpa:
   default:
+    entity-scan:
+      packages:
+        - 'com.knight.contexts.approvalworkflows.engine.infra.persistence.entity'
     properties:
       hibernate:
         hbm2ddl:
           auto: validate
         show_sql: false
+        format_sql: true
+        default_schema: approvals
 
+        # Performance tuning
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+        # Statistics (disable in production)
+        generate_statistics: false
+
+# Flyway Configuration
 flyway:
   datasources:
     default:
       enabled: true
+      schemas: approvals
       locations: classpath:db/migration
+      baseline-on-migrate: true
+      validate-on-migrate: true
+
+# Kafka Configuration
+kafka:
+  enabled: ${KAFKA_ENABLED:true}
+
+  bootstrap:
+    servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+  producer:
+    bootstrap-servers: ${kafka.bootstrap.servers}
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    acks: all
+    retries: 3
+    max-in-flight-requests-per-connection: 1
+    enable-idempotence: true
+    compression-type: snappy
+
+  consumer:
+    bootstrap-servers: ${kafka.bootstrap.servers}
+    group-id: approval-workflow-engine
+    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    auto-offset-reset: earliest
+    enable-auto-commit: false
+    max-poll-records: 10
+
+# Logging
+logger:
+  levels:
+    com.knight: DEBUG
+    io.micronaut: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

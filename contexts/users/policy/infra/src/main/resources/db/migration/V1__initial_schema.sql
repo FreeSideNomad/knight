@@ -1,7 +1,9 @@
 -- Policy Management Schema
--- V1: Initial tables for policies
+-- V1: Create schema and initial policies table
 
-CREATE TABLE policies (
+CREATE SCHEMA IF NOT EXISTS policy;
+
+CREATE TABLE policy.policies (
     policy_id VARCHAR(255) PRIMARY KEY,
     policy_type VARCHAR(50) NOT NULL,
     subject VARCHAR(255) NOT NULL,
@@ -13,6 +15,11 @@ CREATE TABLE policies (
     version BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE INDEX idx_policies_type ON policies(policy_type);
-CREATE INDEX idx_policies_subject ON policies(subject);
-CREATE INDEX idx_policies_resource ON policies(resource);
+-- Indexes
+CREATE INDEX idx_policies_type ON policy.policies(policy_type);
+CREATE INDEX idx_policies_subject ON policy.policies(subject);
+CREATE INDEX idx_policies_resource ON policy.policies(resource);
+
+-- Comments
+COMMENT ON TABLE policy.policies IS 'Policy aggregate root - manages permission and approval policies';
+COMMENT ON COLUMN policy.policies.policy_type IS 'PERMISSION, APPROVAL';

@@ -1,0 +1,17 @@
+flyway:
+  datasources:
+    default:
+      enabled: true
+      schemas: policy
+
+kafka:
+  enabled: false
+
+jpa:
+  default:
+    entity-scan:
+      packages: 'com.knight.contexts.users.policy.infra.persistence.entity'
+    properties:
+      hibernate:
+        default_schema: policy
+        show_sql: true
