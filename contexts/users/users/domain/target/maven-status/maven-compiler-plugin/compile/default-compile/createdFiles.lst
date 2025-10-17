@@ -1,6 +1,0 @@
-com/knight/contexts/users/users/domain/aggregate/User$Status.class
-com/knight/contexts/users/users/domain/aggregate/User.class
-com/knight/contexts/users/users/domain/aggregate/UserGroup.class
-com/knight/contexts/users/users/domain/aggregate/User$Role.class
-com/knight/contexts/users/users/domain/aggregate/User$Source.class
-com/knight/contexts/users/users/domain/aggregate/UserGroup$UserGroupMembership.class
