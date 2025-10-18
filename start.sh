@@ -96,13 +96,13 @@ fi
 echo -e "\n${BLUE}[3/4] Waiting for Infrastructure${NC}"
 wait_for_service "PostgreSQL" 5432
 wait_for_service "Kafka" 9092
-wait_for_service "AKHQ" 8080
-wait_for_service "pgAdmin" 5050
+echo -e "${YELLOW}⊙ AKHQ (Kafka UI) is optional - skipping health check${NC}"
+echo -e "${YELLOW}⊙ pgAdmin is optional - skipping health check${NC}"
 
 # Build applications
 echo -e "\n${BLUE}[4/4] Building Applications${NC}"
 echo "Running Maven build..."
-if mvn clean package -DskipTests -q; then
+if mvn clean package --offline -DskipTests -q; then
     echo -e "${GREEN}✓ Build successful${NC}"
 else
     echo -e "${RED}✗ Build failed${NC}"
@@ -137,7 +137,7 @@ echo "  Bootstrap: localhost:9092"
 echo "  Topics:    spm.*, icm.*, users.*, policy.*, approvals.*"
 
 echo -e "\n${YELLOW}AKHQ (Kafka UI):${NC}"
-echo "  URL:      http://localhost:8080"
+echo "  URL:      http://localhost:8086"
 echo -e "  ${CYAN}→ No authentication required${NC}"
 
 echo -e "\n${YELLOW}Schema Registry:${NC}"
@@ -221,7 +221,7 @@ echo -e "${CYAN}║                  USEFUL LINKS                             �
 echo -e "${CYAN}╚═══════════════════════════════════════════════════════════╝${NC}"
 
 echo ""
-echo "  📊 AKHQ (Kafka):     http://localhost:8080"
+echo "  📊 AKHQ (Kafka):     http://localhost:8086"
 echo "  🗄️  pgAdmin:          http://localhost:5050"
 echo "  📈 Metrics:          http://localhost:808[1-5]/metrics"
 echo "  💚 Health Checks:    http://localhost:808[1-5]/health"

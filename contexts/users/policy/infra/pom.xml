@@ -15,6 +15,13 @@
 
     <name>Policy Management - Infrastructure</name>
 
+    <properties>
+        <exec.mainClass>com.knight.contexts.users.policy.infra.PolicyManagementApplication</exec.mainClass>
+        <micronaut.runtime>netty</micronaut.runtime>
+        <micronaut.test.resources.enabled>false</micronaut.test.resources.enabled>
+        <micronaut.test.resources.version>2.5.2</micronaut.test.resources.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.knight.contexts.users</groupId>
@@ -155,6 +162,24 @@
                 <groupId>io.micronaut.maven</groupId>
                 <artifactId>micronaut-maven-plugin</artifactId>
                 <version>4.7.0</version>
+                <configuration>
+                    <testResourcesEnabled>false</testResourcesEnabled>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>-noverify</argument>
+                        <argument>-XX:TieredStopAtLevel=1</argument>
+                        <argument>io.micronaut.runtime.Micronaut</argument>
+                    </arguments>
+                </configuration>
             </plugin>
         </plugins>
     </build>
