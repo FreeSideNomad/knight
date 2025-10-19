@@ -51,7 +51,7 @@ public class OutboxEventEntity {
     }
 
     // Default constructor for JPA
-    protected OutboxEventEntity() {}
+    public OutboxEventEntity() {}
 
     public OutboxEventEntity(
         UUID id,

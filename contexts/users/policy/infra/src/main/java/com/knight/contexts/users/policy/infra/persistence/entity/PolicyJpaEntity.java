@@ -46,7 +46,7 @@ public class PolicyJpaEntity {
     }
 
     // Default constructor for JPA
-    protected PolicyJpaEntity() {}
+    public PolicyJpaEntity() {}
 
     public PolicyJpaEntity(
         String policyId,

@@ -19,7 +19,8 @@ public class InboxEventEntity {
     @Column(name = "event_type", nullable = false)
     private String eventType;
 
-    @Column(name = "payload", nullable = false, columnDefinition = "JSONB")
+    @Column(name = "payload", nullable = false)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
     private String payload;
 
     @Column(name = "received_at", nullable = false)
@@ -40,7 +41,7 @@ public class InboxEventEntity {
     }
 
     // Default constructor for JPA
-    protected InboxEventEntity() {}
+    public InboxEventEntity() {}
 
     public InboxEventEntity(
         UUID eventId,

@@ -51,7 +51,7 @@ public class ApprovalWorkflowJpaEntity {
     }
 
     // Default constructor for JPA
-    protected ApprovalWorkflowJpaEntity() {}
+    public ApprovalWorkflowJpaEntity() {}
 
     public ApprovalWorkflowJpaEntity(
         String workflowId,

@@ -15,19 +15,19 @@ get_service_info() {
     local service_key=$1
     case "$service_key" in
         spm)
-            echo "contexts/service-profiles/management/infra:8081:Service Profile Management"
+            echo "contexts/service-profiles/management/infra:9500:Service Profile Management"
             ;;
         icm)
-            echo "contexts/service-profiles/indirect-clients/infra:8082:Indirect Client Management"
+            echo "contexts/service-profiles/indirect-clients/infra:9501:Indirect Client Management"
             ;;
         users)
-            echo "contexts/users/users/infra:8083:User Management"
+            echo "contexts/users/users/infra:9502:User Management"
             ;;
         policy)
-            echo "contexts/users/policy/infra:8084:Policy Management"
+            echo "contexts/users/policy/infra:9503:Policy Management"
             ;;
         approvals)
-            echo "contexts/approval-workflows/engine/infra:8085:Approval Workflow Engine"
+            echo "contexts/approval-workflows/engine/infra:9504:Approval Workflow Engine"
             ;;
         *)
             echo ""
@@ -45,11 +45,11 @@ usage() {
     echo "  ./start-service.sh [service-name]"
     echo ""
     echo -e "${YELLOW}Available Services:${NC}"
-    echo "  spm       - Service Profile Management (port 8081)"
-    echo "  icm       - Indirect Client Management (port 8082)"
-    echo "  users     - User Management (port 8083)"
-    echo "  policy    - Policy Management (port 8084)"
-    echo "  approvals - Approval Workflow Engine (port 8085)"
+    echo "  spm       - Service Profile Management (port 9500)"
+    echo "  icm       - Indirect Client Management (port 9501)"
+    echo "  users     - User Management (port 9502)"
+    echo "  policy    - Policy Management (port 9503)"
+    echo "  approvals - Approval Workflow Engine (port 9504)"
     echo "  all       - Start all services in background (default)"
     echo ""
     echo -e "${YELLOW}Examples:${NC}"

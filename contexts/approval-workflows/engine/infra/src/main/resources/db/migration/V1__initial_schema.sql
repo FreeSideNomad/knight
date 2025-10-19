@@ -24,9 +24,8 @@ CREATE TABLE approvals.approvals (
     workflow_id VARCHAR(255) NOT NULL REFERENCES approvals.approval_workflows(workflow_id),
     approver_user_id VARCHAR(255) NOT NULL,
     decision VARCHAR(20) NOT NULL,
-    comments TEXT,
-    approved_at TIMESTAMP NOT NULL,
-    version BIGINT NOT NULL DEFAULT 0
+    comments VARCHAR(1000),
+    approved_at TIMESTAMP NOT NULL
 );
 
 CREATE INDEX idx_approvals_workflow ON approvals.approvals(workflow_id);
@@ -37,3 +36,35 @@ COMMENT ON TABLE approvals.approval_workflows IS 'ApprovalWorkflow aggregate roo
 COMMENT ON COLUMN approvals.approval_workflows.status IS 'PENDING, APPROVED, REJECTED, EXPIRED';
 COMMENT ON TABLE approvals.approvals IS 'Approval entity - individual approvals within a workflow';
 COMMENT ON COLUMN approvals.approvals.decision IS 'APPROVE, REJECT';
+
+-- Outbox table for reliable event publishing
+CREATE TABLE approvals.outbox (
+    id UUID PRIMARY KEY,
+    aggregate_type VARCHAR(100) NOT NULL,
+    aggregate_id VARCHAR(255) NOT NULL,
+    event_type VARCHAR(255) NOT NULL,
+    payload JSONB NOT NULL,
+    correlation_id UUID,
+    created_at TIMESTAMP NOT NULL,
+    published_at TIMESTAMP,
+    status VARCHAR(20) NOT NULL,
+    retry_count INT NOT NULL DEFAULT 0,
+    error_message TEXT
+);
+
+CREATE INDEX idx_outbox_status ON approvals.outbox(status);
+CREATE INDEX idx_outbox_created_at ON approvals.outbox(created_at);
+
+-- Inbox table for idempotent event consumption
+CREATE TABLE approvals.inbox (
+    event_id UUID PRIMARY KEY,
+    event_type VARCHAR(255) NOT NULL,
+    payload JSONB NOT NULL,
+    received_at TIMESTAMP NOT NULL,
+    processed_at TIMESTAMP,
+    status VARCHAR(20) NOT NULL,
+    error_message TEXT
+);
+
+CREATE INDEX idx_inbox_status ON approvals.inbox(status);
+CREATE INDEX idx_inbox_received_at ON approvals.inbox(received_at);

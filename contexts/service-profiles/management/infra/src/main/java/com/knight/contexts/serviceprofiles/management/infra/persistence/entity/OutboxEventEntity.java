@@ -24,7 +24,8 @@ public class OutboxEventEntity {
     @Column(name = "event_type", nullable = false)
     private String eventType;
 
-    @Column(name = "payload", nullable = false, columnDefinition = "JSONB")
+    @Column(name = "payload", nullable = false)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
     private String payload;
 
     @Column(name = "correlation_id")
@@ -51,7 +52,7 @@ public class OutboxEventEntity {
     }
 
     // Default constructor for JPA
-    protected OutboxEventEntity() {}
+    public OutboxEventEntity() {}
 
     public OutboxEventEntity(
         UUID id,

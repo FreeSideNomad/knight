@@ -3,7 +3,7 @@ package com.knight.contexts.serviceprofiles.management.infra.persistence.reposit
 import com.knight.contexts.serviceprofiles.management.infra.persistence.entity.OutboxEventEntity;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.annotation.Repository;
-import io.micronaut.data.jpa.repository.JpaRepository;
+import io.micronaut.data.repository.CrudRepository;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
 
@@ -13,7 +13,7 @@ import java.util.UUID;
  * Repository for Outbox events.
  */
 @Repository
-public interface OutboxEventRepository extends JpaRepository<OutboxEventEntity, UUID> {
+public interface OutboxEventRepository extends CrudRepository<OutboxEventEntity, UUID> {
 
     /**
      * Find pending events ordered by creation time.

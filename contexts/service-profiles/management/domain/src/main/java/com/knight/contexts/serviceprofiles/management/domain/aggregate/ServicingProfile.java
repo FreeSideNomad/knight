@@ -33,6 +33,19 @@ public class ServicingProfile {
             this.enrolledAt = Instant.now();
         }
 
+        // Factory method for reconstruction from persistence
+        private ServiceEnrollment(String enrollmentId, String serviceType, String configuration, Status status, Instant enrolledAt) {
+            this.enrollmentId = enrollmentId;
+            this.serviceType = serviceType;
+            this.configuration = configuration;
+            this.status = status;
+            this.enrolledAt = enrolledAt;
+        }
+
+        public static ServiceEnrollment reconstitute(String enrollmentId, String serviceType, String configuration, Status status, Instant enrolledAt) {
+            return new ServiceEnrollment(enrollmentId, serviceType, configuration, status, enrolledAt);
+        }
+
         public String getEnrollmentId() { return enrollmentId; }
         public String getServiceType() { return serviceType; }
         public String getConfiguration() { return configuration; }
@@ -57,6 +70,19 @@ public class ServicingProfile {
             this.accountId = accountId;
             this.status = Status.ACTIVE;
             this.enrolledAt = Instant.now();
+        }
+
+        // Factory method for reconstruction from persistence
+        private AccountEnrollment(String enrollmentId, String serviceEnrollmentId, String accountId, Status status, Instant enrolledAt) {
+            this.enrollmentId = enrollmentId;
+            this.serviceEnrollmentId = serviceEnrollmentId;
+            this.accountId = accountId;
+            this.status = status;
+            this.enrolledAt = enrolledAt;
+        }
+
+        public static AccountEnrollment reconstitute(String enrollmentId, String serviceEnrollmentId, String accountId, Status status, Instant enrolledAt) {
+            return new AccountEnrollment(enrollmentId, serviceEnrollmentId, accountId, status, enrolledAt);
         }
 
         public String getEnrollmentId() { return enrollmentId; }
@@ -140,6 +166,24 @@ public class ServicingProfile {
         }
         this.status = Status.SUSPENDED;
         this.updatedAt = Instant.now();
+    }
+
+    // Public methods for reconstruction from persistence (used by infrastructure mapper)
+    // Note: These should only be called during aggregate reconstitution from database
+    public void addExistingServiceEnrollment(ServiceEnrollment enrollment) {
+        this.serviceEnrollments.add(enrollment);
+    }
+
+    public void addExistingAccountEnrollment(AccountEnrollment enrollment) {
+        this.accountEnrollments.add(enrollment);
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     // Getters

@@ -62,7 +62,7 @@ public class UserJpaEntity {
     }
 
     // Default constructor for JPA
-    protected UserJpaEntity() {}
+    public UserJpaEntity() {}
 
     public UserJpaEntity(
         String id,

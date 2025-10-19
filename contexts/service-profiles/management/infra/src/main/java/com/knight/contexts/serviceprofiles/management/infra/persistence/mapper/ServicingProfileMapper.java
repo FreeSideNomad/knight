@@ -1,99 +1,122 @@
 package com.knight.contexts.serviceprofiles.management.infra.persistence.mapper;
 
 import com.knight.contexts.serviceprofiles.management.domain.aggregate.ServicingProfile;
-import com.knight.contexts.serviceprofiles.management.infra.persistence.entity.EnrolledAccountJpaEntity;
-import com.knight.contexts.serviceprofiles.management.infra.persistence.entity.EnrolledServiceJpaEntity;
-import com.knight.contexts.serviceprofiles.management.infra.persistence.entity.ServicingProfileJpaEntity;
+import com.knight.contexts.serviceprofiles.management.infra.persistence.entity.AccountEnrollmentEntity;
+import com.knight.contexts.serviceprofiles.management.infra.persistence.entity.ServiceEnrollmentEntity;
+import com.knight.contexts.serviceprofiles.management.infra.persistence.entity.ServicingProfileEntity;
 import com.knight.platform.sharedkernel.ClientId;
 import com.knight.platform.sharedkernel.ServicingProfileId;
 import jakarta.inject.Singleton;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Manual mapper for converting between domain and JPA entities.
- * Cannot use MapStruct because domain aggregate has private constructor.
- */
 @Singleton
 public class ServicingProfileMapper {
 
-    /**
-     * Convert domain aggregate to JPA entity.
-     */
-    public ServicingProfileJpaEntity toEntity(ServicingProfile domain) {
-        if (domain == null) return null;
+    // Entity to Domain - manual mapping since domain has private constructors
+    public ServicingProfile toDomain(ServicingProfileEntity entity) {
+        // Create using factory method - need to reconstruct from stored URN
+        ServicingProfileId profileId = ServicingProfileId.fromUrn(entity.getProfileId());
 
-        ServicingProfileJpaEntity entity = new ServicingProfileJpaEntity();
-        entity.setProfileUrn(domain.getProfileId().urn());
-        entity.setClientUrn(domain.getClientId().urn());
-        entity.setStatus(ServicingProfileJpaEntity.Status.valueOf(domain.getStatus().name()));
-        entity.setCreatedAt(domain.getCreatedAt());
-        entity.setUpdatedAt(domain.getUpdatedAt());
-        entity.setCreatedBy(domain.getCreatedBy());
+        ServicingProfile profile = ServicingProfile.create(
+            profileId,
+            profileId.clientId(),
+            entity.getCreatedBy()
+        );
 
-        // Map service enrollments
-        List<EnrolledServiceJpaEntity> services = domain.getServiceEnrollments().stream()
-            .map(se -> {
-                EnrolledServiceJpaEntity serviceEntity = new EnrolledServiceJpaEntity();
-                serviceEntity.setProfile(entity);
-                serviceEntity.setEnrollmentId(se.getEnrollmentId());
-                serviceEntity.setServiceType(se.getServiceType());
-                serviceEntity.setConfiguration(se.getConfiguration());
-                serviceEntity.setStatus(EnrolledServiceJpaEntity.Status.valueOf(se.getStatus().name()));
-                serviceEntity.setEnrolledAt(se.getEnrolledAt());
-                return serviceEntity;
-            })
-            .collect(Collectors.toList());
-        entity.setEnrolledServices(services);
+        // Restore status and timestamps
+        profile.setStatus(mapStatus(entity.getStatus()));
+        profile.setUpdatedAt(entity.getUpdatedAt());
 
-        // Map account enrollments
-        List<EnrolledAccountJpaEntity> accounts = domain.getAccountEnrollments().stream()
-            .map(ae -> {
-                EnrolledAccountJpaEntity accountEntity = new EnrolledAccountJpaEntity();
-                accountEntity.setProfile(entity);
-                accountEntity.setEnrollmentId(ae.getEnrollmentId());
-                accountEntity.setServiceEnrollmentId(ae.getServiceEnrollmentId());
-                accountEntity.setAccountId(ae.getAccountId());
-                accountEntity.setStatus(EnrolledAccountJpaEntity.Status.valueOf(ae.getStatus().name()));
-                accountEntity.setEnrolledAt(ae.getEnrolledAt());
-                return accountEntity;
-            })
-            .collect(Collectors.toList());
-        entity.setEnrolledAccounts(accounts);
-
-        return entity;
-    }
-
-    /**
-     * Convert JPA entity to domain aggregate.
-     * NOTE: This reconstitution is simplified - in production you'd need
-     * reflection or a reconstitution constructor to properly restore domain state.
-     */
-    public ServicingProfile toDomain(ServicingProfileJpaEntity entity) {
-        if (entity == null) return null;
-
-        ServicingProfileId profileId = ServicingProfileId.fromUrn(entity.getProfileUrn());
-        ClientId clientId = ClientId.of(entity.getClientUrn());
-
-        // Create new profile - this will be in PENDING status
-        ServicingProfile profile = ServicingProfile.create(profileId, clientId, entity.getCreatedBy());
-
-        // Re-enroll services and accounts to restore state
-        // NOTE: This is a workaround since we can't directly set private fields
-        // In production, consider adding a reconstitution method or using reflection
-        if (entity.getEnrolledServices() != null) {
-            for (EnrolledServiceJpaEntity service : entity.getEnrolledServices()) {
-                profile.enrollService(service.getServiceType(), service.getConfiguration());
+        // Reconstitute service enrollments with original IDs
+        if (entity.getServiceEnrollments() != null) {
+            for (ServiceEnrollmentEntity seEntity : entity.getServiceEnrollments()) {
+                ServicingProfile.ServiceEnrollment enrollment = ServicingProfile.ServiceEnrollment.reconstitute(
+                    seEntity.getEnrollmentId(),
+                    seEntity.getServiceType(),
+                    seEntity.getConfiguration(),
+                    mapStatus(seEntity.getStatus()),
+                    seEntity.getEnrolledAt()
+                );
+                profile.addExistingServiceEnrollment(enrollment);
             }
         }
 
-        if (entity.getEnrolledAccounts() != null) {
-            for (EnrolledAccountJpaEntity account : entity.getEnrolledAccounts()) {
-                profile.enrollAccount(account.getServiceEnrollmentId(), account.getAccountId());
+        // Reconstitute account enrollments with original IDs
+        if (entity.getAccountEnrollments() != null) {
+            for (AccountEnrollmentEntity aeEntity : entity.getAccountEnrollments()) {
+                ServicingProfile.AccountEnrollment enrollment = ServicingProfile.AccountEnrollment.reconstitute(
+                    aeEntity.getEnrollmentId(),
+                    aeEntity.getServiceEnrollmentId(),
+                    aeEntity.getAccountId(),
+                    mapStatus(aeEntity.getStatus()),
+                    aeEntity.getEnrolledAt()
+                );
+                profile.addExistingAccountEnrollment(enrollment);
             }
         }
 
         return profile;
+    }
+
+    // Domain to Entity
+    public ServicingProfileEntity toEntity(ServicingProfile domain) {
+        ServicingProfileEntity entity = new ServicingProfileEntity(
+            domain.getProfileId().urn(),
+            domain.getClientId().urn(),
+            domain.getCreatedBy()
+        );
+
+        entity.setStatus(mapStatus(domain.getStatus()));
+        entity.setCreatedAt(domain.getCreatedAt());
+        entity.setUpdatedAt(domain.getUpdatedAt());
+
+        // Map service enrollments
+        if (domain.getServiceEnrollments() != null) {
+            Set<ServiceEnrollmentEntity> seEntities = domain.getServiceEnrollments().stream()
+                .map(se -> {
+                    ServiceEnrollmentEntity e = new ServiceEnrollmentEntity();
+                    e.setEnrollmentId(se.getEnrollmentId());
+                    e.setServiceType(se.getServiceType());
+                    e.setConfiguration(se.getConfiguration());
+                    e.setStatus(mapStatus(se.getStatus()));
+                    e.setEnrolledAt(se.getEnrolledAt());
+                    e.setServicingProfile(entity);
+                    return e;
+                })
+                .collect(Collectors.toSet());
+            entity.setServiceEnrollments(seEntities);
+        }
+
+        // Map account enrollments
+        if (domain.getAccountEnrollments() != null) {
+            Set<AccountEnrollmentEntity> aeEntities = domain.getAccountEnrollments().stream()
+                .map(ae -> {
+                    AccountEnrollmentEntity e = new AccountEnrollmentEntity();
+                    e.setEnrollmentId(ae.getEnrollmentId());
+                    e.setServiceEnrollmentId(ae.getServiceEnrollmentId());
+                    e.setAccountId(ae.getAccountId());
+                    e.setStatus(mapStatus(ae.getStatus()));
+                    e.setEnrolledAt(ae.getEnrolledAt());
+                    e.setServicingProfile(entity);
+                    return e;
+                })
+                .collect(Collectors.toSet());
+            entity.setAccountEnrollments(aeEntities);
+        }
+
+        return entity;
+    }
+
+    // Status enum mappings
+    private ServicingProfileEntity.Status mapStatus(ServicingProfile.Status status) {
+        if (status == null) return null;
+        return ServicingProfileEntity.Status.valueOf(status.name());
+    }
+
+    private ServicingProfile.Status mapStatus(ServicingProfileEntity.Status status) {
+        if (status == null) return null;
+        return ServicingProfile.Status.valueOf(status.name());
     }
 }

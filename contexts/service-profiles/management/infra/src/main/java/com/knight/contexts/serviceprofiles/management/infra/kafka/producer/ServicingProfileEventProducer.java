@@ -1,10 +1,10 @@
 package com.knight.contexts.serviceprofiles.management.infra.kafka.producer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knight.contexts.serviceprofiles.management.api.events.ServicingProfileCreated;
 import com.knight.contexts.serviceprofiles.management.app.service.SpmApplicationService;
 import com.knight.contexts.serviceprofiles.management.infra.persistence.entity.OutboxEventEntity;
 import com.knight.contexts.serviceprofiles.management.infra.persistence.repository.OutboxEventRepository;
+import io.micronaut.json.JsonMapper;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +21,14 @@ public class ServicingProfileEventProducer implements SpmApplicationService.Serv
     private static final Logger LOG = LoggerFactory.getLogger(ServicingProfileEventProducer.class);
 
     private final OutboxEventRepository outboxRepository;
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     public ServicingProfileEventProducer(
         OutboxEventRepository outboxRepository,
-        ObjectMapper objectMapper
+        JsonMapper jsonMapper
     ) {
         this.outboxRepository = outboxRepository;
-        this.objectMapper = objectMapper;
+        this.jsonMapper = jsonMapper;
     }
 
     /**
@@ -37,7 +37,7 @@ public class ServicingProfileEventProducer implements SpmApplicationService.Serv
      */
     public void publishServicingProfileCreated(ServicingProfileCreated event) {
         try {
-            String payload = objectMapper.writeValueAsString(event);
+            String payload = jsonMapper.writeValueAsString(event);
 
             OutboxEventEntity outboxEvent = new OutboxEventEntity(
                 UUID.randomUUID(),

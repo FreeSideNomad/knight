@@ -41,7 +41,7 @@ public class ApprovalJpaEntity {
     }
 
     // Default constructor for JPA
-    protected ApprovalJpaEntity() {}
+    public ApprovalJpaEntity() {}
 
     public ApprovalJpaEntity(
         String approvalId,

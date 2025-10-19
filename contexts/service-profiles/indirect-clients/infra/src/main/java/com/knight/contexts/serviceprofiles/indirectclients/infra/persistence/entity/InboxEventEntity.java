@@ -40,7 +40,7 @@ public class InboxEventEntity {
     }
 
     // Default constructor for JPA
-    protected InboxEventEntity() {}
+    public InboxEventEntity() {}
 
     public InboxEventEntity(
         UUID eventId,
